@@ -22,7 +22,7 @@ public class Components {
      * null before this method is called.
      */
     public static void initialize() {
-        base = new Base(3, 4, 5, 11, 12, 13, 0);
+        base = new Base(1, 2, 3, 4, 0);
         lift = new Lift(2, 1);
         arm = new Arm(14, 15);
         intake = new Intake(2, 1);

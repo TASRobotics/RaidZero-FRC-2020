@@ -121,7 +121,6 @@ public class Teleop {
         if (controller1.getYButtonReleased()) {
             Vision.ledOff();
         }
-        System.out.println(time.get());
         // Arcade
         // if (controller1.getBumper(kRight)) {
         //     Components.getBase().getRightMotor().set(ControlMode.PercentOutput,
@@ -170,7 +169,6 @@ public class Teleop {
         // Reset setpoint when limit is reached
         if (Components.getArm().getReverseLimit()) {
             Components.getArm().setEncoderPos(Arm.STARTING_POS);
-            System.out.println("Arm limit switch reached!");
         }
         // Change the setpoint for the arm
         if (Math.abs(controller2.getY(kRight)) > 0.1) {
@@ -184,10 +182,6 @@ public class Teleop {
         } else if (controller2.getAButton()) {
             armSetpoint = Arm.ROCKET_BALL;
         }
-
-        System.out.println("Arm SP = " + armSetpoint + " | Encoder = " +
-            Components.getArm().getEncoderPos());
-
 
         // Intake Wheels
         double rightTriggerAxis2 = controller2.getTriggerAxis(kRight);
@@ -218,8 +212,6 @@ public class Teleop {
             }
             Components.getClimb().climbPWM(controller2.getY(kLeft));
         }
-
-        SmartDashboard.putBoolean("Climbing?", climbing);
     }
 
 }

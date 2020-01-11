@@ -2,31 +2,33 @@ package raidzero.robot.components;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 public class Base {
 
-    private TalonSRX leftMotor;
-    private TalonSRX rightMotor;
+    private TalonFX leftMotor;
+    private TalonFX rightMotor;
 
     private PigeonIMU pigeon;
 
     /**
-     * Constructs a Drive object and sets up the motors and gear shift.
+     * Constructs a Base object and sets up the motors and gear shift.
      *
      * @param lLeaderId the ID of the left leader motor
-     * @param lFollower1Id the ID of the first left follower motor
-     * @param lFollower2Id the ID of the second left follower motor
+     * @param lFollowerId the ID of the left follower motor
      * @param rLeaderId the ID of the right leader motor
-     * @param rFollower1Id the ID of the first right follower motor
-     * @param rFollower2Id the ID of the second right follower motor
+     * @param rFollowerId the ID of the right follower motor
      * @param pigeonId the ID of the pigeon
      */
-    public Base(int rLeaderId, int rFollower1Id, int rFollower2Id, int lLeaderId, int lFollower1Id,
-    int lFollower2Id, int pigeonId) {
-        rightMotor = initSide(rLeaderId, rFollower1Id, rFollower2Id, false);
-        leftMotor = initSide(lLeaderId, lFollower1Id, lFollower2Id, true);
+    public Base(
+        int rLeaderId, int rFollowerId, 
+        int lLeaderId, int lFollowerId, 
+        int pigeonId) {
+        rightMotor = initSide(rLeaderId, rFollowerId, false);
+        leftMotor = initSide(lLeaderId, lFollowerId, true);
         pigeon = new PigeonIMU(pigeonId);
     }
 
@@ -34,33 +36,28 @@ public class Base {
      * Constructs and configures the motors for one side of the robot (i.e. one leader and two
      * followers), and returns the leader motor object.
      *
-     * @param leaderID the ID of the leader motor
+     * @param leaderId the ID of the leader motor
+     * @param followerId the ID of the follower motor
      * @param invert whether to invert the leader or not
      * @return the newly constructed leader motor object
      */
-    private TalonSRX initSide(int leaderId, int follower1Id, int follower2Id, boolean invert) {
-        TalonSRX leader = new TalonSRX(leaderId);
-        TalonSRX follower1 = new TalonSRX(follower1Id);
-        TalonSRX follower2 = new TalonSRX(follower2Id);
+    private TalonFX initSide(int leaderId, int followerId, boolean invert) {
+        TalonFX leader = new TalonFX(leaderId);
+        TalonFX follower = new TalonFX(followerId);
 
         leader.configFactoryDefault();
-        follower1.configFactoryDefault();
-        follower2.configFactoryDefault();
+        follower.configFactoryDefault();
 
-        leader.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-
-        leader.configNeutralDeadband(0.001);
+        leader.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor);
+        leader.configNeutralDeadband(0.04);
 
         leader.setNeutralMode(NeutralMode.Brake);
-        follower1.setNeutralMode(NeutralMode.Brake);
-        follower2.setNeutralMode(NeutralMode.Brake);
+        follower.setNeutralMode(NeutralMode.Brake);
 
-        follower1.follow(leader);
-        follower2.follow(leader);
+        follower.follow(leader);
 
         leader.setInverted(invert);
-        follower1.setInverted(invert);
-        follower2.setInverted(invert);
+        follower.setInverted(invert);
 
         return leader;
     }
@@ -72,7 +69,7 @@ public class Base {
      *
      * @return the right leader motor
      */
-    public TalonSRX getRightMotor() {
+    public TalonFX getRightMotor() {
         return rightMotor;
     }
 
@@ -83,7 +80,7 @@ public class Base {
      *
      * @return the left leader motor
      */
-    public TalonSRX getLeftMotor() {
+    public TalonFX getLeftMotor() {
         return leftMotor;
     }
 
