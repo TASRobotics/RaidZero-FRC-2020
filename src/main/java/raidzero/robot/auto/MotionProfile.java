@@ -257,7 +257,8 @@ public class MotionProfile {
             TrajectoryPoint tp = new TrajectoryPoint();
             tp.position = waypoints[i].position * reverse * SENSOR_UNITS_PER_INCH;
             tp.velocity = waypoints[i].velocity * reverse * SENSOR_UNITS_PER_INCH;
-            tp.timeDur = (int) waypoints[i].time;
+            // timeDur takes ms, but Pathpoint::time is in 100 ms
+            tp.timeDur = (int) (waypoints[i].time * 100);
             tp.auxiliaryPos = waypoints[i].angle * 10;
             tp.useAuxPID = true;
             tp.profileSlotSelect0 = PID_PRIMARY_SLOT;
