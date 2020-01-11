@@ -48,7 +48,6 @@ public class Base {
         leader.configFactoryDefault();
         follower.configFactoryDefault();
 
-        leader.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor);
         leader.configNeutralDeadband(0.04);
 
         leader.setNeutralMode(NeutralMode.Brake);

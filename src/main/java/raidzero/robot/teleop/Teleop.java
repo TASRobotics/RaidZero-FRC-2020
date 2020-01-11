@@ -88,7 +88,7 @@ public class Teleop {
             inMP = true;
             profile.reset();
             Components.getBase().getLeftMotor().setSelectedSensorPosition(0);
-            Components.getBase().getRightMotor().getSensorCollection().setQuadraturePosition(0, 10);
+            Components.getBase().getRightMotor().getSensorCollection().setIntegratedSensorPosition(0, 10);
             time.reset();
             time.start();
         } else if (controller1.getYButton() && inMP) {

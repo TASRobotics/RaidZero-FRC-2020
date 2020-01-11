@@ -9,7 +9,7 @@ import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.wpilibj.Notifier;
@@ -56,8 +56,8 @@ public class MotionProfile {
     private State state;
     private MotionProfileStatus status;
     private SetValueMotionProfile setValue;
-    private TalonSRX rightTal;
-    private TalonSRX leftTal;
+    private TalonFX rightTal;
+    private TalonFX leftTal;
     private PigeonIMU pidgey;
 
     Notifier notifer = new Notifier(() -> {
@@ -71,7 +71,7 @@ public class MotionProfile {
      * @param leftMaster the left master of the base
      * @param pidgey the pigeon object to use
      */
-    public MotionProfile(TalonSRX rightMaster, TalonSRX leftMaster, PigeonIMU pidgey) {
+    public MotionProfile(TalonFX rightMaster, TalonFX leftMaster, PigeonIMU pidgey) {
         rightTal = rightMaster;
         leftTal = leftMaster;
         this.pidgey = pidgey;

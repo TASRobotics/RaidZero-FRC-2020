@@ -101,7 +101,7 @@ public class Auto {
 
         // Reset encoders and motion profile
         Components.getBase().getLeftMotor().setSelectedSensorPosition(0);
-        Components.getBase().getRightMotor().getSensorCollection().setQuadraturePosition(0, 10);
+        Components.getBase().getRightMotor().getSensorCollection().setIntegratedSensorPosition(0, 10);
         Components.getBase().getPigeon().setYaw(0);
         profile.reset();
 
