@@ -1,19 +1,12 @@
 package raidzero.robot.auto;
 
 import raidzero.robot.components.Components;
-import raidzero.robot.teleop.Teleop;
-import raidzero.robot.vision.Vision;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidzero.pathgen.Point;
 
 public class Auto {
