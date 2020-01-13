@@ -97,12 +97,21 @@ public class Base {
     }
 
     /**
-     * Get the yaw value of the pigeon
+     * Gets the yaw value of the pigeon.
      */
     public double getYaw() {
         double[] angles = new double[3];
         pigeon.getYawPitchRoll(angles);
         return angles[0];
+    }
+
+    /**
+     * Zeros the encoders & gyro.
+     */
+    public void zeroSensors() {
+        leftMotor.setSelectedSensorPosition(0);
+        rightMotor.setSelectedSensorPosition(0);
+        pigeon.setYaw(0.0);
     }
 
 }

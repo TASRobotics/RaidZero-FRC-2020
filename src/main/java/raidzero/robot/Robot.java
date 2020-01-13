@@ -1,6 +1,5 @@
 package raidzero.robot;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import raidzero.robot.auto.Auto;
 import raidzero.robot.components.Components;
