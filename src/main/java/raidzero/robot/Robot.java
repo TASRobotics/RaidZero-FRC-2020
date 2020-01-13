@@ -8,10 +8,10 @@ import edu.wpi.first.wpilibj.TimedRobot;
 public class Robot extends TimedRobot {
 
     /**
-     * Initializes everything.
+     * Main thread to loop and run.
      */
     @Override
-    public void robotInit() {
+    public void robotPeriodic() {
     }
 
     /**
