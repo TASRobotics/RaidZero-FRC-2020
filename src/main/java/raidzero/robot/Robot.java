@@ -1,11 +1,6 @@
 package raidzero.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import raidzero.robot.auto.Auto;
-import raidzero.robot.components.Components;
-import raidzero.robot.teleop.Teleop;
-
-import raidzero.robot.vision.Vision;
 
 /**
  * The main robot class.
@@ -17,10 +12,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
-        Components.initialize();
-        Auto.initialize();
-        Teleop.initialize();
-        Vision.initialize();
     }
 
     /**
@@ -30,8 +21,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        Auto.setup();
-        Vision.driverCamSetup();
     }
 
     /**
@@ -41,7 +30,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
-        Auto.run();
     }
 
     /**
@@ -51,8 +39,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopInit() {
-        Teleop.setup();
-        Vision.driverCamSetup();
     }
 
     /**
@@ -62,7 +48,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-        Teleop.run();
     }
 
     /**
@@ -72,8 +57,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledPeriodic() {
-        Auto.disabled();
-        Vision.driverCamSetup();
     }
 
     /**
