@@ -1,78 +1,57 @@
 package raidzero.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import raidzero.robot.submodules.Drive;
+import raidzero.robot.teleop.Teleop;
 
 /**
  * The main robot class.
  */
 public class Robot extends TimedRobot {
 
-    /**
-     * Main thread to loop and run.
-     */
+    private SubmoduleManager submoduleManager = SubmoduleManager.getInstance();
+
+    private Teleop teleop = Teleop.getInstance();
+
+    private Drive moduleDrive = Drive.getInstance();
+    
+
+    //private PeriodicExecutor periodicExecutor = new PeriodicExecutor();
+
     @Override
-    public void robotPeriodic() {
+    public void robotInit() {
+        SubmoduleManager.getInstance().setSubmodules(
+            moduleDrive
+        );
+        //periodicExecutor.start();
     }
 
-    /**
-     * Runs setup code for autonomous mode.
-     *
-     * <p>This is called once when autonomous mode begins.
-     */
+    @Override
+    public void disabledInit() {
+        //periodicExecutor.stop();
+    }
+
     @Override
     public void autonomousInit() {
+        submoduleManager.onStart(Timer.getFPGATimestamp());
     }
 
-    /**
-     * Runs periodic code for autonomous mode.
-     *
-     * <p>This is called repeatedly during autonomous mode.
-     */
     @Override
     public void autonomousPeriodic() {
+        submoduleManager.onLoop(Timer.getFPGATimestamp());
     }
 
-    /**
-     * Runs setup code for teleop mode.
-     *
-     * <p>This is called once when teleop mode begins.
-     */
     @Override
     public void teleopInit() {
+        teleop.onStart();
+        submoduleManager.onStart(Timer.getFPGATimestamp());
     }
 
-    /**
-     * Runs periodic code for teleop mode.
-     *
-     * <p>This is called repeatedly during teleop mode.
-     */
     @Override
     public void teleopPeriodic() {
-    }
-
-    /**
-     * Runs periodic code for disabled mode.
-     *
-     * <p>This is called repeatedly during disabled mode.
-     */
-    @Override
-    public void disabledPeriodic() {
-    }
-
-    /**
-     * Runs setup code for test mode.
-     *
-     * <p>This is called once when test mode begins.
-     */
-    @Override
-    public void testInit() {
-    }
-
-    /**
-     * Runs periodic code for test mode.
-     */
-    @Override
-    public void testPeriodic() {
+        teleop.onLoop();
+        submoduleManager.onLoop(Timer.getFPGATimestamp());
     }
 
 }
