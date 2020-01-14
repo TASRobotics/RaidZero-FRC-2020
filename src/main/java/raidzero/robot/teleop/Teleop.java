@@ -7,11 +7,11 @@ import raidzero.robot.submodules.Drive.GearShift;
 
 public class Teleop {
 
+    /**
+     * Singleton
+     */
     private static Teleop instance = null;
-
-    private Drive drive = Drive.getInstance();
-    private XboxController controller = new XboxController(0);
-
+    private Teleop() {}
     public static Teleop getInstance() {
         if (instance == null) {
             instance = new Teleop();
@@ -19,17 +19,24 @@ public class Teleop {
         return instance;
     }
 
-    private Teleop() {}
+    /**
+     * Local Variables
+     */
+    private Drive drive = Drive.getInstance();
+    private XboxController controller = new XboxController(0);
 
     public void onStart() {
-        
+        drive.setGearShift(GearShift.LOW);
     }
 
     public void onLoop() {
+        /**
+         * Drivetrain
+         */
         drive.tank(-controller.getY(Hand.kLeft), -controller.getY(Hand.kRight));
-        if (controller.getBumper(Hand.kLeft)) {
+        if (controller.getBumper(Hand.kRight)) {
             drive.setGearShift(GearShift.HIGH);
-        } else if (controller.getBumper(Hand.kRight)) {
+        } else if (controller.getBumperReleased(Hand.kRight)) {
             drive.setGearShift(GearShift.LOW);
         }
         //drive.arcade(-controller.getY(Hand.kLeft), controller.getX(Hand.kRight));
