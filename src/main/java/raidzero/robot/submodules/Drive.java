@@ -28,7 +28,6 @@ public class Drive extends Submodule {
 
     private double outputLeftDrive = 0.0;
     private double outputRightDrive = 0.0;
-    private GearShift gear = GearShift.LOW;
 
     public static Drive getInstance() {
         if (instance == null) {
@@ -87,10 +86,6 @@ public class Drive extends Submodule {
     public void run() {
         leftLeader.set(ControlMode.PercentOutput, outputLeftDrive);
         rightLeader.set(ControlMode.PercentOutput, outputRightDrive);
-
-        if(gearShift.get() != gearValue(gear)) {
-            gearShift.set(gearValue(gear));
-        }
     }
 
     @Override
@@ -125,7 +120,7 @@ public class Drive extends Submodule {
     }
 
     public void setGearShift(GearShift mode) {
-        gear = mode;
+        gearShift.set(gearValue(mode));
     }
 
     private Value gearValue(GearShift gear) {
