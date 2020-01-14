@@ -28,6 +28,7 @@ public class Drive extends Submodule {
 
     private double outputLeftDrive = 0.0;
     private double outputRightDrive = 0.0;
+    private GearShift gear = GearShift.LOW;
 
     public static Drive getInstance() {
         if (instance == null) {
@@ -40,6 +41,7 @@ public class Drive extends Submodule {
         /**
          * Motors
          */
+        //omg can i please put the motors into arrays plsssss
         leftLeader = new TalonSRX(Constants.driveLeftLeaderId);
         configureMotor(leftLeader, true, false);
         
@@ -54,13 +56,15 @@ public class Drive extends Submodule {
         configureMotor(rightFollower, false, false);
         rightFollower.follow(rightLeader);
 
+        /**
+         * Gear
+         */
         gearShift = new DoubleSolenoid(Constants.driveGearshiftForwardId, 
             Constants.driveGearshiftReverseId);
         setGearShift(GearShift.LOW);
-        //omg can i please put the motors into arrays plsssss
 
         /**
-         * Power Reduction
+         * Relation Control
          */
         exp = Constants.driveExponent;
         coef = Constants.driveCoef;
@@ -83,6 +87,10 @@ public class Drive extends Submodule {
     public void run() {
         leftLeader.set(ControlMode.PercentOutput, outputLeftDrive);
         rightLeader.set(ControlMode.PercentOutput, outputRightDrive);
+
+        if(gearShift.get() != gearValue(gear)) {
+            gearShift.set(gearValue(gear));
+        }
     }
 
     @Override
@@ -117,10 +125,14 @@ public class Drive extends Submodule {
     }
 
     public void setGearShift(GearShift mode) {
-        if (mode == GearShift.HIGH) {
-            gearShift.set(Value.kForward);
+        gear = mode;
+    }
+
+    private Value gearValue(GearShift gear) {
+        if(gear == GearShift.HIGH) {
+            return Value.kForward;
         } else {
-            gearShift.set(Value.kReverse);
+            return Value.kReverse;
         }
     }
 }

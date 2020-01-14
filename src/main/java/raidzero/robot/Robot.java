@@ -16,21 +16,16 @@ public class Robot extends TimedRobot {
     private Teleop teleop = Teleop.getInstance();
 
     private Drive moduleDrive = Drive.getInstance();
-    
-
-    //private PeriodicExecutor periodicExecutor = new PeriodicExecutor();
 
     @Override
     public void robotInit() {
         SubmoduleManager.getInstance().setSubmodules(
             moduleDrive
         );
-        //periodicExecutor.start();
     }
 
     @Override
     public void disabledInit() {
-        //periodicExecutor.stop();
     }
 
     @Override

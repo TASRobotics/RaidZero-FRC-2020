@@ -25,11 +25,19 @@ public class Teleop {
     private Drive drive = Drive.getInstance();
     private XboxController controller = new XboxController(0);
 
+
+    /**
+     * Run at the start of teleop
+     */
     public void onStart() {
         drive.setGearShift(GearShift.LOW);
     }
 
+    /**
+     * Continuously looped in teleop
+     */
     public void onLoop() {
+        
         /**
          * Drivetrain
          */
