@@ -1,5 +1,7 @@
 package raidzero.robot.submodules;
 
+import java.sql.Time;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -18,12 +20,13 @@ public class Drive extends Submodule {
 
     private TalonSRX leftLeader;
     private TalonSRX leftFollower;
-    //private TalonSRX leftFollower2;
     private TalonSRX rightLeader;
     private TalonSRX rightFollower;
-    //private TalonSRX rightFollower2;
 
     private DoubleSolenoid gearShift;
+    
+    private double coef;
+    private double exp;
 
     private double outputLeftDrive = 0.0;
     private double outputRightDrive = 0.0;
@@ -36,16 +39,15 @@ public class Drive extends Submodule {
     }
 
     private Drive() {
+        /**
+         * Motors
+         */
         leftLeader = new TalonSRX(Constants.driveLeftLeaderId);
         configureMotor(leftLeader, true, false);
         
         leftFollower = new TalonSRX(Constants.driveLeftFollowerId);
         configureMotor(leftFollower, true, false);
         leftFollower.follow(leftLeader);
-
-        /*leftFollower2 = new TalonSRX(13);
-        configureMotor(leftFollower2, true, false);
-        leftFollower2.follow(leftLeader);*/
 
         rightLeader = new TalonSRX(Constants.driveRightLeaderId);
         configureMotor(rightLeader, false, false);
@@ -54,13 +56,16 @@ public class Drive extends Submodule {
         configureMotor(rightFollower, false, false);
         rightFollower.follow(rightLeader);
 
-        /*rightFollower2 = new TalonSRX(5);
-        configureMotor(rightFollower2, false, false);
-        rightFollower2.follow(rightLeader);*/
-
         gearShift = new DoubleSolenoid(Constants.driveGearshiftForwardId, 
             Constants.driveGearshiftReverseId);
         setGearShift(GearShift.LOW);
+        //omg can i please put the motors into arrays plsssss
+
+        /**
+         * Power Reduction
+         */
+        exp = Constants.driveExponent;
+        coef = Constants.driveCoef;
     }
 
     private void configureMotor(TalonSRX motor, boolean invertMotor, boolean invertSensorPhase) {
@@ -68,6 +73,12 @@ public class Drive extends Submodule {
         motor.setNeutralMode(NeutralMode.Coast);
         motor.setSensorPhase(invertSensorPhase);
         motor.setInverted(invertMotor);
+    }
+
+    @Override
+    public void update(double timestamp) {
+        outputLeftDrive = coef * Math.pow(outputLeftDrive, exp);
+        outputRightDrive = coef * Math.pow(outputRightDrive, exp);
     }
 
     @Override
