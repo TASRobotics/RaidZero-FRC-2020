@@ -1,95 +1,53 @@
 package raidzero.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import raidzero.robot.auto.Auto;
-import raidzero.robot.components.Components;
+import edu.wpi.first.wpilibj.Timer;
+import raidzero.robot.submodules.Drive;
 import raidzero.robot.teleop.Teleop;
-
-import raidzero.robot.vision.Vision;
+import raidzero.robot.submodules.SubmoduleManager;
 
 /**
  * The main robot class.
  */
 public class Robot extends TimedRobot {
 
-    /**
-     * Initializes everything.
-     */
+    private SubmoduleManager submoduleManager = SubmoduleManager.getInstance();
+
+    private Teleop teleop = Teleop.getInstance();
+
+    private Drive moduleDrive = Drive.getInstance();
+
     @Override
     public void robotInit() {
-        Components.initialize();
-        Auto.initialize();
-        Teleop.initialize();
-        Vision.initialize();
+        SubmoduleManager.getInstance().setSubmodules(
+            moduleDrive
+        );
     }
 
-    /**
-     * Runs setup code for autonomous mode.
-     *
-     * <p>This is called once when autonomous mode begins.
-     */
+    @Override
+    public void disabledInit() {
+    }
+
     @Override
     public void autonomousInit() {
-        Auto.setup();
-        Vision.driverCamSetup();
+        submoduleManager.onStart(Timer.getFPGATimestamp());
     }
 
-    /**
-     * Runs periodic code for autonomous mode.
-     *
-     * <p>This is called repeatedly during autonomous mode.
-     */
     @Override
     public void autonomousPeriodic() {
-        Auto.run();
+        submoduleManager.onLoop(Timer.getFPGATimestamp());
     }
 
-    /**
-     * Runs setup code for teleop mode.
-     *
-     * <p>This is called once when teleop mode begins.
-     */
     @Override
     public void teleopInit() {
-        Teleop.setup();
-        Vision.driverCamSetup();
+        teleop.onStart();
+        submoduleManager.onStart(Timer.getFPGATimestamp());
     }
 
-    /**
-     * Runs periodic code for teleop mode.
-     *
-     * <p>This is called repeatedly during teleop mode.
-     */
     @Override
     public void teleopPeriodic() {
-        Teleop.run();
-    }
-
-    /**
-     * Runs periodic code for disabled mode.
-     *
-     * <p>This is called repeatedly during disabled mode.
-     */
-    @Override
-    public void disabledPeriodic() {
-        Auto.disabled();
-        Vision.driverCamSetup();
-    }
-
-    /**
-     * Runs setup code for test mode.
-     *
-     * <p>This is called once when test mode begins.
-     */
-    @Override
-    public void testInit() {
-    }
-
-    /**
-     * Runs periodic code for test mode.
-     */
-    @Override
-    public void testPeriodic() {
+        teleop.onLoop();
+        submoduleManager.onLoop(Timer.getFPGATimestamp());
     }
 
 }
