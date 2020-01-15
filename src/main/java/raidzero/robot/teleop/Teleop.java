@@ -7,9 +7,6 @@ import raidzero.robot.submodules.Drive.GearShift;
 
 public class Teleop {
 
-    /**
-     * Singleton
-     */
     private static Teleop instance = null;
     private Teleop() {}
     public static Teleop getInstance() {
@@ -27,17 +24,16 @@ public class Teleop {
 
 
     /**
-     * Run at the start of teleop
+     * Runs at the start of teleop.
      */
     public void onStart() {
         drive.setGearShift(GearShift.LOW);
     }
 
     /**
-     * Continuously looped in teleop
+     * Continuously loops in teleop.
      */
     public void onLoop() {
-        
         /**
          * Drivetrain
          */
