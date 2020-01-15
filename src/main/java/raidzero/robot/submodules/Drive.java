@@ -120,11 +120,11 @@ public class Drive extends Submodule {
     }
 
     public void setGearShift(GearShift mode) {
-        gearShift.set(gearValue(mode));
+        gearShift.set(gearSolenoidValue(mode));
     }
 
-    private Value gearValue(GearShift gear) {
-        if(gear == GearShift.HIGH) {
+    private Value gearSolenoidValue(GearShift gear) {
+        if (gear == GearShift.HIGH) {
             return Value.kForward;
         } else {
             return Value.kReverse;
