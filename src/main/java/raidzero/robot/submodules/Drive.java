@@ -77,12 +77,6 @@ public class Drive extends Submodule {
     }
 
     @Override
-    public void update(double timestamp) {
-        outputLeftDrive = coef * Math.pow(outputLeftDrive, exp);
-        outputRightDrive = coef * Math.pow(outputRightDrive, exp);
-    }
-
-    @Override
     public void run() {
         leftLeader.set(ControlMode.PercentOutput, outputLeftDrive);
         rightLeader.set(ControlMode.PercentOutput, outputRightDrive);
@@ -103,8 +97,8 @@ public class Drive extends Submodule {
         if (Math.abs(rightJoystick) < Constants.joystickDeadband) {
             rightJoystick = 0.0;
         }
-        outputLeftDrive = leftJoystick;
-        outputRightDrive = rightJoystick;
+        outputLeftDrive = Math.copySign(coef * Math.pow(leftJoystick, exp), leftJoystick);
+        outputRightDrive = Math.copySign(coef * Math.pow(rightJoystick, exp), rightJoystick);
     }
 
     public void arcade(double leftJoystick, double rightJoystick) {
