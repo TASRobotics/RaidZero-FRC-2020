@@ -1,3 +1,4 @@
+
 package raidzero.robot.submodules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -7,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import raidzero.robot.Constants;
-
 public class Drive extends Submodule {
 
     public static enum GearShift {

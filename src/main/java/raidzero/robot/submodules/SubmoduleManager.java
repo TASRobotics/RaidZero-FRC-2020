@@ -25,6 +25,10 @@ public class SubmoduleManager {
         submodules.forEach(o -> o.onStart(timestamp));
     }
 
+    public void stop() {
+        submodules.forEach(o -> o.stop());
+    }
+
     public void onStop(double timestamp) {
         submodules.forEach(o -> o.onStop(timestamp));
     }

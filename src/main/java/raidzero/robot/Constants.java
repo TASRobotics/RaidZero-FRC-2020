@@ -1,5 +1,7 @@
 package raidzero.robot;
 
+import com.revrobotics.CANSparkMax.IdleMode;
+
 public class Constants {
 
     /**
@@ -23,4 +25,11 @@ public class Constants {
      * Joystick Constants
      */
     public static final double joystickDeadband = 0.1;
+
+    /**
+     * Shooter Constants
+     */
+    public static final int skinFlap = 1;
+    public static final IdleMode skinFlapIdle = IdleMode.kCoast;
+    public static final boolean skinFlapInvert = true;
 }
