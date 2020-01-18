@@ -3,6 +3,15 @@ package raidzero.robot;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 public class Constants {
+    /**
+     * TalonSRX IDs
+     * driveLeft 1, 3
+     * driveRight 0, 2
+     * shooter neo
+     * intake 4
+     * hopper 5
+     * turret 6
+     */
 
     /**
      * Drivetrain Constants
@@ -32,4 +41,14 @@ public class Constants {
     public static final int skinFlap = 1;
     public static final IdleMode skinFlapIdle = IdleMode.kCoast;
     public static final boolean skinFlapInvert = true;
+
+    /**
+     * Intake Constants
+     */
+    public static final int throat = 4;
+
+    /**
+     * Hopper Constants
+     */
+    public static final int myDog = 5;
 }

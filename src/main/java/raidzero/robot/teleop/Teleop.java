@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.EjectsBalls;
+import raidzero.robot.submodules.MovesBalls;
 import raidzero.robot.submodules.SubmoduleManager;
 import raidzero.robot.submodules.SucksBalls;
 import raidzero.robot.submodules.Drive.GearShift;
@@ -25,6 +26,7 @@ public class Teleop {
     private Drive drive = Drive.getInstance();
     private EjectsBalls shitter = EjectsBalls.getInstance();
     private SucksBalls sucky = SucksBalls.getInstance();
+    private MovesBalls move = MovesBalls.getInstance();
 
 
     private XboxController p1 = new XboxController(0);
@@ -43,11 +45,29 @@ public class Teleop {
      */
     public void onLoop() {
         /**
+         * Overview
+         * 
+         * P1
+         * BackButton: Estop
+         * StartButton: Enables climb || Exits Estop
+         * Joysticks: Drive
+         * Bumpers: Shift [Right(while held down): high gear]
+         * Triggers: Intake [Right: In, Left: Out]
+         * DPad: Hopper [Up: In, Down: out]
+         *  
+         * P2
+         * Left joystick: Shooter
+         * A button: Maintain Previous shooter speed
+         * Right joystick: Hopper [Up: In, Down: Out]
+         */
+        
+        /**
          * E stop that we have control over
          */
         if(p1.getBackButtonPressed()){
             while(!p1.getStartButtonPressed()){
                 SubmoduleManager.getInstance().stop();
+                System.out.println("ESTOPPED: press the 'start' button on controller 1 to re-enable");
             }
         }
         /**
@@ -70,5 +90,10 @@ public class Teleop {
          * Sucker
          */
         sucky.suck(p1.getTriggerAxis(Hand.kRight) - p1.getTriggerAxis(Hand.kLeft));
+
+        /**
+         * Hopper
+         */
+        move.moveMyBalls(p1.getPOV(), p2.getY(Hand.kRight));
     }
 }
