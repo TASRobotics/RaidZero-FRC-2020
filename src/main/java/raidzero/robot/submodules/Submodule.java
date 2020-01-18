@@ -5,9 +5,6 @@ package raidzero.robot.submodules;
  */
 public abstract class Submodule {
 
-    // Used to disable a submodule for unit testing or other reasons.
-    public boolean isEnabled = true;
-
     public void onStart(double timestamp) {}
 
     /**
@@ -29,20 +26,4 @@ public abstract class Submodule {
      * Resets the sensor(s) to zero.
      */
     public void zero() {}
-
-    /**
-     * Enables this submodule.
-     * 
-     * @param enabled
-     */
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
-    }
-
-    /**
-     * Returns whether the submodule is enabled or not.
-     */
-    public boolean isEnabled() {
-        return isEnabled;
-    }
 }

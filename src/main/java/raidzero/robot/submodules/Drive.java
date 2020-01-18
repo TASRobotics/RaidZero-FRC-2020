@@ -30,9 +30,9 @@ public class Drive extends Submodule {
 
     private static Drive instance = null;
 
-    private TalonFX leftLeader; // Also the "ultimate master" for profiling
+    private TalonFX leftLeader; 
     private TalonFX leftFollower;
-    private TalonFX rightLeader;
+    private TalonFX rightLeader; // Also the "ultimate master" for profiling
     private TalonFX rightFollower;
     /*private TalonSRX leftLeader;
     private TalonSRX leftFollower1;
@@ -130,70 +130,70 @@ public class Drive extends Submodule {
     }
 
     private void configureMotorClosedLoop() {
-        leftLeader.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         rightLeader.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+        leftLeader.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
 
         // Configure the follower encoder as a remote sensor for the leader
-        leftLeader.configRemoteFeedbackFilter(rightLeader.getDeviceID(),
+        rightLeader.configRemoteFeedbackFilter(leftLeader.getDeviceID(),
                 RemoteSensorSource.TalonSRX_SelectedSensor,	Constants.REMOTE_0);
         
         // Configure the Pigeon as the other Remote Slot on the leader
-        leftLeader.configRemoteFeedbackFilter(pigeon.getDeviceID(), 
+        rightLeader.configRemoteFeedbackFilter(pigeon.getDeviceID(), 
             RemoteSensorSource.Pigeon_Yaw, Constants.REMOTE_1);
 
         // Setup Sum signal to be used for distance
-        leftLeader.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0);
-        leftLeader.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.IntegratedSensor);
+        rightLeader.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0);
+        rightLeader.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.IntegratedSensor);
 
         // Configure Sum [Sum of both IntegratedSensor] to be used for Primary PID Index
-        leftLeader.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 
+        rightLeader.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 
             Constants.PID_PRIMARY_SLOT, Constants.TIMEOUT_MS);
 
         // Scale Feedback by 0.5 to half the sum of distance
-        leftLeader.configSelectedFeedbackCoefficient(0.5, Constants.PID_PRIMARY_SLOT, 
+        rightLeader.configSelectedFeedbackCoefficient(0.5, Constants.PID_PRIMARY_SLOT, 
             Constants.TIMEOUT_MS);
 
         // Configure Pigeon's Yaw to be used for Auxiliary PID Index
-        leftLeader.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 
+        rightLeader.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 
             Constants.PID_AUX_SLOT, Constants.TIMEOUT_MS);
 
         // Scale the Feedback Sensor using a coefficient (Configured for 360 units of resolution)
-        leftLeader.configSelectedFeedbackCoefficient(
+        rightLeader.configSelectedFeedbackCoefficient(
             Constants.PIGEON_SCALE, Constants.PID_AUX_SLOT, Constants.TIMEOUT_MS);
 
         // Set status frame periods to ensure we don't have stale data
-        leftLeader.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20);
-        leftLeader.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
-        leftLeader.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20);
-        leftLeader.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20);
-        rightLeader.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5);
+        rightLeader.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20);
+        rightLeader.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
+        rightLeader.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20);
+        rightLeader.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20);
+        leftLeader.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5);
 
         // FPID Gains for the distance part
-        leftLeader.config_kP(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_P);
-        leftLeader.config_kI(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_I);
-        leftLeader.config_kD(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_D);
-        leftLeader.config_kF(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_F);
-        leftLeader.config_IntegralZone(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_INT_ZONE);
+        rightLeader.config_kP(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_P);
+        rightLeader.config_kI(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_I);
+        rightLeader.config_kD(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_D);
+        rightLeader.config_kF(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_F);
+        rightLeader.config_IntegralZone(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_INT_ZONE);
 
         // FPID Gains for turning part
-        leftLeader.config_kP(Constants.PID_AUX_SLOT, Constants.AUX_P);
-        leftLeader.config_kI(Constants.PID_AUX_SLOT, Constants.AUX_I);
-        leftLeader.config_kD(Constants.PID_AUX_SLOT, Constants.AUX_D);
-        leftLeader.config_kF(Constants.PID_AUX_SLOT, Constants.AUX_F);
-        leftLeader.config_IntegralZone(Constants.PID_AUX_SLOT, Constants.AUX_INT_ZONE);
+        rightLeader.config_kP(Constants.PID_AUX_SLOT, Constants.AUX_P);
+        rightLeader.config_kI(Constants.PID_AUX_SLOT, Constants.AUX_I);
+        rightLeader.config_kD(Constants.PID_AUX_SLOT, Constants.AUX_D);
+        rightLeader.config_kF(Constants.PID_AUX_SLOT, Constants.AUX_F);
+        rightLeader.config_IntegralZone(Constants.PID_AUX_SLOT, Constants.AUX_INT_ZONE);
 
         // Set the period of the closed loops to be 1 ms
-        leftLeader.configClosedLoopPeriod(Constants.PID_PRIMARY_SLOT, 
+        rightLeader.configClosedLoopPeriod(Constants.PID_PRIMARY_SLOT, 
             Constants.CLOSED_LOOP_TIME_MS);
-        leftLeader.configClosedLoopPeriod(Constants.PID_AUX_SLOT, 
+            rightLeader.configClosedLoopPeriod(Constants.PID_AUX_SLOT, 
             Constants.CLOSED_LOOP_TIME_MS);
-        leftLeader.configAuxPIDPolarity(Constants.AUX_POLARITY);
+            rightLeader.configAuxPIDPolarity(Constants.AUX_POLARITY);
 
-        leftLeader.changeMotionControlFramePeriod(Constants.TRANSMIT_PERIOD_MS);
-        leftLeader.configMotionProfileTrajectoryPeriod(Constants.BASE_TRAJ_PERIOD_MS);
-        leftLeader.configMotionProfileTrajectoryInterpolationEnable(true);
+        rightLeader.changeMotionControlFramePeriod(Constants.TRANSMIT_PERIOD_MS);
+        rightLeader.configMotionProfileTrajectoryPeriod(Constants.BASE_TRAJ_PERIOD_MS);
+        rightLeader.configMotionProfileTrajectoryInterpolationEnable(true);
 
-        profileFollower = new ProfileFollower(leftLeader);
+        profileFollower = new ProfileFollower(rightLeader);
     }
 
     @Override
