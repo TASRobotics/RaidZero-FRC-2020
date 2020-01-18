@@ -20,7 +20,6 @@ public class Drive extends Submodule {
     private TalonSRX leftFollower;
     private TalonSRX rightLeader;
     private TalonSRX rightFollower;
-
     private DoubleSolenoid gearShift;
     
     private double coef;
@@ -28,6 +27,7 @@ public class Drive extends Submodule {
 
     private double outputLeftDrive = 0.0;
     private double outputRightDrive = 0.0;
+    private Value shift = Value.kReverse;
 
     public static Drive getInstance() {
         if (instance == null) {
@@ -37,6 +37,10 @@ public class Drive extends Submodule {
     }
 
     private Drive() {
+    }
+
+    @Override
+    public void init() {
         /**
          * Motors
          */
@@ -86,6 +90,7 @@ public class Drive extends Submodule {
     public void run() {
         leftLeader.set(ControlMode.PercentOutput, outputLeftDrive);
         rightLeader.set(ControlMode.PercentOutput, outputRightDrive);
+        gearShift.set(shift);
     }
 
     @Override
@@ -120,7 +125,7 @@ public class Drive extends Submodule {
     }
 
     public void setGearShift(GearShift mode) {
-        gearShift.set(gearSolenoidValue(mode));
+        shift = gearSolenoidValue(mode);
     }
 
     private Value gearSolenoidValue(GearShift gear) {

@@ -25,8 +25,7 @@ public class SucksBalls extends Submodule {
         mouth = new TalonSRX(Constants.throat);
         mouth.configFactoryDefault();
         mouth.setNeutralMode(NeutralMode.Brake);
-        mouth.setSensorPhase(true);
-        mouth.setInverted(true);
+        mouth.setInverted(false);
     }
 
     @Override

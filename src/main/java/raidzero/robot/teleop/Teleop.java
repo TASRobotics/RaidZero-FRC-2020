@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.EjectsBalls;
+import raidzero.robot.submodules.FondlesBalls;
 import raidzero.robot.submodules.MovesBalls;
 import raidzero.robot.submodules.SubmoduleManager;
 import raidzero.robot.submodules.SucksBalls;
@@ -27,6 +28,7 @@ public class Teleop {
     private EjectsBalls shitter = EjectsBalls.getInstance();
     private SucksBalls sucky = SucksBalls.getInstance();
     private MovesBalls move = MovesBalls.getInstance();
+    private FondlesBalls ballFondlers = FondlesBalls.getInstance();
 
 
     private XboxController p1 = new XboxController(0);
@@ -59,6 +61,8 @@ public class Teleop {
          * Left joystick: Shooter
          * A button: Maintain Previous shooter speed
          * Right joystick: Hopper [Up: In, Down: Out]
+         * Triggers: Turret [Right: Clockwise, Left: Counterclockwise]
+         * Left bumper: Use left joystick to aim
          */
         
         /**
@@ -67,7 +71,8 @@ public class Teleop {
         if(p1.getBackButtonPressed()){
             while(!p1.getStartButtonPressed()){
                 SubmoduleManager.getInstance().stop();
-                System.out.println("ESTOPPED: press the 'start' button on controller 1 to re-enable");
+                System.out.println
+                    ("ESTOPPED: press the 'start' button on controller 1 to re-enable");
             }
         }
         /**
@@ -95,5 +100,10 @@ public class Teleop {
          * Hopper
          */
         move.moveMyBalls(p1.getPOV(), p2.getY(Hand.kRight));
+
+        /**
+         * Turret
+         */
+        ballFondlers.fondleThemHard(p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft));
     }
 }

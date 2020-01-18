@@ -12,6 +12,11 @@ public abstract class Submodule {
     public void onStop(double timestamp) {}
 
     /**
+     * initialize
+     */
+    public void init() {}
+
+    /**
      * Reads cached inputs & calculate outputs
      */
     public void update(double timestamp) {}

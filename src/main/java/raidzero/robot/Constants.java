@@ -51,4 +51,10 @@ public class Constants {
      * Hopper Constants
      */
     public static final int myDog = 5;
+
+    /**
+     * Turret
+     */
+    public static final int ballFondler = 6;
+    public static final double degToTic = 1000; //random # for now
 }
