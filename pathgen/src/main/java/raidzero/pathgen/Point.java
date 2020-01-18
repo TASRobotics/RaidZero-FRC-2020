@@ -8,12 +8,12 @@ import java.util.OptionalDouble;
 public class Point {
 
     /**
-     * The x-coordinate.
+     * The x-coordinate. (+x is forward in the robot's frame)
      */
     public final double x;
 
     /**
-     * The y-coordinate.
+     * The y-coordinate. (+y is to the left in the robot's frame)
      */
     public final double y;
 

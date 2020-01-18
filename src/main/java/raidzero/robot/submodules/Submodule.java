@@ -9,15 +9,14 @@ public abstract class Submodule {
     public boolean isEnabled = true;
 
     public void onStart(double timestamp) {}
-    public void onStop(double timestamp) {}
 
     /**
-     * Reads cached inputs & calculate outputs
+     * Reads cached inputs & calculate outputs.
      */
     public void update(double timestamp) {}
     
     /**
-     * Runs the submodule.
+     * Runs components in the submodule that have continuously changing inputs.
      */
     public void run() {}
 

@@ -27,7 +27,7 @@ public class Teleop {
      * Runs at the start of teleop.
      */
     public void onStart() {
-        drive.setGearShift(GearShift.LOW);
+        //drive.setGearShift(GearShift.LOW);
     }
 
     /**
@@ -37,12 +37,15 @@ public class Teleop {
         /**
          * Drivetrain
          */
-        drive.tank(-controller.getY(Hand.kLeft), -controller.getY(Hand.kRight));
+        //drive.tank(-controller.getY(Hand.kLeft), -controller.getY(Hand.kRight));
+        drive.arcade(-controller.getY(Hand.kLeft), controller.getX(Hand.kRight));
         if (controller.getBumper(Hand.kRight)) {
             drive.setGearShift(GearShift.HIGH);
         } else if (controller.getBumperReleased(Hand.kRight)) {
             drive.setGearShift(GearShift.LOW);
         }
-        //drive.arcade(-controller.getY(Hand.kLeft), controller.getX(Hand.kRight));
+        if (controller.getAButtonPressed()) {
+            drive.zero();
+        }
     }
 }
