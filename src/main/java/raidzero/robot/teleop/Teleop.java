@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.EjectsBalls;
 import raidzero.robot.submodules.SubmoduleManager;
+import raidzero.robot.submodules.SucksBalls;
 import raidzero.robot.submodules.Drive.GearShift;
 
 public class Teleop {
@@ -23,6 +24,7 @@ public class Teleop {
      */
     private Drive drive = Drive.getInstance();
     private EjectsBalls shitter = EjectsBalls.getInstance();
+    private SucksBalls sucky = SucksBalls.getInstance();
 
 
     private XboxController p1 = new XboxController(0);
@@ -63,5 +65,10 @@ public class Teleop {
          * Ejecter
          */
         shitter.shoot(p2.getY(Hand.kLeft), p2.getAButtonPressed());
+
+        /**
+         * Sucker
+         */
+        sucky.suck(p1.getTriggerAxis(Hand.kRight) - p1.getTriggerAxis(Hand.kLeft));
     }
 }
