@@ -9,6 +9,12 @@ import raidzero.robot.Constants;
 public class Limelight extends Submodule {
 
 	private static Limelight instance = null;
+	public static Limelight getInstance() {
+        if (instance == null) {
+            instance = new Limelight(Constants.LIMELIGHT_NAME_SHOOTER);
+        }
+        return instance;
+    }
 	
 	private NetworkTable table = null;
 
@@ -36,14 +42,6 @@ public class Limelight extends Submodule {
 	}
 
 	private String tableName;
-
-	public static Limelight getInstance() {
-        if (instance == null) {
-            instance = new Limelight(Constants.limelightNameShooter);
-        }
-        return instance;
-    }
-
 
 	private Limelight(String tableName) {
 		this.tableName = tableName;
