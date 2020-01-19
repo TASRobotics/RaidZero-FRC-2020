@@ -8,13 +8,12 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 import raidzero.robot.Constants;
+import raidzero.robot.wrappers.*;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.pathing.ProfileFollower;
 
@@ -36,12 +35,12 @@ public class Drive extends Submodule {
         OPEN_LOOP, PATH_FOLLOWING
     }
 
-    private TalonFX leftLeader; 
-    private TalonFX leftFollower;
-    private TalonFX rightLeader; // Also the "ultimate master" for profiling
-    private TalonFX rightFollower;
+	private LazyTalonFX leftLeader;
+    private LazyTalonFX leftFollower;
+    private LazyTalonFX rightLeader; // Also the "ultimate master" for profiling
+    private LazyTalonFX rightFollower;
 
-    private DoubleSolenoid gearShift;
+    private InactiveDoubleSolenoid gearShift;
 
     private PigeonIMU pigeon;
 
@@ -62,17 +61,17 @@ public class Drive extends Submodule {
 
     private Drive() {
         // Motors
-        leftLeader = new TalonFX(Constants.driveLeftLeaderId);
+        leftLeader = new LazyTalonFX(Constants.driveLeftLeaderId);
         configureMotor(leftLeader, false, false);
         
-        leftFollower = new TalonFX(Constants.driveLeftFollowerId);
+        leftFollower = new LazyTalonFX(Constants.driveLeftFollowerId);
         configureMotor(leftFollower, false, false);
         leftFollower.follow(leftLeader);
 
-        rightLeader = new TalonFX(Constants.driveRightLeaderId);
+        rightLeader = new LazyTalonFX(Constants.driveRightLeaderId);
         configureMotor(rightLeader, true, true);
         
-        rightFollower = new TalonFX(Constants.driveRightFollowerId);
+        rightFollower = new LazyTalonFX(Constants.driveRightFollowerId);
         configureMotor(rightFollower, true, true);
         rightFollower.follow(rightLeader);
 
@@ -83,9 +82,8 @@ public class Drive extends Submodule {
         configureMotorClosedLoop();
 
         // Gear shift
-        gearShift = new DoubleSolenoid(Constants.driveGearshiftForwardId, 
-            Constants.driveGearshiftReverseId);
-        setGearShift(GearShift.LOW);
+        gearShift = new InactiveDoubleSolenoid(Constants.driveGearshiftForwardId, 
+			Constants.driveGearshiftReverseId);
 
         // Joystick-to-output mapping
         exp = Constants.DRIVE_JOYSTICK_EXPONENT;
@@ -102,7 +100,7 @@ public class Drive extends Submodule {
      * @param invertMotor whether to invert the motor output
      * @param invertSensorPhase whether to invert the sensor output
      */
-    private void configureMotor(TalonFX motor, boolean invertMotor, boolean invertSensorPhase) {
+    private void configureMotor(LazyTalonFX motor, boolean invertMotor, boolean invertSensorPhase) {
         motor.configFactoryDefault();
         motor.setNeutralMode(NeutralMode.Brake);
         motor.setSensorPhase(invertSensorPhase);
