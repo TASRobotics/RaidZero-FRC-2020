@@ -27,7 +27,7 @@ Left bumper| Use left joystick to aim
 ## Keyboard (future update)
 keybind | action
 -- | --
-spacebar, enter | doesn't disable
+spacebar, enter | doesn't disable on EXTERNAL keyboard
 insert | disable
 delete | emergency stop
 ( | estop
