@@ -3,7 +3,7 @@ package raidzero.robot.pathing;
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motion.TrajectoryPoint;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Notifier;
@@ -16,13 +16,13 @@ import raidzero.robot.Constants;
 public class ProfileFollower {
 
     /**
-     * The states of controlling the motion profile
+     * The states of the motion profile.
      */
     private enum State {
         FillPoints, WaitPoints, Run;
     };
 
-    private TalonFX leaderTalon;
+    private BaseTalon leaderTalon;
 
     private boolean reversed;
     private boolean initRun;
@@ -30,6 +30,9 @@ public class ProfileFollower {
     private MotionProfileStatus status;
     private SetValueMotionProfile setValue;
 
+    /**
+     * Runs periodically to push the trajectory points into the controller.
+     */
     Notifier notifier = new Notifier(() -> {
         leaderTalon.processMotionProfileBuffer();
     });
@@ -37,7 +40,7 @@ public class ProfileFollower {
     /**
      * Creates the profile follower.
      */
-    public ProfileFollower(TalonFX leader) {
+    public ProfileFollower(BaseTalon leader) {
         leaderTalon = leader;
 
         setValue = SetValueMotionProfile.Disable;
@@ -71,7 +74,9 @@ public class ProfileFollower {
     }
 
     /**
-     * Call periodically to control states of the motion profile.
+     * Updates the state of the motion profile from the motor controller.
+     * 
+     * Note: Should be called periodically.
      */
     public void update() {
         switch (state) {
@@ -101,29 +106,37 @@ public class ProfileFollower {
 
 
     /**
-     * Moves the base in motion profile arc mode.
-     *
-     * <p>This should be periodically called.
+     * Returns the output of the current set value. Should be passed to 
+     * the set method of the ultimate leader Talon.
+     * @see SetValueMotionProfile
+     * 
+     * @return int
      */
     public int getOutput() {
         return setValue.value;
     }
 
+    /**
+     * Returns whether the current motion profile has finished executing.
+     * 
+     * @return if the profile is finished
+     */
     public boolean isFinished() {
         return setValue == SetValueMotionProfile.Hold;
     }
 
     /**
-     * Set the path to go reversed or not
+     * Changes whether the path should be reversed or not. Must be called
+     * before {@link #start(PathPoint[])}.
      *
-     * @param reversed true if want bot to go backwards, else false
+     * @param reversed if the robot should move backwards
      */
     public void setReverse(boolean reversed) {
         this.reversed = reversed;
     }
 
     /**
-     * Clears the Motion profile buffer and resets state info
+     * Clears the Motion profile buffer and resets state info.
      */
     public void reset() {
         leaderTalon.clearMotionProfileTrajectories();
@@ -153,6 +166,7 @@ public class ProfileFollower {
             tp.velocity = waypoints[i].velocity * reverse * Constants.SENSOR_UNITS_PER_INCH;
             // timeDur takes ms, but Pathpoint::time is in 100 ms
             tp.timeDur = (int) (waypoints[i].time * 100);
+            // auxiliaryPos takes in units of 3600 ticks, but angle is in 360 degress
             tp.auxiliaryPos = waypoints[i].angle * 10;
             tp.useAuxPID = true;
             tp.profileSlotSelect0 = Constants.PID_PRIMARY_SLOT;

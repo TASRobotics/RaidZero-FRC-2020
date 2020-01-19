@@ -5,6 +5,9 @@ import raidzero.robot.Constants;
 import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.Limelight;
 
+/**
+ * Action for turning the drive towards the goal using vision.
+ */
 public class TurnToGoal implements Action {
 
     private static final Drive drive = Drive.getInstance();

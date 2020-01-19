@@ -3,6 +3,9 @@ package raidzero.robot.auto.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Action for running multiple Actions in series.
+ */
 public class SeriesAction implements Action {
 
     private Action currentAction;

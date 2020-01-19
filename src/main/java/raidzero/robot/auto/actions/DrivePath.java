@@ -3,6 +3,9 @@ package raidzero.robot.auto.actions;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.submodules.Drive;
 
+/**
+ * Action for following a path.
+ */
 public class DrivePath implements Action {
 
     private static final Drive drive = Drive.getInstance();
@@ -23,9 +26,7 @@ public class DrivePath implements Action {
     }
 
     @Override
-    public void update() {
-        
-    }
+    public void update() {}
 
     @Override
     public void done() {

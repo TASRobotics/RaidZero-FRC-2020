@@ -3,6 +3,9 @@ package raidzero.robot.auto.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Action for running multiple Actions in parallel.
+ */
 public class ParallelAction implements Action {
 
     private final ArrayList<Action> actions;

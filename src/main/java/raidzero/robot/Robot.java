@@ -22,28 +22,43 @@ public class Robot extends TimedRobot {
     private static final Drive moduleDrive = Drive.getInstance();
     private static final Limelight moduleLimelight = Limelight.getInstance();
 
+    /**
+     * Runs only once at the start of robot code execution.
+     */
     @Override
     public void robotInit() {
+        // Register all submodules here
         SubmoduleManager.getInstance().setSubmodules(
             moduleDrive,
             moduleLimelight
         );
     }
 
+    /**
+     * Runs every time the robot is disabled.
+     */
     @Override
     public void disabledInit() {
+        // Stop autonomous
         autoRunner.stop();
         submoduleManager.onStop(Timer.getFPGATimestamp());
     }
 
+    /**
+     * Runs at the start of autonomous.
+     */
     @Override
     public void autonomousInit() {
         submoduleManager.onStart(Timer.getFPGATimestamp());
 
+        // TODO: Autonomous selection code here
         autoRunner.selectSequence(new TestSequence());
         autoRunner.start();
     }
 
+    /**
+     * Runs every 0.02s during autonomous (50 Hz).
+     */
     @Override
     public void autonomousPeriodic() {
         double timestamp = Timer.getFPGATimestamp();
@@ -51,14 +66,22 @@ public class Robot extends TimedRobot {
         submoduleManager.onLoop(timestamp);
     }
 
+    /**
+     * Runs at the start of teleop.
+     */
     @Override
     public void teleopInit() {
+        // Stop the autonomous
         autoRunner.stop();
 
+        // Start the teleop handler
         teleop.onStart();
         submoduleManager.onStart(Timer.getFPGATimestamp());
     }
 
+    /**
+     * Runs every 0.02s during teleop (50 Hz).
+     */
     @Override
     public void teleopPeriodic() {
         teleop.onLoop();

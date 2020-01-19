@@ -1,5 +1,6 @@
 package raidzero.robot.submodules;
 
+import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.FollowerType;
@@ -8,17 +9,24 @@ import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import raidzero.robot.Constants;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.pathing.ProfileFollower;
 
 public class Drive extends Submodule {
+
+    private static Drive instance = null;
+    public static Drive getInstance() {
+        if (instance == null) {
+            instance = new Drive();
+        }
+        return instance;
+    }
 
     public static enum GearShift {
         HIGH, LOW
@@ -28,18 +36,10 @@ public class Drive extends Submodule {
         OPEN_LOOP, PATH_FOLLOWING
     }
 
-    private static Drive instance = null;
-
     private TalonFX leftLeader; 
     private TalonFX leftFollower;
     private TalonFX rightLeader; // Also the "ultimate master" for profiling
     private TalonFX rightFollower;
-    /*private TalonSRX leftLeader;
-    private TalonSRX leftFollower1;
-    private TalonSRX leftFollower2;
-    private TalonSRX rightLeader;
-    private TalonSRX rightFollower1;
-    private TalonSRX rightFollower2;*/
 
     private DoubleSolenoid gearShift;
 
@@ -60,13 +60,6 @@ public class Drive extends Submodule {
     private double outputRightDrive = 0.0;
     private int outputClosedLoop = 0;
 
-    public static Drive getInstance() {
-        if (instance == null) {
-            instance = new Drive();
-        }
-        return instance;
-    }
-
     private Drive() {
         // Motors
         leftLeader = new TalonFX(Constants.driveLeftLeaderId);
@@ -82,31 +75,11 @@ public class Drive extends Submodule {
         rightFollower = new TalonFX(Constants.driveRightFollowerId);
         configureMotor(rightFollower, true, true);
         rightFollower.follow(rightLeader);
-        /*leftLeader = new TalonSRX(Constants.driveLeftLeaderId);
-        configureMotor(leftLeader, true, true);
-        
-        leftFollower1 = new TalonSRX(Constants.driveLeftFollower1Id);
-        configureMotor(leftFollower1, true, true);
-        leftFollower1.follow(leftLeader);
-
-        leftFollower2 = new TalonSRX(Constants.driveLeftFollower2Id);
-        configureMotor(leftFollower2, true, true);
-        leftFollower2.follow(leftLeader);
-
-        rightLeader = new TalonSRX(Constants.driveRightLeaderId);
-        configureMotor(rightLeader, false, true);
-        
-        rightFollower1 = new TalonSRX(Constants.driveRightFollower1Id);
-        configureMotor(rightFollower1, false, true);
-        rightFollower1.follow(rightLeader);
-
-        rightFollower2 = new TalonSRX(Constants.driveRightFollower2Id);
-        configureMotor(rightFollower2, false, true);
-        rightFollower2.follow(rightLeader);*/
 
         // Pigeon IMU
         pigeon = new PigeonIMU(Constants.pigeonId);
 
+        // Must be called after the pigeon is initialized
         configureMotorClosedLoop();
 
         // Gear shift
@@ -115,13 +88,20 @@ public class Drive extends Submodule {
         setGearShift(GearShift.LOW);
 
         // Joystick-to-output mapping
-        exp = Constants.driveExponent;
-        coef = Constants.driveCoef;
+        exp = Constants.DRIVE_JOYSTICK_EXPONENT;
+        coef = Constants.DRIVE_JOYSTICK_COEF;
 
         // Control state
         controlState = ControlState.OPEN_LOOP;
     }
 
+    /**
+     * Configures a motor controller.
+     * 
+     * @param motor the motor controller to configure
+     * @param invertMotor whether to invert the motor output
+     * @param invertSensorPhase whether to invert the sensor output
+     */
     private void configureMotor(TalonFX motor, boolean invertMotor, boolean invertSensorPhase) {
         motor.configFactoryDefault();
         motor.setNeutralMode(NeutralMode.Brake);
@@ -129,7 +109,11 @@ public class Drive extends Submodule {
         motor.setInverted(invertMotor);
     }
 
+    /**
+     * Configures the motor controllers for closed-loop control.
+     */
     private void configureMotorClosedLoop() {
+        // Use the integrated sensors on the falcons as feedback
         rightLeader.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         leftLeader.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
 
@@ -168,14 +152,14 @@ public class Drive extends Submodule {
         rightLeader.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20);
         leftLeader.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5);
 
-        // FPID Gains for the distance part
+        // PIDF Gains for the distance part
         rightLeader.config_kP(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_P);
         rightLeader.config_kI(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_I);
         rightLeader.config_kD(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_D);
         rightLeader.config_kF(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_F);
         rightLeader.config_IntegralZone(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_INT_ZONE);
 
-        // FPID Gains for turning part
+        // PIDF Gains for turning part
         rightLeader.config_kP(Constants.PID_AUX_SLOT, Constants.AUX_P);
         rightLeader.config_kI(Constants.PID_AUX_SLOT, Constants.AUX_I);
         rightLeader.config_kD(Constants.PID_AUX_SLOT, Constants.AUX_D);
@@ -185,9 +169,9 @@ public class Drive extends Submodule {
         // Set the period of the closed loops to be 1 ms
         rightLeader.configClosedLoopPeriod(Constants.PID_PRIMARY_SLOT, 
             Constants.CLOSED_LOOP_TIME_MS);
-            rightLeader.configClosedLoopPeriod(Constants.PID_AUX_SLOT, 
+        rightLeader.configClosedLoopPeriod(Constants.PID_AUX_SLOT, 
             Constants.CLOSED_LOOP_TIME_MS);
-            rightLeader.configAuxPIDPolarity(Constants.AUX_POLARITY);
+        rightLeader.configAuxPIDPolarity(Constants.AUX_POLARITY);
 
         rightLeader.changeMotionControlFramePeriod(Constants.TRANSMIT_PERIOD_MS);
         rightLeader.configMotionProfileTrajectoryPeriod(Constants.BASE_TRAJ_PERIOD_MS);
@@ -196,6 +180,11 @@ public class Drive extends Submodule {
         profileFollower = new ProfileFollower(rightLeader);
     }
 
+    /**
+     * Resets all outputs on start.
+     * 
+     * @param timestamp
+     */
     @Override
     public void onStart(double timestamp) {
         controlState = ControlState.OPEN_LOOP;
@@ -205,24 +194,22 @@ public class Drive extends Submodule {
         outputClosedLoop = 0;
     }
 
+    /**
+     * Updates the profile follower if currently in path following mode.
+     * 
+     * @param timestamp
+     */
     @Override
     public void update(double timestamp) {
         if (controlState == ControlState.PATH_FOLLOWING) {
             profileFollower.update();
             outputClosedLoop = profileFollower.getOutput();
-
-            SmartDashboard.putNumber("Target Heading", 
-                leftLeader.getActiveTrajectoryPosition(Constants.PID_AUX_SLOT));
-            SmartDashboard.putNumber("Current Heading", 
-                pigeon.getFusedHeading());
-            //System.out.println(outputClosedLoop);
         }
-        /*System.out.println(
-            "Left: " + leftLeader.getSelectedSensorPosition() + ", " +
-            "Right: " + rightLeader.getSelectedSensorPosition()
-        );*/
     }
 
+    /**
+     * Runs the motors with different control modes depending on the state.
+     */
     @Override
     public void run() {
         switch (controlState) {
@@ -231,63 +218,99 @@ public class Drive extends Submodule {
                 rightLeader.set(ControlMode.PercentOutput, outputRightDrive);
                 break;
             case PATH_FOLLOWING:
-                leftLeader.set(ControlMode.MotionProfileArc, outputClosedLoop);
-                rightLeader.follow(leftLeader, FollowerType.AuxOutput1);
-                rightFollower.follow(leftLeader, FollowerType.AuxOutput1);
+                // The right leader is the "ultimate leader" for pathing
+                rightLeader.set(ControlMode.MotionProfileArc, outputClosedLoop);
+                leftLeader.follow(rightLeader, FollowerType.AuxOutput1);
+                leftFollower.follow(rightLeader, FollowerType.AuxOutput1);
                 break;
         }
     }
 
+    /**
+     * Stops all the motors. Also changes the control state to open-loop.
+     */
     @Override
     public void stop() {
         controlState = ControlState.OPEN_LOOP;
 
         outputLeftDrive = 0.0;
         outputRightDrive = 0.0;
+
+        // TODO: Make sure we don't ever directly set motor outputs
         leftLeader.set(ControlMode.PercentOutput, 0.0);
         rightLeader.set(ControlMode.PercentOutput, 0.0);
     }
 
+    /**
+     * Zeros all encoders & the pigeon.
+     */
     @Override
     public void zero() {
-        // setSelectedSensorPosition would set the Sensor Sum for the PID,
-        // which is not what we want to do.
+        /**
+         * setSelectedSensorPosition would set the sensor sum for the PID,
+         * which is not what we want to do.
+         */
         leftLeader.getSensorCollection().setIntegratedSensorPosition(0, Constants.TIMEOUT_MS);
         rightLeader.getSensorCollection().setIntegratedSensorPosition(0, Constants.TIMEOUT_MS);
         pigeon.setYaw(0.0);
     }
 
+    /**
+     * Switches the base to open-loop control mode.
+     */
     public void setOpenLoop() {
         controlState = ControlState.OPEN_LOOP;
     }
 
+    /**
+     * Tank drive mode for open-loop control.
+     * 
+     * @param leftJoystick value of the left joystick in [-1, 1]
+     * @param rightJoystick value of the right joystick in [-1, 1]
+     */
     public void tank(double leftJoystick, double rightJoystick) {
-        if (Math.abs(leftJoystick) < Constants.joystickDeadband) {
+        if (Math.abs(leftJoystick) < Constants.JOYSTICK_DEADBAND) {
             leftJoystick = 0.0;
         }
-        if (Math.abs(rightJoystick) < Constants.joystickDeadband) {
+        if (Math.abs(rightJoystick) < Constants.JOYSTICK_DEADBAND) {
             rightJoystick = 0.0;
         }
         outputLeftDrive = Math.copySign(coef * Math.pow(leftJoystick, exp), leftJoystick);
         outputRightDrive = Math.copySign(coef * Math.pow(rightJoystick, exp), rightJoystick);
-        //System.out.println(outputLeftDrive + " " + outputRightDrive);
     }
 
+    /**
+     * Arcade drive mode for open-loop control.
+     * 
+     * @param leftJoystick value of the left joystick in [-1, 1]
+     * @param rightJoystick value of the right joystick in [-1, 1]
+     */
     public void arcade(double leftJoystick, double rightJoystick) {
-        if (Math.abs(leftJoystick) < Constants.joystickDeadband) {
+        if (Math.abs(leftJoystick) < Constants.JOYSTICK_DEADBAND) {
             leftJoystick = 0.0;
         }
-        if (Math.abs(rightJoystick) < Constants.joystickDeadband) {
+        if (Math.abs(rightJoystick) < Constants.JOYSTICK_DEADBAND) {
             rightJoystick = 0.0;
         }
         outputLeftDrive = leftJoystick + rightJoystick;
         outputRightDrive = leftJoystick - rightJoystick;
     }
 
+    /**
+     * Shifts the gears depending on the mode.
+     * 
+     * @param mode the gear shift
+     */
     public void setGearShift(GearShift mode) {
         gearShift.set(gearSolenoidValue(mode));
     }
 
+    /**
+     * Converts from a GearShift to a DoubleSolenoid value.
+     * 
+     * @param gear the gear shift
+     * @return a DoubleSolenoid value
+     */
     private Value gearSolenoidValue(GearShift gear) {
         if (gear == GearShift.HIGH) {
             return Value.kForward;
@@ -296,18 +319,30 @@ public class Drive extends Submodule {
         }
     }
 
+    /**
+     * Makes the drive start following a Path.
+     * 
+     * @param path the path to follow
+     */
     public void setDrivePath(Path path) {
         if (profileFollower != null) {
+            // Stops & resets everything
             stop();
             zero();
+            outputClosedLoop = SetValueMotionProfile.Disable.value;
             profileFollower.reset();
+
             profileFollower.setReverse(path.isReversed());
-            profileFollower.start(path.getPoints(), path.getCruiseVelocity(), 
-                path.getTargetAcceleration());
+            profileFollower.start(path.getPathPoints());
             controlState = ControlState.PATH_FOLLOWING;
         }
     }
-
+    
+    /**
+     * Returns whether the drive has finished following a path.
+     * 
+     * @return if the drive is finished pathing
+     */
     public boolean isFinishedWithPath() {
         if (profileFollower == null || controlState != ControlState.PATH_FOLLOWING) {
             return false;

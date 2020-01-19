@@ -2,11 +2,16 @@ package raidzero.robot.auto.actions;
 
 public interface Action {
     
+    /**
+     * Returns whether the action is finished or not.
+     * 
+     * @return if the action is finished
+     */
     boolean isFinished();
 
     /**
-     * Called by runAction in AutoSequence iteratively until isFinished returns true. Iterative logic lives in this
-     * method.
+     * Called AutoSequence iteratively until isFinished returns true. 
+     * Iterative logic lives in this method.
      */
     void update();
 
@@ -16,7 +21,7 @@ public interface Action {
     void done();
 
     /**
-     * Runs code once when the action is started, for set up.
+     * Runs code once when the action is started for set up.
      */
     void start();
 }

@@ -5,15 +5,23 @@ package raidzero.robot.submodules;
  */
 public abstract class Submodule {
 
+    /**
+     * Called at the start of autonomous or teleop.
+     * 
+     * @param timestamp
+     */
     public void onStart(double timestamp) {}
 
     /**
      * Reads cached inputs & calculate outputs.
+     * 
+     * @param timestamp
      */
     public void update(double timestamp) {}
     
     /**
-     * Runs components in the submodule that have continuously changing inputs.
+     * Runs components in the submodule that have continuously changing 
+     * inputs.
      */
     public void run() {}
 
