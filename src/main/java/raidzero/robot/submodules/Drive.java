@@ -1,10 +1,10 @@
 package raidzero.robot.submodules;
 
+import raidzero.robot.wrappers.*;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import raidzero.robot.Constants;
 
@@ -16,12 +16,12 @@ public class Drive extends Submodule {
 
     private static Drive instance = null;
 
-    private TalonSRX leftLeader;
-    private TalonSRX leftFollower;
-    private TalonSRX rightLeader;
-    private TalonSRX rightFollower;
+    private LazyTalonFX leftLeader;
+    private LazyTalonFX leftFollower;
+    private LazyTalonFX rightLeader;
+    private LazyTalonFX rightFollower;
 
-    private DoubleSolenoid gearShift;
+    private InactiveDoubleSolenoid gearShift;
     
     private double coef;
     private double exp;
@@ -41,24 +41,24 @@ public class Drive extends Submodule {
          * Motors
          */
         //omg can i please put the motors into arrays plsssss
-        leftLeader = new TalonSRX(Constants.driveLeftLeaderId);
+        leftLeader = new LazyTalonFX(Constants.driveLeftLeaderId);
         configureMotor(leftLeader, true, false);
         
-        leftFollower = new TalonSRX(Constants.driveLeftFollowerId);
+        leftFollower = new LazyTalonFX(Constants.driveLeftFollowerId);
         configureMotor(leftFollower, true, false);
         leftFollower.follow(leftLeader);
 
-        rightLeader = new TalonSRX(Constants.driveRightLeaderId);
+        rightLeader = new LazyTalonFX(Constants.driveRightLeaderId);
         configureMotor(rightLeader, false, false);
         
-        rightFollower = new TalonSRX(Constants.driveRightFollowerId);
+        rightFollower = new LazyTalonFX(Constants.driveRightFollowerId);
         configureMotor(rightFollower, false, false);
         rightFollower.follow(rightLeader);
 
         /**
          * Gear
          */
-        gearShift = new DoubleSolenoid(Constants.driveGearshiftForwardId, 
+        gearShift = new InactiveDoubleSolenoid(Constants.driveGearshiftForwardId, 
             Constants.driveGearshiftReverseId);
         setGearShift(GearShift.LOW);
 
@@ -69,7 +69,7 @@ public class Drive extends Submodule {
         coef = Constants.driveCoef;
     }
 
-    private void configureMotor(TalonSRX motor, boolean invertMotor, boolean invertSensorPhase) {
+    private void configureMotor(LazyTalonFX motor, boolean invertMotor, boolean invertSensorPhase) {
         motor.configFactoryDefault();
         motor.setNeutralMode(NeutralMode.Coast);
         motor.setSensorPhase(invertSensorPhase);
