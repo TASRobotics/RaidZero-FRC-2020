@@ -3,6 +3,7 @@ package raidzero.robot.wrappers;
 import com.revrobotics.CANSparkMax;
 
 public class LazyCANSparkMax extends CANSparkMax {
+    
     protected double prevVal = 0;
 
     public LazyCANSparkMax(int deviceNumber, MotorType type) {

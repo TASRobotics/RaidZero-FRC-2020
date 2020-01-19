@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 public class LazyTalonFX extends TalonFX {
+    
     protected double prevVal = 0;
     protected ControlMode prevControlMode = null;
 
@@ -11,7 +12,7 @@ public class LazyTalonFX extends TalonFX {
         super(deviceNumber);
     }
 
-    public double getprevVal() {
+    public double getLastSet() {
         return prevVal;
     }
 

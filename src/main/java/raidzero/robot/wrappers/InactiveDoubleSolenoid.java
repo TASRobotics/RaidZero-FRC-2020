@@ -3,10 +3,11 @@ package raidzero.robot.wrappers;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class InactiveDoubleSolenoid extends DoubleSolenoid {
+    
     protected boolean active = false;
 
-    public InactiveDoubleSolenoid(int FwdSolenoid, int RvrseSolenoid) {
-        super(FwdSolenoid, RvrseSolenoid);
+    public InactiveDoubleSolenoid(final int forwardChannel, final int reverseChannel) {
+        super(forwardChannel, reverseChannel);
     }
  
     public void setActive(boolean state) {
@@ -15,7 +16,7 @@ public class InactiveDoubleSolenoid extends DoubleSolenoid {
   
     @Override
     public void set(Value value) {
-        if(!active) {
+        if (!active) {
             return;
         }
         super.set(value);
