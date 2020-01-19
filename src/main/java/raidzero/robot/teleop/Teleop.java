@@ -8,17 +8,14 @@ import raidzero.robot.submodules.Drive.GearShift;
 public class Teleop {
 
     private static Teleop instance = null;
-    private Teleop() {}
     public static Teleop getInstance() {
         if (instance == null) {
             instance = new Teleop();
         }
         return instance;
     }
+    private Teleop() {}
 
-    /**
-     * Local Variables
-     */
     private Drive drive = Drive.getInstance();
     private XboxController controller = new XboxController(0);
 
@@ -27,7 +24,8 @@ public class Teleop {
      * Runs at the start of teleop.
      */
     public void onStart() {
-        //drive.setGearShift(GearShift.LOW);
+        drive.setGearShift(GearShift.LOW);
+        drive.setOpenLoop();
     }
 
     /**
