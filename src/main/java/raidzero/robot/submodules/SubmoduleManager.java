@@ -15,10 +15,14 @@ public class SubmoduleManager {
             instance = new SubmoduleManager();
         }
         return instance;
-    }
+    }    
 
     public void setSubmodules(Submodule... submodules) {
         this.submodules = Arrays.asList(submodules);
+    }
+
+    public void init() {
+        submodules.forEach(o -> o.init());
     }
 
     public void onStart(double timestamp) {

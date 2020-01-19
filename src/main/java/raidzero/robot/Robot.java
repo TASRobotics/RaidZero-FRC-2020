@@ -47,6 +47,7 @@ public class Robot extends TimedRobot {
 
         
         SubmoduleManager.getInstance().setSubmodules((Submodule[]) modules.toArray());
+        SubmoduleManager.getInstance().init();
     }
 
     @Override

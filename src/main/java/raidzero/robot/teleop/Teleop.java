@@ -95,6 +95,9 @@ public class Teleop {
          * Sucker
          */
         sucky.suck(p1.getTriggerAxis(Hand.kRight) - p1.getTriggerAxis(Hand.kLeft));
+        if(p1.getBumperPressed(Hand.kLeft)) {
+            sucky.invertStraw();
+        }
 
         /**
          * Hopper

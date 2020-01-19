@@ -7,10 +7,17 @@ public class Constants {
      * TalonSRX IDs
      * driveLeft 1, 3
      * driveRight 0, 2
-     * shooter neo
+     * shooter neo 1
      * intake 4
      * hopper 5
      * turret 6
+     * rotator 7
+     */
+    /**
+     * Pneumatic ID's
+     * Drive 0, 1
+     * Intake 2, 3
+     * Wheel 4, 5
      */
 
     /**
@@ -23,6 +30,7 @@ public class Constants {
     public static final int driveRightFollowerId = 2;
 
     // Solenoid IDs
+    // Forward should make the 
     public static final int driveGearshiftForwardId = 0;
     public static final int driveGearshiftReverseId = 1;
 
@@ -46,6 +54,8 @@ public class Constants {
      * Intake Constants
      */
     public static final int throat = 4;
+    public static final int suckerr = 2;
+    public static final int suckyy = 3;
 
     /**
      * Hopper Constants
@@ -57,4 +67,19 @@ public class Constants {
      */
     public static final int ballFondler = 6;
     public static final double degToTic = 1000; //random # for now
+
+    /**
+     * Gaywheel
+     */
+    public static final int gayPride = 7;
+    public static final int rainbows = 4;
+    public static final int ponies = 5;
+
+    // PID Constants
+    public static final double gayF = 0;
+    public static final double gayP = 0;
+    public static final double gayI = 0;
+    public static final double gayD = 0;
+
+    public static final int POSITION_CONTROL_SLOT = 1;
 }
