@@ -1,5 +1,6 @@
 package raidzero.robot.teleop;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import raidzero.robot.submodules.Drive;
@@ -11,6 +12,7 @@ import raidzero.robot.submodules.SucksBalls;
 import raidzero.robot.submodules.Drive.GearShift;
 
 public class Teleop {
+    private static boolean hi = true;
 
     private static Teleop instance = null;
     private Teleop() {}
@@ -29,7 +31,7 @@ public class Teleop {
     private SucksBalls sucky = SucksBalls.getInstance();
     private MovesBalls move = MovesBalls.getInstance();
     private FondlesBalls ballFondlers = FondlesBalls.getInstance();
-
+    private static Compressor compressor = new Compressor();
 
     private XboxController p1 = new XboxController(0);
     private XboxController p2 = new XboxController(1);
@@ -64,7 +66,17 @@ public class Teleop {
          * Triggers: Turret [Right: Clockwise, Left: Counterclockwise]
          * Left bumper: Use left joystick to aim
          */
-        
+
+        if(p1.getBButtonPressed()) {
+            if(hi) {
+                compressor.stop();
+                hi = false;
+            }
+            else {
+                hi = true;
+                compressor.start();
+            }
+        }        
         /**
          * E stop that we have control over
          */

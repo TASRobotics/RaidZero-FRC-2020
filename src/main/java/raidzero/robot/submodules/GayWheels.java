@@ -17,6 +17,7 @@ public class GayWheels extends Submodule {
     private static Value engaged = Value.kOff;
     private static double velo = 0;
     private static double pos = 0;
+    private static boolean gayMan = false;
 
     public static GayWheels getInstance() {
         if (instance == null) {
@@ -45,16 +46,37 @@ public class GayWheels extends Submodule {
 
     @Override
     public void run() {
-        lesbianMotor.set(ControlMode.PercentOutput, velo);
         nonBinarySolenoid.set(engaged);
+        velocityControl();        
+    }
+
+    private void velocityControl() {
+        if(gayMan) {
+            lesbianMotor.set(ControlMode.PercentOutput, velo);
+            return;
+        }
+        lesbianMotor.set(ControlMode.MotionMagic, pos);
     }
 
     @Override
     public void stop() {
+        velo = 0;
+        pos = 0;
+        lesbianMotor.set(ControlMode.PercentOutput, 0);
+        nonBinarySolenoid.set(Value.kOff);
     }
 
-    public void manual(double speed) {
+    private void manual(double speed) {
         velo = speed;
+    }
+
+    public void rotate(double input, boolean manual) {
+        gayMan = manual;
+        if(manual) {
+            manual(input);
+            return;
+        }
+        pos = input;
     }
 
     public void engage(boolean value) {

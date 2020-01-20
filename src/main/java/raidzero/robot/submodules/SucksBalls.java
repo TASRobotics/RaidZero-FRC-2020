@@ -59,11 +59,16 @@ public class SucksBalls extends Submodule {
     public void suck(double trigger) {
         if(trigger > Constants.joystickDeadband) {
             suckForce = trigger;
+            return;
         }
+        suckForce = 0;
     }
 
     public void invertStraw() {
-        if(position == Value.kReverse) {position = Value.kForward;}
-        if(position == Value.kForward) {position = Value.kReverse;}
+        if(position == Value.kReverse) {
+            position = Value.kForward;
+            return;
+        }
+        position = Value.kReverse;
     }
 }

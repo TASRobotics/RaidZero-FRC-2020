@@ -18,7 +18,6 @@ import raidzero.robot.teleop.Teleop;
  * The main robot class.
  */
 public class Robot extends TimedRobot {
-
     private SubmoduleManager submoduleManager = SubmoduleManager.getInstance();
 
     private Teleop teleop = Teleop.getInstance();
@@ -28,25 +27,35 @@ public class Robot extends TimedRobot {
     private SucksBalls sucky = SucksBalls.getInstance();
     private MovesBalls hopper = MovesBalls.getInstance();
     private FondlesBalls fondler = FondlesBalls.getInstance();
-
-    private ArrayList<Submodule> modules = new ArrayList<Submodule>(Arrays.asList(
+    private Submodule[] thingy = {
         moduleDrive,
         shitter,
         sucky,
         hopper,
-        fondler));
+        fondler
+    };
+
+
+    private ArrayList<Submodule> modules = new ArrayList<Submodule>(Arrays.asList(
+        moduleDrive,
+        //shitter,
+        sucky,
+        hopper
+        //fondler
+        ));
 
     @Override
     public void robotInit() {
-        for(Submodule module : modules) {
+        /*for(Submodule module : modules) {
             if(module.isEnabled) {
                 continue;
             }
             modules.remove(modules.indexOf(module));
-        }
+        }*/
 
         
-        SubmoduleManager.getInstance().setSubmodules((Submodule[]) modules.toArray());
+        SubmoduleManager.getInstance().setSubmodules(thingy);
+        //(Submodule[]) modules.toArray());
         SubmoduleManager.getInstance().init();
     }
 

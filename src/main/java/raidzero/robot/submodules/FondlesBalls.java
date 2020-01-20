@@ -38,9 +38,9 @@ public class FondlesBalls extends Submodule {
         ballFondlers = new TalonSRX(Constants.ballFondler);
 
         ballFondlers.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
-            LimitSwitchNormal.NormallyOpen);
+            LimitSwitchNormal.NormallyClosed);
         ballFondlers.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
-            LimitSwitchNormal.NormallyOpen);
+            LimitSwitchNormal.NormallyClosed);
     }
 
     @Override

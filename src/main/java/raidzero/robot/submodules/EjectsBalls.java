@@ -44,10 +44,11 @@ public class EjectsBalls extends Submodule {
     }
 
     public void shoot(double speed, boolean freeze) {
-        if(!freeze){
+        if(freeze) {
             return;
         }
-        if(speed < Constants.joystickDeadband) {
+        if(Math.abs(speed) < Constants.joystickDeadband) {
+            flowRate = 0;
             return;
         }
         flowRate = speed;
