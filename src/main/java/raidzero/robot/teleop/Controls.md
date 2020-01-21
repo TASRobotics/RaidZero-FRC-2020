@@ -10,7 +10,8 @@ RBumper | Shifts to high gear while held down
 right trigger | Intake in
 left trigger  | intake out
 DPad up | Hopper forward
-DPad down| Hopper reverse
+DPad down| Hopper 
+B button | Compressor On/Off
 
 ## P2
 keybind | action

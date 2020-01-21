@@ -1,18 +1,17 @@
 package raidzero.robot.teleop;
 
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import raidzero.robot.submodules.Drive;
-import raidzero.robot.submodules.EjectsBalls;
-import raidzero.robot.submodules.FondlesBalls;
-import raidzero.robot.submodules.MovesBalls;
+import raidzero.robot.submodules.Intake;
+import raidzero.robot.submodules.Shooter;
 import raidzero.robot.submodules.SubmoduleManager;
-import raidzero.robot.submodules.SucksBalls;
+import raidzero.robot.submodules.Hopper;
+import raidzero.robot.submodules.Turret;
 import raidzero.robot.submodules.Drive.GearShift;
+import raidzero.robot.wrappers.InactiveCompressor;
 
 public class Teleop {
-    private static boolean hi = true;
 
     private static Teleop instance = null;
     private Teleop() {}
@@ -27,11 +26,11 @@ public class Teleop {
      * Local Variables
      */
     private Drive drive = Drive.getInstance();
-    private EjectsBalls shitter = EjectsBalls.getInstance();
-    private SucksBalls sucky = SucksBalls.getInstance();
-    private MovesBalls move = MovesBalls.getInstance();
-    private FondlesBalls ballFondlers = FondlesBalls.getInstance();
-    private static Compressor compressor = new Compressor();
+    private Shooter shitter = Shooter.getInstance();
+    private Intake sucky = Intake.getInstance();
+    private Hopper move = Hopper.getInstance();
+    private Turret turret = Turret.getInstance();
+    private static InactiveCompressor compressor = new InactiveCompressor();
 
     private XboxController p1 = new XboxController(0);
     private XboxController p2 = new XboxController(1);
@@ -58,6 +57,7 @@ public class Teleop {
          * Bumpers: Shift [Right(while held down): high gear]
          * Triggers: Intake [Right: In, Left: Out]
          * DPad: Hopper [Up: In, Down: out]
+         * B buttom: compressor on/off
          *  
          * P2
          * Left joystick: Shooter
@@ -67,16 +67,13 @@ public class Teleop {
          * Left bumper: Use left joystick to aim
          */
 
+        /**
+         * Compressor
+         */
         if(p1.getBButtonPressed()) {
-            if(hi) {
-                compressor.stop();
-                hi = false;
-            }
-            else {
-                hi = true;
-                compressor.start();
-            }
+            compressor.changeState();
         }        
+
         /**
          * E stop that we have control over
          */
@@ -119,6 +116,6 @@ public class Teleop {
         /**
          * Turret
          */
-        ballFondlers.fondleThemHard(p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft));
+        turret.fondleThemHard(p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft));
     }
 }

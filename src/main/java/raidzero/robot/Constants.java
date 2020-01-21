@@ -46,16 +46,16 @@ public class Constants {
     /**
      * Shooter Constants
      */
-    public static final int skinFlap = 1;
-    public static final IdleMode skinFlapIdle = IdleMode.kCoast;
-    public static final boolean skinFlapInvert = true;
+    public static final int shooter = 1;
+    public static final IdleMode shooterIdle = IdleMode.kCoast;
+    public static final boolean shooterInvert = true;
 
     /**
      * Intake Constants
      */
-    public static final int throat = 4;
-    public static final int suckerr = 2;
-    public static final int suckyy = 3;
+    public static final int intakeMotor = 4;
+    public static final int intakeOut = 2;
+    public static final int intakeIn = 3;
 
     /**
      * Hopper Constants
@@ -65,7 +65,7 @@ public class Constants {
     /**
      * Turret
      */
-    public static final int ballFondler = 6;
+    public static final int puppy = 6;
     public static final double degToTic = 1000; //random # for now
 
     /**
@@ -76,10 +76,10 @@ public class Constants {
     public static final int ponies = 5;
 
     // PID Constants
-    public static final double gayF = 0;
-    public static final double gayP = 0;
-    public static final double gayI = 0;
-    public static final double gayD = 0;
+    public static final double gayPrideF = 0;
+    public static final double gayPrideP = 0;
+    public static final double gayPrideI = 0;
+    public static final double gayPrideD = 0;
 
     public static final int POSITION_CONTROL_SLOT = 1;
 }
