@@ -17,7 +17,7 @@ public class WheelOfFortune extends Submodule {
     private static Value engaged = Value.kOff;
     private static double velo = 0;
     private static double pos = 0;
-    private static boolean gayMan = false;
+    private static boolean gMan = false;
 
     public static WheelOfFortune getInstance() {
         if (instance == null) {
@@ -52,7 +52,7 @@ public class WheelOfFortune extends Submodule {
     }
 
     private void velocityControl() {
-        if(gayMan) {
+        if(gMan) {
             wheel.set(ControlMode.PercentOutput, velo);
             return;
         }
@@ -72,7 +72,7 @@ public class WheelOfFortune extends Submodule {
     }
 
     public void rotate(double input, boolean manual) {
-        gayMan = manual;
+        gMan = manual;
         if(manual) {
             manual(input);
             return;
