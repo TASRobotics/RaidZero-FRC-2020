@@ -42,7 +42,7 @@ public class Hopper extends Submodule {
         mover.set(ControlMode.PercentOutput, 0);
     }
 
-    public void moveMyBalls(int p1, double p2) {
+    public void moveBalls(int p1, double p2) {
         if(p1 == -1) {
             player2Ctrl(p2);
             return;

@@ -74,11 +74,11 @@ public class Turret extends Submodule {
         motor.setSelectedSensorPosition(0);
     }
 
-    public void fondleMyBalls(double deg) {
+    public void rotate(double deg) {
         pos = deg * Constants.degToTic;
     }
 
-    public void fondleThemHard(double pow) {
+    public void rotateManual(double pow) {
         speed = pow;
     }
 }

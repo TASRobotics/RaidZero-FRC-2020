@@ -111,11 +111,11 @@ public class Teleop {
         /**
          * Hopper
          */
-        move.moveMyBalls(p1.getPOV(), p2.getY(Hand.kRight));
+        move.moveBalls(p1.getPOV(), p2.getY(Hand.kRight));
 
         /**
          * Turret
          */
-        turret.fondleThemHard(p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft));
+        turret.rotateManual(p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft));
     }
 }
