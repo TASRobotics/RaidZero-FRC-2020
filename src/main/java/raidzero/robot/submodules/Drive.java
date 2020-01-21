@@ -64,6 +64,7 @@ public class Drive extends Submodule {
          */
         gearShift = new InactiveDoubleSolenoid(Constants.driveGearshiftForwardId, 
             Constants.driveGearshiftReverseId);
+        gearShift.setActive(true);
         setGearShift(GearShift.LOW);
 
         /**

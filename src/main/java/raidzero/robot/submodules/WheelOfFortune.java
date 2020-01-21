@@ -3,7 +3,7 @@ package raidzero.robot.submodules;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import raidzero.robot.wrappers.LazyTalonSRX;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import raidzero.robot.wrappers.InactiveDoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import raidzero.robot.Constants;
 
@@ -12,7 +12,7 @@ public class WheelOfFortune extends Submodule {
     private static WheelOfFortune instance = null;
 
     private static LazyTalonSRX wheel;
-    private static DoubleSolenoid solenoid;
+    private static InactiveDoubleSolenoid solenoid;
 
     private static Value engaged = Value.kOff;
     private static double velo = 0;
@@ -32,7 +32,8 @@ public class WheelOfFortune extends Submodule {
     @Override
     public void init() {
         wheel = new LazyTalonSRX(Constants.gayPride);
-        solenoid = new DoubleSolenoid(Constants.rainbows, Constants.ponies);
+        solenoid = new InactiveDoubleSolenoid(Constants.rainbows, Constants.ponies);
+        solenoid.setActive(true);
 
         wheel.config_kF(Constants.POSITION_CONTROL_SLOT, Constants.gayPrideF);
         wheel.config_kP(Constants.POSITION_CONTROL_SLOT, Constants.gayPrideP);
