@@ -3,7 +3,7 @@ package raidzero.robot.submodules;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import raidzero.robot.wrappers.LazyTalonSRX;
 
 import raidzero.robot.Constants;
 
@@ -17,7 +17,7 @@ public class Turret extends Submodule {
 
     private static Turret instance = null;
 
-    private static TalonSRX motor;
+    private static LazyTalonSRX motor;
     
     private static double speed = 0;
     private static double pos = 0;
@@ -35,7 +35,7 @@ public class Turret extends Submodule {
 
     @Override
     public void init() {
-        motor = new TalonSRX(Constants.puppy);
+        motor = new LazyTalonSRX(Constants.puppy);
 
         motor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
             LimitSwitchNormal.NormallyClosed);

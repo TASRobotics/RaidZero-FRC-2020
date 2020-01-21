@@ -1,13 +1,13 @@
 package raidzero.robot.submodules;
 
-import com.revrobotics.CANSparkMax;
+import raidzero.robot.wrappers.LazyCANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import raidzero.robot.Constants;
 
 public class Shooter extends Submodule {
 
-    private static CANSparkMax motor;
+    private static LazyCANSparkMax motor;
     private static Shooter instance = null;
 
     private static double shooterSpeed = 0.0;
@@ -23,7 +23,7 @@ public class Shooter extends Submodule {
         /**
          * Epididymis Init
          */
-        motor = new CANSparkMax(Constants.shooter, MotorType.kBrushless);
+        motor = new LazyCANSparkMax(Constants.shooter, MotorType.kBrushless);
         motor.setInverted(Constants.shooterInvert);
         motor.setIdleMode(Constants.shooterIdle);
     }

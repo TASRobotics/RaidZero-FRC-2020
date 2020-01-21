@@ -2,9 +2,8 @@ package raidzero.robot.submodules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import raidzero.robot.wrappers.LazyTalonSRX;
+import raidzero.robot.wrappers.InactiveDoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import raidzero.robot.Constants;
 
@@ -15,8 +14,8 @@ public class Intake extends Submodule {
 
     private static Intake instance = null;
 
-    private static TalonSRX motor;
-    private static DoubleSolenoid solenoid;
+    private static LazyTalonSRX motor;
+    private static InactiveDoubleSolenoid solenoid;
     
     private static double power = 0.0;
 
@@ -30,12 +29,12 @@ public class Intake extends Submodule {
     }
 
     private Intake() {
-        motor = new TalonSRX(Constants.intakeMotor);
+        motor = new LazyTalonSRX(Constants.intakeMotor);
         motor.configFactoryDefault();
         motor.setNeutralMode(NeutralMode.Brake);
         motor.setInverted(false);
 
-        solenoid = new DoubleSolenoid(Constants.intakeOut, Constants.intakeIn);
+        solenoid = new InactiveDoubleSolenoid(Constants.intakeOut, Constants.intakeIn);
     }
 
     @Override

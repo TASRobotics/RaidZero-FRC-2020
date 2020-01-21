@@ -2,7 +2,7 @@ package raidzero.robot.submodules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import raidzero.robot.wrappers.LazyTalonSRX;
 
 import raidzero.robot.Constants;
 
@@ -10,7 +10,7 @@ public class Hopper extends Submodule {
 
     private static Hopper instance = null;
 
-    private static TalonSRX mover;
+    private static LazyTalonSRX mover;
     private static double power;
 
     public static Hopper getInstance() {
@@ -21,7 +21,7 @@ public class Hopper extends Submodule {
     }
 
     private Hopper() {
-        mover = new TalonSRX(Constants.myDog);
+        mover = new LazyTalonSRX(Constants.myDog);
         mover.configFactoryDefault();
         mover.setNeutralMode(NeutralMode.Brake);
         mover.setInverted(true);
