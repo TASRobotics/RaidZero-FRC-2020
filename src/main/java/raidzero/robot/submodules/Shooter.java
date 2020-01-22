@@ -1,13 +1,17 @@
 package raidzero.robot.submodules;
 
 import raidzero.robot.wrappers.LazyCANSparkMax;
+import raidzero.robot.wrappers.LazyTalonFX;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import raidzero.robot.Constants;
 
 public class Shooter extends Submodule {
 
-    private static LazyCANSparkMax motor;
+    private static LazyTalonFX motor;
     private static Shooter instance = null;
 
     private static double shooterSpeed = 0.0;
@@ -23,9 +27,9 @@ public class Shooter extends Submodule {
         /**
          * Epididymis Init
          */
-        motor = new LazyCANSparkMax(Constants.shooter, MotorType.kBrushless);
+        motor = new LazyTalonFX(8);
         motor.setInverted(Constants.shooterInvert);
-        motor.setIdleMode(Constants.shooterIdle);
+        motor.setNeutralMode(NeutralMode.Coast);
     }
 
     @Override
@@ -34,13 +38,13 @@ public class Shooter extends Submodule {
 
     @Override
     public void run() {
-        motor.set(shooterSpeed);
+        motor.set(ControlMode.PercentOutput, shooterSpeed);
     }
 
     @Override
     public void stop() {
         shooterSpeed = 0;
-        motor.set(0);
+        motor.set(ControlMode.PercentOutput,0);
     }
 
     public void shoot(double speed, boolean freeze) {

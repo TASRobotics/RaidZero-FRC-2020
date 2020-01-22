@@ -7,11 +7,11 @@ public class Constants {
      * TalonSRX IDs
      * driveLeft 1, 3
      * driveRight 0, 2
-     * shooter neo 1
      * intake 4
      * hopper 5
      * turret 6
      * rotator 7
+     * 
      */
     /**
      * Pneumatic ID's
@@ -31,8 +31,8 @@ public class Constants {
 
     // Solenoid IDs
     // Forward should make the 
-    public static final int driveGearshiftForwardId = 0;
-    public static final int driveGearshiftReverseId = 1;
+    public static final int driveGearshiftForwardId = 1;
+    public static final int driveGearshiftReverseId = 0;
 
     // Joystick to Output mapping
     public static final double driveExponent = 2;

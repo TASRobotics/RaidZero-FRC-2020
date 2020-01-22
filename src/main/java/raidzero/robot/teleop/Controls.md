@@ -7,6 +7,7 @@ start | exits estop if enabled
 start | Enables climb when held down at the same time as p2
 joysticks | Drive (tank)
 RBumper | Shifts to high gear while held down
+LBumper | brings intake up or down
 right trigger | Intake in
 left trigger  | intake out
 DPad up | Hopper forward
