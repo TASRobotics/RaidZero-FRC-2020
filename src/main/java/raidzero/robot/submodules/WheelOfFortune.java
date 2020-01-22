@@ -14,7 +14,6 @@ public class WheelOfFortune extends Submodule {
     private static LazyTalonSRX wheel;
     private static InactiveDoubleSolenoid solenoid;
 
-    private static Value engaged = Value.kOff;
     private static double velo = 0;
     private static double pos = 0;
     private static boolean gMan = false;
@@ -34,6 +33,7 @@ public class WheelOfFortune extends Submodule {
         wheel = new LazyTalonSRX(Constants.gayPride);
         solenoid = new InactiveDoubleSolenoid(Constants.rainbows, Constants.ponies);
         solenoid.setActive(true);
+        solenoid.set(Value.kOff);
 
         wheel.config_kF(Constants.POSITION_CONTROL_SLOT, Constants.gayPrideF);
         wheel.config_kP(Constants.POSITION_CONTROL_SLOT, Constants.gayPrideP);
@@ -47,7 +47,6 @@ public class WheelOfFortune extends Submodule {
 
     @Override
     public void run() {
-        solenoid.set(engaged);
         velocityControl();        
     }
 
@@ -82,10 +81,10 @@ public class WheelOfFortune extends Submodule {
 
     public void engage(boolean value) {
         if(value == true) {
-            engaged = Value.kForward;
+            solenoid.set(Value.kForward);
         }
         if(value == false) {
-            engaged = Value.kReverse;
+            solenoid.set(Value.kReverse);
         }
     }
 

@@ -6,6 +6,7 @@ import raidzero.robot.wrappers.LazyTalonSRX;
 import raidzero.robot.wrappers.InactiveDoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import raidzero.robot.Constants;
+import java.lang.Math;
 
 /**
  * Sucks BOBA balls and definitely not other balls
@@ -37,9 +38,10 @@ public class Intake extends Submodule {
         motor = new LazyTalonSRX(Constants.intakeMotor);
         motor.configFactoryDefault();
         motor.setNeutralMode(NeutralMode.Brake);
-        motor.setInverted(false);
+        motor.setInverted(true);
 
         solenoid = new InactiveDoubleSolenoid(Constants.intakeOut, Constants.intakeIn);
+        solenoid.setActive(true);
     }
 
     @Override
@@ -49,7 +51,6 @@ public class Intake extends Submodule {
     @Override
     public void run() {
         motor.set(ControlMode.PercentOutput, power);
-        solenoid.set(position);
     }
 
     @Override
@@ -61,7 +62,7 @@ public class Intake extends Submodule {
     }
 
     public void suck(double trigger) {
-        if(trigger > Constants.joystickDeadband) {
+        if(Math.abs(trigger) > Constants.joystickDeadband) {
             power = trigger;
             return;
         }
@@ -69,6 +70,11 @@ public class Intake extends Submodule {
     }
 
     public void invertStraw() {
+        invertPos();
+        solenoid.set(position);
+    }
+
+    private void invertPos() {
         if(position == Value.kReverse) {
             position = Value.kForward;
             return;

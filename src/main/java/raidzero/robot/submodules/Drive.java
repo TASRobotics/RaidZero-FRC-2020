@@ -27,7 +27,6 @@ public class Drive extends Submodule {
 
     private double outputLeftDrive = 0.0;
     private double outputRightDrive = 0.0;
-    private Value shift = Value.kReverse;
 
     public static Drive getInstance() {
         if (instance == null) {
@@ -46,17 +45,17 @@ public class Drive extends Submodule {
          */
         //omg can i please put the motors into arrays plsssss
         leftLeader = new LazyTalonFX(Constants.driveLeftLeaderId);
-        configureMotor(leftLeader, true, false);
+        configureMotor(leftLeader, false, false);
         
         leftFollower = new LazyTalonFX(Constants.driveLeftFollowerId);
-        configureMotor(leftFollower, true, false);
+        configureMotor(leftFollower, false, false);
         leftFollower.follow(leftLeader);
 
         rightLeader = new LazyTalonFX(Constants.driveRightLeaderId);
-        configureMotor(rightLeader, false, false);
+        configureMotor(rightLeader, true, true);
         
         rightFollower = new LazyTalonFX(Constants.driveRightFollowerId);
-        configureMotor(rightFollower, false, false);
+        configureMotor(rightFollower, true, true);
         rightFollower.follow(rightLeader);
 
         /**
@@ -76,22 +75,21 @@ public class Drive extends Submodule {
 
     private void configureMotor(LazyTalonFX motor, boolean invertMotor, boolean invertSensorPhase) {
         motor.configFactoryDefault();
-        motor.setNeutralMode(NeutralMode.Brake);
+        motor.setNeutralMode(NeutralMode.Coast);
         motor.setSensorPhase(invertSensorPhase);
         motor.setInverted(invertMotor);
     }
 
     @Override
     public void update(double timestamp) {
-        outputLeftDrive = coef * Math.pow(outputLeftDrive, exp);
-        outputRightDrive = coef * Math.pow(outputRightDrive, exp);
+        outputLeftDrive =  coef * Math.copySign(Math.pow(outputLeftDrive, exp), outputLeftDrive);
+        outputRightDrive = coef * Math.copySign(Math.pow(outputRightDrive, exp), outputRightDrive);
     }
 
     @Override
     public void run() {
         leftLeader.set(ControlMode.PercentOutput, outputLeftDrive);
         rightLeader.set(ControlMode.PercentOutput, outputRightDrive);
-        gearShift.set(shift);
     }
 
     @Override
@@ -100,6 +98,7 @@ public class Drive extends Submodule {
         outputRightDrive = 0.0;
         leftLeader.set(ControlMode.PercentOutput, 0.0);
         rightLeader.set(ControlMode.PercentOutput, 0.0);
+        gearShift.set(Value.kOff);
     }
 
     public void tank(double leftJoystick, double rightJoystick) {
@@ -126,7 +125,7 @@ public class Drive extends Submodule {
     }
 
     public void setGearShift(GearShift mode) {
-        shift = gearSolenoidValue(mode);
+        gearShift.set(gearSolenoidValue(mode));
     }
 
     private Value gearSolenoidValue(GearShift gear) {
