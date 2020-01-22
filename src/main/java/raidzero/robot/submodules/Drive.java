@@ -119,7 +119,6 @@ public class Drive extends Submodule {
         if (Math.abs(rightJoystick) < Constants.joystickDeadband) {
             rightJoystick = 0.0;
         }
-        System.out.println(leftJoystick + " " + rightJoystick);
         outputLeftDrive = leftJoystick + rightJoystick;
         outputRightDrive = leftJoystick - rightJoystick;
     }
@@ -131,8 +130,10 @@ public class Drive extends Submodule {
     private Value gearSolenoidValue(GearShift gear) {
         if (gear == GearShift.HIGH) {
             return Value.kForward;
-        } else {
+        }
+        if (gear == GearShift.LOW) {
             return Value.kReverse;
         }
+        return Value.kOff;
     }
 }
