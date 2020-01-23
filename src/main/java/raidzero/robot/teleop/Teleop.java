@@ -98,7 +98,7 @@ public class Teleop {
         /**
          * Ejecter
          */
-        shitter.shoot(p2.getY(Hand.kLeft), p2.getAButtonPressed());
+        shitter.shoot(p2.getY(Hand.kLeft), p2.getAButton());
 
         /**
          * Sucker
