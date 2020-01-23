@@ -12,7 +12,7 @@ public class TestSequence extends AutoSequence {
 
     private static final Point[] TEST_WAYPOINTS = {
         new Point(0, 0, 0),
-        new Point(30, 30, 0)
+        new Point(60, 0, 0)
     };
     private static final Path PATH = new Path(TEST_WAYPOINTS, false);
 

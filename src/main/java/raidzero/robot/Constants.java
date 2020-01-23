@@ -11,8 +11,8 @@ public class Constants {
     public static final int driveRightLeaderId = 0;
     public static final int driveRightFollowerId = 2;
 
-    public static final double LOW_GEAR_RATIO = 9.98;
-    public static final double HIGH_GEAR_RATIO = 18.43;
+    public static final double HIGH_GEAR_RATIO = 9.98;
+    public static final double LOW_GEAR_RATIO = 18.43;
 
     public static final double WHEEL_DIAMETER_INCHES = 6.0;
 
@@ -23,6 +23,15 @@ public class Constants {
     // Pigeon ID
     public static final int pigeonId = 0;
 
+    public static final int shooterId = 8;
+    public static final int turretId = 6;
+
+    public static final int intakeId = 4;
+    public static final int intakeForwardId = 2;
+    public static final int intakeReverseId = 3;
+
+    public static final int hopperId = 5;
+
     // Closed-loop constants
     public static final int REMOTE_0 = 0;
     public static final int REMOTE_1 = 1;
@@ -31,14 +40,14 @@ public class Constants {
     public static final int TIMEOUT_MS = 10;
     public static final double PIGEON_SCALE = 3600.0 / 8192.0;
 
-    public static final double PRIMARY_F = 0.0;
-    public static final double PRIMARY_P = 0.7;
+    public static final double PRIMARY_F = 0.75 * 1023.0 / 20348;
+    public static final double PRIMARY_P = 0.01;
     public static final double PRIMARY_I = 0;
     public static final double PRIMARY_D = 0;
     public static final int PRIMARY_INT_ZONE = 50;
 
-    public static final double AUX_F = 0.60 * 1023.0 / (440.0 * 10.0); // Maximum was 440 dps
-    public static final double AUX_P = 3.0;
+    public static final double AUX_F = 0;//0.60 * 1023.0 / (440.0 * 10.0); // Maximum was 440 dps
+    public static final double AUX_P = 0;
     public static final double AUX_I = 0;
     public static final double AUX_D = 0;
     public static final int AUX_INT_ZONE = 20;
@@ -51,11 +60,11 @@ public class Constants {
     public static final int CLOSED_LOOP_TIME_MS = 1;
     public static final int TRANSMIT_PERIOD_MS = 3;
 
-    public static final double DEFAULT_CRUISE_VELOCITY = 7;
-    public static final double DEFAULT_TARGET_ACCELERATION = 10;
+    public static final double DEFAULT_CRUISE_VELOCITY = 4;
+    public static final double DEFAULT_TARGET_ACCELERATION = 8;
 
     // Joystick to Output mapping
-    public static final double DRIVE_JOYSTICK_EXPONENT = 2;
+    public static final double DRIVE_JOYSTICK_EXPONENT = 1;
     public static final double DRIVE_JOYSTICK_COEF = 1;
 
     public static final String LIMELIGHT_NAME_SHOOTER = "limelight";
