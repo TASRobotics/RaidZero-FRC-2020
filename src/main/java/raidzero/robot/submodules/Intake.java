@@ -51,8 +51,7 @@ public class Intake extends Submodule {
         if (Math.abs(output) < Constants.JOYSTICK_DEADBAND) {
             output = 0.0;
         }
-
-        outputOpenLoop = MathUtil.clamp(outputOpenLoop, -1.0, 1.0);
+        outputOpenLoop = MathUtil.clamp(output, -1.0, 1.0);
     }
 
     public void moveUp() {

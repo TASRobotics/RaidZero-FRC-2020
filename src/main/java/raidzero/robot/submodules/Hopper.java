@@ -45,8 +45,7 @@ public class Hopper extends Submodule {
         if (Math.abs(output) < Constants.JOYSTICK_DEADBAND) {
             output = 0.0;
         }
-
-        outputOpenLoop = MathUtil.clamp(outputOpenLoop, -0.75, 0.75);
+        outputOpenLoop = MathUtil.clamp(output, -1.0, 1.0);
     }
 
     /**
@@ -77,6 +76,5 @@ public class Hopper extends Submodule {
                 hopperMotor.set(ControlMode.PercentOutput, outputOpenLoop);
                 break;
         }
-        
     }
 }
