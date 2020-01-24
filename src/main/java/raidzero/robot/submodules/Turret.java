@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 
 import edu.wpi.first.wpiutil.math.MathUtil;
 import raidzero.robot.Constants;
+import raidzero.robot.utils.JoystickUtils;
 import raidzero.robot.wrappers.LazyTalonSRX;
 
 public class Turret extends Submodule {
@@ -50,11 +51,7 @@ public class Turret extends Submodule {
      * @param output open-loop output in [-1, 1], + is counterclockwise
      */
     public void turn(double output) {
-        // TODO: Move the deadband out of here!!!
-        if (Math.abs(output) < Constants.JOYSTICK_DEADBAND) {
-            output = 0.0;
-        }
-        outputOpenLoop = MathUtil.clamp(output, -1.0, 1.0);
+        outputOpenLoop = MathUtil.clamp(JoystickUtils.deadband(output), -1.0, 1.0);
     }
 
     /**

@@ -2,19 +2,15 @@ package raidzero.robot.auto.sequences;
 
 import java.util.Arrays;
 
-import raidzero.pathgen.Point;
 import raidzero.robot.auto.actions.DrivePath;
 import raidzero.robot.auto.actions.SeriesAction;
 import raidzero.robot.auto.actions.WaitAction;
 import raidzero.robot.pathing.Path;
+import raidzero.robot.pathing.paths.TestPath;
 
 public class TestSequence extends AutoSequence {
 
-    private static final Point[] TEST_WAYPOINTS = {
-        new Point(0, 0, 0),
-        new Point(60, 0, 0)
-    };
-    private static final Path PATH = new Path(TEST_WAYPOINTS, false);
+    private static final Path PATH = new TestPath();
 
     public TestSequence() {
 

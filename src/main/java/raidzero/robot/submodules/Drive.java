@@ -1,21 +1,24 @@
 package raidzero.robot.submodules;
 
-import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
-import com.ctre.phoenix.motorcontrol.SensorTerm;
-import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import raidzero.robot.Constants;
+import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.wrappers.*;
 import raidzero.robot.pathing.Path;
-import raidzero.robot.pathing.ProfileFollower;
+import raidzero.robot.pathing.TrajectoryFollower;
 import raidzero.robot.utils.EncoderUtils;
 
 public class Drive extends Submodule {
@@ -38,22 +41,20 @@ public class Drive extends Submodule {
 
 	private LazyTalonFX leftLeader;
     private LazyTalonFX leftFollower;
-    private LazyTalonFX rightLeader; // Also the "ultimate master" for profiling
+    private LazyTalonFX rightLeader;
     private LazyTalonFX rightFollower;
-
-    // Should be references to one of the 4 motors
-    private LazyTalonFX profilingLeader;
-    private LazyTalonFX profilingFollower;
 
     private InactiveDoubleSolenoid gearShiftSolenoid;
 
-    private PigeonIMU pigeon;
+    private Pigeon pigeon;
 
     // Control states
     private ControlState controlState;
 
-    // Profile follower
-    private ProfileFollower profileFollower;
+    // Trajectory follower
+    private TrajectoryFollower trajectoryFollower;
+
+    private DifferentialDriveOdometry odometry;
     
     // Tunable constants
     private double coef;
@@ -64,7 +65,11 @@ public class Drive extends Submodule {
     // Output
     private double outputLeftDrive = 0.0;
     private double outputRightDrive = 0.0;
-    private int outputClosedLoop = 0;
+
+    private double outputLeftVelocity = 0.0; // in sensor units / 100 ms
+    private double outputLeftFeedforward = 0.0; // in volts
+    private double outputRightVelocity = 0.0; // in sensor units / 100 ms
+    private double outputRightFeedforward = 0.0; // in volts
 
     private Drive() {
         // Motors
@@ -83,10 +88,14 @@ public class Drive extends Submodule {
         rightFollower.follow(rightLeader);
 
         // Pigeon IMU
-        pigeon = new PigeonIMU(Constants.pigeonId);
+        pigeon = new Pigeon(Constants.pigeonId);
 
-        // Must be called after the pigeon is initialized
         configureMotorClosedLoop();
+
+        // Everything must be zeroed before constructing odometry
+        zero();
+        odometry = new DifferentialDriveOdometry(
+            Rotation2d.fromDegrees(pigeon.getHeading()));
 
         // Gear shift
         gearShiftSolenoid = new InactiveDoubleSolenoid(Constants.driveGearshiftForwardId, 
@@ -118,87 +127,27 @@ public class Drive extends Submodule {
      * Configures the motor controllers for closed-loop control.
      */
     private void configureMotorClosedLoop() {
-        profilingLeader = leftLeader;
-        profilingFollower = rightLeader;
+        TalonFXConfiguration talonConfig = new TalonFXConfiguration();
+        talonConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+        talonConfig.neutralDeadband = 0.1;
+        talonConfig.slot0.kP = DriveConstants.PRIMARY_P;
+        talonConfig.slot0.kI = DriveConstants.PRIMARY_I;
+        talonConfig.slot0.kD = DriveConstants.PRIMARY_D;
+        talonConfig.slot0.integralZone = DriveConstants.PRIMARY_INT_ZONE;
+        talonConfig.slot0.closedLoopPeakOutput = 1.0;
+        talonConfig.openloopRamp = 0.25;
 
-        // Use the integrated sensors on the falcons as feedback
-        profilingLeader.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor,
-                                                     Constants.PID_PRIMARY_SLOT, 
-                                                     Constants.TIMEOUT_MS);
+        leftLeader.configAllSettings(talonConfig);
+        rightLeader.configAllSettings(talonConfig);
 
-        // Configure the follower encoder as a remote sensor for the leader
-        profilingLeader.configRemoteFeedbackFilter(profilingFollower.getDeviceID(),
-                                                   RemoteSensorSource.TalonSRX_SelectedSensor,	
-                                                   Constants.REMOTE_0, 
-                                                   Constants.TIMEOUT_MS);
-        
-        // Configure the Pigeon as the other Remote Slot on the leader
-        profilingLeader.configRemoteFeedbackFilter(pigeon.getDeviceID(),
-                                                   RemoteSensorSource.Pigeon_Yaw, 
-                                                   Constants.REMOTE_1,
-                                                   Constants.TIMEOUT_MS);
+        leftLeader.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor,
+                                                DriveConstants.PID_PRIMARY_SLOT, 
+                                                Constants.TIMEOUT_MS);
+        rightLeader.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor,
+                                                 DriveConstants.PID_PRIMARY_SLOT, 
+                                                 Constants.TIMEOUT_MS);
 
-        // Setup Sum signal to be used for distance
-        profilingLeader.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0,
-                                         Constants.TIMEOUT_MS);
-        profilingLeader.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.IntegratedSensor,
-                                         Constants.TIMEOUT_MS);
-
-        // Configure Sum [Sum of both IntegratedSensor] to be used for Primary PID Index
-        profilingLeader.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 
-                                                     Constants.PID_PRIMARY_SLOT, 
-                                                     Constants.TIMEOUT_MS);
-
-        // Scale Feedback by 0.5 to half the sum of distance
-        profilingLeader.configSelectedFeedbackCoefficient(0.5, 
-                                                          Constants.PID_PRIMARY_SLOT, 
-                                                          Constants.TIMEOUT_MS);
-
-        // Configure Pigeon's Yaw to be used for Auxiliary PID Index
-        profilingLeader.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 
-                                                     Constants.PID_AUX_SLOT, 
-                                                     Constants.TIMEOUT_MS);
-
-        // Scale the Feedback Sensor using a coefficient (Configured for 360 units of resolution)
-        profilingLeader.configSelectedFeedbackCoefficient(Constants.PIGEON_SCALE, 
-                                                          Constants.PID_AUX_SLOT, 
-                                                          Constants.TIMEOUT_MS);
-
-        // Set status frame periods to ensure we don't have stale data
-        profilingLeader.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20);
-        profilingLeader.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
-        profilingLeader.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20);
-        profilingLeader.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20);
-        profilingFollower.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5);
-
-        // PIDF Gains for the distance part
-        profilingLeader.config_kP(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_P);
-        profilingLeader.config_kI(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_I);
-        profilingLeader.config_kD(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_D);
-        profilingLeader.config_kF(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_F);
-        profilingLeader.config_IntegralZone(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_INT_ZONE);
-
-        // PIDF Gains for turning part
-        profilingLeader.config_kP(Constants.PID_AUX_SLOT, Constants.AUX_P);
-        profilingLeader.config_kI(Constants.PID_AUX_SLOT, Constants.AUX_I);
-        profilingLeader.config_kD(Constants.PID_AUX_SLOT, Constants.AUX_D);
-        profilingLeader.config_kF(Constants.PID_AUX_SLOT, Constants.AUX_F);
-        profilingLeader.config_IntegralZone(Constants.PID_AUX_SLOT, Constants.AUX_INT_ZONE);
-
-        // Set the period of the closed loops to be 1 ms
-        profilingLeader.configClosedLoopPeriod(Constants.PID_PRIMARY_SLOT, 
-                                               Constants.CLOSED_LOOP_TIME_MS,
-                                               Constants.TIMEOUT_MS);
-        profilingLeader.configClosedLoopPeriod(Constants.PID_AUX_SLOT, 
-                                               Constants.CLOSED_LOOP_TIME_MS,
-                                               Constants.TIMEOUT_MS);
-        profilingLeader.configAuxPIDPolarity(Constants.AUX_POLARITY, Constants.TIMEOUT_MS);
-
-        profilingLeader.changeMotionControlFramePeriod(Constants.TRANSMIT_PERIOD_MS);
-        profilingLeader.configMotionProfileTrajectoryPeriod(Constants.BASE_TRAJ_PERIOD_MS,
-                                                            Constants.TIMEOUT_MS);
-
-        profileFollower = new ProfileFollower(profilingLeader);
+        trajectoryFollower = new TrajectoryFollower(getKinematics());
     }
 
     /**
@@ -208,13 +157,8 @@ public class Drive extends Submodule {
      */
     @Override
     public void onStart(double timestamp) {
-        controlState = ControlState.OPEN_LOOP;
-
-        outputLeftDrive = 0.0;
-        outputRightDrive = 0.0;
-        outputClosedLoop = 0;
-
-        profilingLeader.clearMotionProfileTrajectories();
+        stop();
+        zero();
     }
 
     /**
@@ -224,23 +168,25 @@ public class Drive extends Submodule {
      */
     @Override
     public void update(double timestamp) {
-        if (controlState == ControlState.PATH_FOLLOWING) {
-            profileFollower.update();
-            outputClosedLoop = profileFollower.getOutput();
-        }
-
-        SmartDashboard.putNumber("left inches", 
-            EncoderUtils.ticksToInches(
+        odometry.update(
+            Rotation2d.fromDegrees(pigeon.getHeading()),
+            EncoderUtils.ticksToMeters(
                 leftLeader.getSensorCollection().getIntegratedSensorPosition(), 
                 currentGearShift
-            )
-        );
-        SmartDashboard.putNumber("right inches", 
-            EncoderUtils.ticksToInches(
+            ),
+            EncoderUtils.ticksToMeters(
                 -rightLeader.getSensorCollection().getIntegratedSensorPosition(), 
                 currentGearShift
             )
         );
+        if (controlState == ControlState.PATH_FOLLOWING) {
+            // Update trajectory follower here
+            DifferentialDriveWheelSpeeds wheelSpeeds = trajectoryFollower.update(
+                getCurrentPose());
+            tankVelocity(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
+        }
+
+        SmartDashboard.putString("Current Pose", odometry.getPoseMeters().toString());
     }
 
     /**
@@ -254,8 +200,11 @@ public class Drive extends Submodule {
                 rightLeader.set(ControlMode.PercentOutput, outputRightDrive);
                 break;
             case PATH_FOLLOWING:
-                profilingLeader.set(ControlMode.MotionProfileArc, outputClosedLoop);
-                profilingFollower.follow(profilingLeader, FollowerType.AuxOutput1);
+                // Divide by 12 V since its the maximum voltage
+                leftLeader.set(ControlMode.Velocity, outputLeftVelocity, 
+                    DemandType.ArbitraryFeedForward, outputLeftFeedforward / 12);
+                rightLeader.set(ControlMode.Velocity, outputRightVelocity, 
+                    DemandType.ArbitraryFeedForward, outputRightFeedforward / 12);
                 break;
         }
     }
@@ -270,6 +219,11 @@ public class Drive extends Submodule {
         outputLeftDrive = 0.0;
         outputRightDrive = 0.0;
 
+        outputLeftVelocity = 0.0;
+        outputLeftFeedforward = 0.0;
+        outputRightVelocity = 0.0;
+        outputRightFeedforward = 0.0;
+
         // TODO: Make sure we don't ever directly set motor outputs
         leftLeader.set(ControlMode.PercentOutput, 0.0);
         rightLeader.set(ControlMode.PercentOutput, 0.0);
@@ -280,13 +234,19 @@ public class Drive extends Submodule {
      */
     @Override
     public void zero() {
-        /**
-         * setSelectedSensorPosition would set the sensor sum for the PID,
-         * which is not what we want to do.
-         */
-        leftLeader.getSensorCollection().setIntegratedSensorPosition(0, Constants.TIMEOUT_MS);
-        rightLeader.getSensorCollection().setIntegratedSensorPosition(0, Constants.TIMEOUT_MS);
+        leftLeader.setSelectedSensorPosition(0,
+            DriveConstants.PID_PRIMARY_SLOT, Constants.TIMEOUT_MS);
+        rightLeader.setSelectedSensorPosition(0,
+            DriveConstants.PID_PRIMARY_SLOT, Constants.TIMEOUT_MS);
         pigeon.setYaw(0.0);
+    }
+
+    /**
+     * Resets odometry pose & zeros all sensors.
+     */
+    public void resetOdometry(Pose2d pose) {
+        odometry.resetPosition(
+            pose, Rotation2d.fromDegrees(pigeon.getHeading()));
     }
 
     /**
@@ -311,6 +271,31 @@ public class Drive extends Submodule {
         }
         outputLeftDrive = Math.copySign(coef * Math.pow(leftJoystick, exp), leftJoystick);
         outputRightDrive = Math.copySign(coef * Math.pow(rightJoystick, exp), rightJoystick);
+    }
+
+    /**
+     * Tank drive mode for closed-loop velocity control (trajectory).
+     * 
+     * @param leftVelocity velocity in m/s
+     * @param rightVelocity velocity in m/s
+     */
+    public void tankVelocity(double leftVelocity, double rightVelocity) {
+        outputLeftVelocity = EncoderUtils.metersPerSecToTicksPer100ms(leftVelocity, 
+            currentGearShift);
+        outputRightVelocity = EncoderUtils.metersPerSecToTicksPer100ms(rightVelocity, 
+            currentGearShift);
+
+        double leftAcceleration = (leftVelocity - EncoderUtils.ticksToMeters(
+            leftLeader.getSelectedSensorPosition(), currentGearShift))
+                / DriveConstants.LOOP_PERIOD_MS;
+        double rightAcceleration = (rightVelocity - EncoderUtils.ticksToMeters(
+            rightLeader.getSelectedSensorVelocity(), currentGearShift))
+                / DriveConstants.LOOP_PERIOD_MS;
+        
+        outputLeftFeedforward = DriveConstants.FEED_FORWARD.calculate(
+            leftVelocity, leftAcceleration);
+        outputRightFeedforward = DriveConstants.FEED_FORWARD.calculate(
+            rightVelocity, rightAcceleration);
     }
 
     /**
@@ -355,21 +340,43 @@ public class Drive extends Submodule {
     }
 
     /**
+     * Returns the current robot pose through odometry.
+     * 
+     * @return robot pose in meters & degrees
+     */
+    public Pose2d getCurrentPose() {
+        return odometry.getPoseMeters();
+    }
+
+    /**
+     * Returns the kinematics object corresponding to this drive.
+     * 
+     * @return drive kinematics
+     */
+    public DifferentialDriveKinematics getKinematics() {
+        return DriveConstants.DRIVE_KINEMATICS;
+    }
+
+    /**
      * Makes the drive start following a Path.
      * 
      * @param path the path to follow
      */
     public void setDrivePath(Path path) {
-        if (profileFollower != null) {
+        if (trajectoryFollower != null) {
             // Stops & resets everything
             stop();
             zero();
-            outputClosedLoop = SetValueMotionProfile.Disable.value;
-            profileFollower.reset();
 
-            profileFollower.setGearShift(currentGearShift);
-            profileFollower.setReverse(path.isReversed());
-            profileFollower.start(path.getPathPoints());
+            Trajectory trajectory = path.getTrajectory();
+
+            // Set the odometry pose to the start of the trajectory
+            resetOdometry(trajectory.getInitialPose());
+
+            // Reset & start trajectory follower
+            trajectoryFollower.reset();
+            trajectoryFollower.start(trajectory);
+
             controlState = ControlState.PATH_FOLLOWING;
         }
     }
@@ -380,9 +387,9 @@ public class Drive extends Submodule {
      * @return if the drive is finished pathing
      */
     public boolean isFinishedWithPath() {
-        if (profileFollower == null || controlState != ControlState.PATH_FOLLOWING) {
+        if (trajectoryFollower == null || controlState != ControlState.PATH_FOLLOWING) {
             return false;
         }
-        return profileFollower.isFinished();
+        return trajectoryFollower.isFinished();
     }
 }

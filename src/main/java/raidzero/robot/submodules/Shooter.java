@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import raidzero.robot.Constants;
+import raidzero.robot.utils.JoystickUtils;
 import raidzero.robot.wrappers.LazyTalonFX;
 
 public class Shooter extends Submodule {
@@ -40,11 +41,7 @@ public class Shooter extends Submodule {
      * @param output open-loop output in [-1, 1], + is counterclockwise
      */
     public void spin(double output) {
-        // TODO: Move the deadband out of here!!!
-        if (Math.abs(output) < Constants.JOYSTICK_DEADBAND) {
-            output = 0.0;
-        }
-        outputOpenLoop = output;
+        outputOpenLoop = JoystickUtils.deadband(output);
     }
 
     /**

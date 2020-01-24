@@ -1,55 +1,55 @@
 package raidzero.robot.pathing;
 
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Transform2d;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
 
-import raidzero.pathgen.PathGenerator;
-import raidzero.pathgen.PathPoint;
-import raidzero.pathgen.Point;
-import raidzero.robot.Constants;
+import raidzero.robot.Constants.DriveConstants;
+import raidzero.robot.submodules.Drive;
 
-public class Path {
+public abstract class Path {
 
-    private Point[] points;
-    private PathPoint[] pathPoints;
-    private double cruiseVel;
-    private double targetAccel;
-    private boolean reversed;
+    protected static final Drive drive = Drive.getInstance();
 
-    public Path(Point[] points, boolean reversed) {
-        this(points, reversed, Constants.DEFAULT_CRUISE_VELOCITY, 
-            Constants.DEFAULT_TARGET_ACCELERATION);
+    protected double maxVelocity;
+    protected double maxAcceleration;
+
+    protected Trajectory trajectory;
+
+    /**
+     * Constructor using default constants.
+     */
+    public Path() {
+        this(DriveConstants.MAX_VELOCITY, DriveConstants.MAX_ACCELERATION);
     }
 
-    public Path(Point[] points, boolean reversed, double cruiseVel, double targetAccel) {
-        this.points = points;
-        this.reversed = reversed;
-        this.cruiseVel = cruiseVel;
-        this.targetAccel = targetAccel;
+    /**
+     * Initializes a path and generates a trajectory.
+     * 
+     * @param maxVelocity maximum velocity in m/s
+     * @param maxAcceleration maximum acceleration in m/s^2
+     */
+    public Path(double maxVelocity, double maxAcceleration) {
+        this.maxVelocity = maxVelocity;
+        this.maxAcceleration = maxAcceleration;
 
-        double startTime = Timer.getFPGATimestamp();
-        pathPoints = PathGenerator.generatePath(points, cruiseVel, 
-            targetAccel);
-        System.out.println(
-            "PathGenerator: It took " + (Timer.getFPGATimestamp() - startTime) + "s to generate a path!");
+        trajectory = generateTrajectory();
     }
 
-    public Point[] getPoints() {
-        return points;
-    }
+    /**
+     * This method should be overriden to generate the trajectory.
+     * 
+     * @return path trajectory
+     */
+    protected abstract Trajectory generateTrajectory();
 
-    public PathPoint[] getPathPoints() {
-        return pathPoints;
-    }
-
-    public boolean isReversed() {
-        return reversed;
-    }
-    
-    public double getCruiseVelocity() {
-        return cruiseVel;
-    }
-
-    public double getTargetAcceleration() {
-        return targetAccel;
+    /**
+     * Returns the stored trajectory in this path.
+     * 
+     * @return the pre-generated trajectory
+     */
+    public Trajectory getTrajectory() {
+        return trajectory;
     }
 }
