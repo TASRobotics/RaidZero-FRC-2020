@@ -228,7 +228,7 @@ public class Drive extends Submodule {
             profileFollower.update();
             outputClosedLoop = profileFollower.getOutput();
         }
-        
+
         SmartDashboard.putNumber("left inches", 
             EncoderUtils.ticksToInches(
                 leftLeader.getSensorCollection().getIntegratedSensorPosition(), 
@@ -367,6 +367,7 @@ public class Drive extends Submodule {
             outputClosedLoop = SetValueMotionProfile.Disable.value;
             profileFollower.reset();
 
+            profileFollower.setGearShift(currentGearShift);
             profileFollower.setReverse(path.isReversed());
             profileFollower.start(path.getPathPoints());
             controlState = ControlState.PATH_FOLLOWING;
