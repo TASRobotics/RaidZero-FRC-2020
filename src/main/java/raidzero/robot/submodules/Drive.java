@@ -16,6 +16,7 @@ import raidzero.robot.Constants;
 import raidzero.robot.wrappers.*;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.pathing.ProfileFollower;
+import raidzero.robot.utils.EncoderUtils;
 
 public class Drive extends Submodule {
 
@@ -44,7 +45,7 @@ public class Drive extends Submodule {
     private LazyTalonFX profilingLeader;
     private LazyTalonFX profilingFollower;
 
-    private InactiveDoubleSolenoid gearShift;
+    private InactiveDoubleSolenoid gearShiftSolenoid;
 
     private PigeonIMU pigeon;
 
@@ -57,6 +58,8 @@ public class Drive extends Submodule {
     // Tunable constants
     private double coef;
     private double exp;
+
+    private GearShift currentGearShift;
 
     // Output
     private double outputLeftDrive = 0.0;
@@ -86,7 +89,7 @@ public class Drive extends Submodule {
         configureMotorClosedLoop();
 
         // Gear shift
-        gearShift = new InactiveDoubleSolenoid(Constants.driveGearshiftForwardId, 
+        gearShiftSolenoid = new InactiveDoubleSolenoid(Constants.driveGearshiftForwardId, 
 			Constants.driveGearshiftReverseId);
 
         // Joystick-to-output mapping
@@ -225,10 +228,19 @@ public class Drive extends Submodule {
             profileFollower.update();
             outputClosedLoop = profileFollower.getOutput();
         }
+        
         SmartDashboard.putNumber("left inches", 
-            leftLeader.getSensorCollection().getIntegratedSensorPosition() / Constants.SENSOR_UNITS_PER_INCH);
+            EncoderUtils.ticksToInches(
+                leftLeader.getSensorCollection().getIntegratedSensorPosition(), 
+                currentGearShift
+            )
+        );
         SmartDashboard.putNumber("right inches", 
-            -rightLeader.getSensorCollection().getIntegratedSensorPosition() / Constants.SENSOR_UNITS_PER_INCH);
+            EncoderUtils.ticksToInches(
+                -rightLeader.getSensorCollection().getIntegratedSensorPosition(), 
+                currentGearShift
+            )
+        );
     }
 
     /**
@@ -324,7 +336,8 @@ public class Drive extends Submodule {
      * @param mode the gear shift
      */
     public void setGearShift(GearShift mode) {
-        gearShift.set(gearSolenoidValue(mode));
+        currentGearShift = mode;
+        gearShiftSolenoid.set(gearSolenoidValue(mode));
     }
 
     /**

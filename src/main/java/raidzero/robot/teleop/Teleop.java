@@ -46,10 +46,9 @@ public class Teleop {
          */
         //drive.tank(-controller.getY(Hand.kLeft), -controller.getY(Hand.kRight));
         drive.arcade(-controller.getY(Hand.kLeft), controller.getX(Hand.kRight));
-        if (controller.getBumper(Hand.kRight)) {
+        if (controller.getBumperPressed(Hand.kRight)) {
             drive.setGearShift(GearShift.HIGH);
         } else if (controller.getBumperReleased(Hand.kRight)) {
-            System.out.println("HELLO WORLD");
             drive.setGearShift(GearShift.LOW);
         }
         if (controller.getAButtonPressed()) {

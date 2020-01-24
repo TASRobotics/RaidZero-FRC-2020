@@ -11,6 +11,8 @@ import raidzero.pathgen.PathGenerator;
 import raidzero.pathgen.PathPoint;
 import raidzero.pathgen.Point;
 import raidzero.robot.Constants;
+import raidzero.robot.submodules.Drive.GearShift;
+import raidzero.robot.utils.EncoderUtils;
 
 public class ProfileFollower {
 
@@ -24,6 +26,8 @@ public class ProfileFollower {
     private BaseTalon leaderTalon;
 
     private boolean reversed;
+    private GearShift gearShift;
+
     private boolean initRun;
     private State state;
     private MotionProfileStatus status;
@@ -46,7 +50,9 @@ public class ProfileFollower {
         status = new MotionProfileStatus();
         notifier.startPeriodic(0.001 * Constants.TRANSMIT_PERIOD_MS);
         state = State.FillPoints;
+
         reversed = false;
+        gearShift = GearShift.LOW;
     }
 
     /**
@@ -135,6 +141,16 @@ public class ProfileFollower {
     }
 
     /**
+     * Changes the gear while running this path. Must be called
+     * before {@link #start(PathPoint[])}.
+     *
+     * @param gearShift gear of the drive
+     */
+    public void setGearShift(GearShift gearShift) {
+        this.gearShift = gearShift;
+    }
+
+    /**
      * Clears the Motion profile buffer and resets state info.
      */
     public void reset() {
@@ -161,8 +177,8 @@ public class ProfileFollower {
 
         for (int i = 0; i < waypoints.length; i++) {
             TrajectoryPoint tp = new TrajectoryPoint();
-            tp.position = waypoints[i].position * reverse * Constants.SENSOR_UNITS_PER_INCH;
-            tp.velocity = waypoints[i].velocity * reverse * Constants.SENSOR_UNITS_PER_INCH;
+            tp.position = reverse * EncoderUtils.inchesToTicks(waypoints[i].position, gearShift);
+            tp.velocity = reverse * EncoderUtils.inchesToTicks(waypoints[i].velocity, gearShift);
             // timeDur takes ms, but Pathpoint::time is in 100 ms
             tp.timeDur = (int) (waypoints[i].time * 100);
             // auxiliaryPos takes in units of 3600 ticks, but angle is in 360 degress
