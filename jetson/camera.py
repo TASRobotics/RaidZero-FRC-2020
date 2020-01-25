@@ -1,34 +1,48 @@
+import numpy as np
 import cv2
-import io
-import socket
-import struct
-import time
-import pickle
-import zlib
 
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect(('10.42.53.140', 5802))
-connection = client_socket.makefile('wb')
+camArray = []
+frameArray = []
+loss_factor = 16
 
-cam = cv2.VideoCapture(0)
+def capFrame(id):
+    ret, frame = camArray[id].read()
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR555)
+    frame = cv2.resize(frame, (256, 144))
+    frameArray[id] = frame
 
-cam.set(3, 320);
-cam.set(4, 240);
+def getFrame(id):
+    return frameArray[id]
 
-img_counter = 0
+def decCam(id):
+    return cv2.VideoCapture(id)
 
-encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
+def getLen():
+    return len(camArray)
 
-while True:
-    ret, frame = cam.read()
-    result, frame = cv2.imencode('.jpg', frame, encode_param)
-#    data = zlib.compress(pickle.dumps(frame, 0))
-    data = pickle.dumps(frame, 0)
-    size = len(data)
+def startCap():
+    global camArray
+    global frameArray
 
+    for i in range(4):
+        cap = decCam(int(i))
+        if cap is None or not cap.isOpened():
+            print('camera ', str(i), ' does not exist')
+        else:
+            print('declared')
+            camArray.append(cap)
+    print('Cameras added:',len(camArray))
+    frameArray = [None] * len(camArray)
 
-    print("{}: {}".format(img_counter, size))
-    client_socket.sendall(struct.pack(">L", size) + data)
-    img_counter += 1
-
-cam.release()
+if __name__ == '__main__':
+    startCap()
+    print('started cap')
+    while True:
+        for id in range(len(camArray)):
+            capFrame(id)
+            cv2.imshow('id:'+ str(id),getFrame(id))
+        if cv2.waitKey(10) & 0xFF == ord("q"): 
+            break
+    for cam in camArray:
+        cam.release()
+    cv2.destroyAllWindows()
