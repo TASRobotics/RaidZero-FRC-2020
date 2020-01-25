@@ -7,13 +7,10 @@ import sys
 
 sys.path.append('CLib/build')
 #Cython files
-import hello
-
-UDP_IP = ""
-UDP_PORT =''
+import driverCam
 
 def main():
-    hello.hi()
+    driverCam.camStart()
 
 if __name__ == '__main__':
     main()
