@@ -34,9 +34,9 @@ public class Robot extends TimedRobot {
         shooter,
         intake,
         hopper,
-        turret
+        turret,
         //wheelOfFortune
-        //climb
+        climb
     };
 
     @Override

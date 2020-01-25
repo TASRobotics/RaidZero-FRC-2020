@@ -2,6 +2,7 @@ package raidzero.robot.teleop;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import raidzero.robot.submodules.Climb;
 import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.Intake;
 import raidzero.robot.submodules.Shooter;
@@ -30,6 +31,7 @@ public class Teleop {
     private Intake sucky = Intake.getInstance();
     private Hopper move = Hopper.getInstance();
     private Turret turret = Turret.getInstance();
+    private Climb climb = Climb.getInstance();
     private static InactiveCompressor compressor = new InactiveCompressor();
 
     private XboxController p1 = new XboxController(0);
@@ -117,5 +119,13 @@ public class Teleop {
          * Turret
          */
         turret.rotateManual(p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft));
+
+        if(p2.getBButton()) {
+            climb.climb(-1);
+        } else if(p2.getXButton()) {
+            climb.climb(1);
+        } else {
+            climb.climb(0);
+        }
     }
 }
