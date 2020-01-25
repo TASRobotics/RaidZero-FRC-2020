@@ -14,12 +14,14 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import raidzero.robot.Constants;
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.wrappers.*;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.pathing.TrajectoryFollower;
 import raidzero.robot.utils.EncoderUtils;
+import raidzero.robot.utils.JoystickUtils;
 
 public class Drive extends Submodule {
 
@@ -264,12 +266,8 @@ public class Drive extends Submodule {
      * @param rightJoystick value of the right joystick in [-1, 1]
      */
     public void tank(double leftJoystick, double rightJoystick) {
-        if (Math.abs(leftJoystick) < Constants.JOYSTICK_DEADBAND) {
-            leftJoystick = 0.0;
-        }
-        if (Math.abs(rightJoystick) < Constants.JOYSTICK_DEADBAND) {
-            rightJoystick = 0.0;
-        }
+        leftJoystick = JoystickUtils.deadband(leftJoystick);
+        rightJoystick = JoystickUtils.deadband(rightJoystick);
         outputLeftDrive = Math.copySign(coef * Math.pow(leftJoystick, exp), leftJoystick);
         outputRightDrive = Math.copySign(coef * Math.pow(rightJoystick, exp), rightJoystick);
     }
@@ -306,14 +304,10 @@ public class Drive extends Submodule {
      * @param rightJoystick value of the right joystick in [-1, 1]
      */
     public void arcade(double leftJoystick, double rightJoystick) {
-        if (Math.abs(leftJoystick) < Constants.JOYSTICK_DEADBAND) {
-            leftJoystick = 0.0;
-        }
-        if (Math.abs(rightJoystick) < Constants.JOYSTICK_DEADBAND) {
-            rightJoystick = 0.0;
-        }
-        outputLeftDrive = leftJoystick + rightJoystick;
-        outputRightDrive = leftJoystick - rightJoystick;
+        leftJoystick = JoystickUtils.deadband(leftJoystick);
+        rightJoystick = JoystickUtils.deadband(rightJoystick);
+        outputLeftDrive = MathUtil.clamp(leftJoystick + rightJoystick, -1.0, 1.0);
+        outputRightDrive = MathUtil.clamp(leftJoystick - rightJoystick, -1.0, 1.0);
     }
 
     /**
