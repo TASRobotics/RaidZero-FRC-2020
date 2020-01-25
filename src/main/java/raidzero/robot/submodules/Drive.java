@@ -168,8 +168,9 @@ public class Drive extends Submodule {
      */
     @Override
     public void update(double timestamp) {
+        double pigeonHeading = pigeon.getHeading();
         odometry.update(
-            Rotation2d.fromDegrees(pigeon.getHeading()),
+            Rotation2d.fromDegrees(pigeonHeading),
             EncoderUtils.ticksToMeters(
                 leftLeader.getSensorCollection().getIntegratedSensorPosition(), 
                 currentGearShift
@@ -185,7 +186,7 @@ public class Drive extends Submodule {
                 getCurrentPose());
             tankVelocity(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
         }
-
+        SmartDashboard.putNumber("Heading", pigeonHeading);
         SmartDashboard.putString("Current Pose", odometry.getPoseMeters().toString());
     }
 

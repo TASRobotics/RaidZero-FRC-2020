@@ -1,8 +1,5 @@
 package raidzero.robot.pathing;
 
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Transform2d;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 
 import raidzero.robot.Constants.DriveConstants;

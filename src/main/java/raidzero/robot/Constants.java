@@ -48,8 +48,8 @@ public class Constants {
         public static final double PRIMARY_D = 0;
         public static final int PRIMARY_INT_ZONE = 50;
 
-        public static final double METERS_PER_INCH = Units.inchesToMeters(1);
-        public static final double INCHES_PER_METER = Units.metersToInches(1);
+        public static final double METERS_PER_INCH = 0.0254;
+        public static final double INCHES_PER_METER = 1.0 / 0.0254;
         public static final int SENSOR_UNITS_PER_ROTATION = 2048;
         public static final double SENSOR_UNITS_PER_INCH_LOW_GEAR =
             SENSOR_UNITS_PER_ROTATION * LOW_GEAR_RATIO / (WHEEL_DIAMETER_INCHES * Math.PI);
