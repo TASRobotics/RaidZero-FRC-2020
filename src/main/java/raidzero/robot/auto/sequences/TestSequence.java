@@ -20,7 +20,7 @@ public class TestSequence extends AutoSequence {
     public void sequence() {
         addAction(new SeriesAction(
             Arrays.asList(
-                new DrivePath(PATH)
+                new DrivePath(PATH, true)
             )
         ));
         System.out.println("Added actions.");

@@ -171,7 +171,7 @@ public class Drive extends Submodule {
     @Override
     public void update(double timestamp) {
         double pigeonHeading = pigeon.getHeading();
-        odometry.update(
+        Pose2d currentPose = odometry.update(
             Rotation2d.fromDegrees(pigeonHeading),
             EncoderUtils.ticksToMeters(
                 leftLeader.getSensorCollection().getIntegratedSensorPosition(), 
@@ -184,12 +184,10 @@ public class Drive extends Submodule {
         );
         if (controlState == ControlState.PATH_FOLLOWING) {
             // Update trajectory follower here
-            DifferentialDriveWheelSpeeds wheelSpeeds = trajectoryFollower.update(
-                getCurrentPose());
-            tankVelocity(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
+            tankVelocity(trajectoryFollower.update(currentPose));
         }
         SmartDashboard.putNumber("Heading", pigeonHeading);
-        SmartDashboard.putString("Current Pose", odometry.getPoseMeters().toString());
+        SmartDashboard.putString("Current Pose", currentPose.toString());
     }
 
     /**
@@ -245,7 +243,7 @@ public class Drive extends Submodule {
     }
 
     /**
-     * Resets odometry pose & zeros all sensors.
+     * Resets odometry pose.
      */
     public void resetOdometry(Pose2d pose) {
         odometry.resetPosition(
@@ -253,7 +251,7 @@ public class Drive extends Submodule {
     }
 
     /**
-     * Switches the base to open-loop control mode.
+     * Switches the drive to open-loop control mode.
      */
     public void setOpenLoop() {
         controlState = ControlState.OPEN_LOOP;
@@ -270,6 +268,15 @@ public class Drive extends Submodule {
         rightJoystick = JoystickUtils.deadband(rightJoystick);
         outputLeftDrive = Math.copySign(coef * Math.pow(leftJoystick, exp), leftJoystick);
         outputRightDrive = Math.copySign(coef * Math.pow(rightJoystick, exp), rightJoystick);
+    }
+
+    /**
+     * Tank drive mode for closed-loop velocity control (trajectory).
+     * 
+     * @param speeds wheel speeds in m/s
+     */
+    public void tankVelocity(DifferentialDriveWheelSpeeds speeds) {
+        tankVelocity(speeds.leftMetersPerSecond, speeds.rightMetersPerSecond);
     }
 
     /**
@@ -359,14 +366,10 @@ public class Drive extends Submodule {
      */
     public void setDrivePath(Path path) {
         if (trajectoryFollower != null) {
-            // Stops & resets everything
+            // Stops the drive
             stop();
-            zero();
 
             Trajectory trajectory = path.getTrajectory();
-
-            // Set the odometry pose to the start of the trajectory
-            resetOdometry(trajectory.getInitialPose());
 
             // Reset & start trajectory follower
             trajectoryFollower.reset();

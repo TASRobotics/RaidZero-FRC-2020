@@ -42,8 +42,9 @@ public class Constants {
         public static final int PID_PRIMARY_SLOT = 0;
         public static final double PIGEON_SCALE = 3600.0 / 8192.0;
 
-        public static final double PRIMARY_F = 0.0;//0.75 * 1023.0 / 20348;
-        public static final double PRIMARY_P = 0.01;
+        // kF should stay at 0 since the drive is using an arbitrary feedforward term
+        public static final double PRIMARY_F = 0.0;
+        public static final double PRIMARY_P = 0;
         public static final double PRIMARY_I = 0;
         public static final double PRIMARY_D = 0;
         public static final int PRIMARY_INT_ZONE = 50;
