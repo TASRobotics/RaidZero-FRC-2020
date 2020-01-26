@@ -293,10 +293,10 @@ public class Drive extends Submodule {
 
         double leftAcceleration = (leftVelocity - EncoderUtils.ticksToMeters(
             leftLeader.getSelectedSensorPosition(), currentGearShift))
-                / DriveConstants.LOOP_PERIOD_MS;
+                / DriveConstants.LOOP_PERIOD_SECONDS;
         double rightAcceleration = (rightVelocity - EncoderUtils.ticksToMeters(
             rightLeader.getSelectedSensorVelocity(), currentGearShift))
-                / DriveConstants.LOOP_PERIOD_MS;
+                / DriveConstants.LOOP_PERIOD_SECONDS;
         
         outputLeftFeedforward = DriveConstants.FEED_FORWARD.calculate(
             leftVelocity, leftAcceleration);

@@ -3,7 +3,6 @@ package raidzero.robot;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
-import edu.wpi.first.wpilibj.util.Units;
 
 public class Constants {
 
@@ -58,6 +57,7 @@ public class Constants {
             SENSOR_UNITS_PER_ROTATION * HIGH_GEAR_RATIO / (WHEEL_DIAMETER_INCHES * Math.PI);
 
         public static final double LOOP_PERIOD_MS = 20;
+        public static final double LOOP_PERIOD_SECONDS = LOOP_PERIOD_MS * 0.001;
 
         /**
          * Characterization constants
