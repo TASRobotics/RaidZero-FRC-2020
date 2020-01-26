@@ -2,6 +2,7 @@ package raidzero.robot.auto.actions;
 
 import raidzero.robot.pathing.Path;
 import raidzero.robot.submodules.Drive;
+import raidzero.robot.submodules.Drive.GearShift;
 
 /**
  * Action for following a path.
@@ -62,6 +63,7 @@ public class DrivePath implements Action {
              */ 
             drive.resetOdometry(path.getTrajectory().getInitialPose());
         }
+        drive.setGearShift(GearShift.LOW);
         drive.setDrivePath(path);
     }
 }
