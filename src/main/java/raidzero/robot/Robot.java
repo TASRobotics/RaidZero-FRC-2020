@@ -1,5 +1,6 @@
 package raidzero.robot;
 
+import io.github.oblarg.oblog.Logger;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import raidzero.robot.auto.AutoRunner;
@@ -35,6 +36,9 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
+        // Enable Shuffleboard logging
+        Logger.configureLoggingAndConfig(this, false);
+
         // Register all submodules here
         SubmoduleManager.getInstance().setSubmodules(
             moduleDrive,
@@ -44,6 +48,15 @@ public class Robot extends TimedRobot {
             moduleIntake,
             moduleLimelight
         );
+    }
+
+    /**
+     * Runs every 0.02s regardless of the competition mode (50 Hz).
+     */
+    @Override
+    public void robotPeriodic() {
+        // Send the logger entries
+        Logger.updateEntries();
     }
 
     /**

@@ -44,6 +44,9 @@ def includeDesktopSupport = false
 allprojects {
     repositories {
         mavenCentral()
+        maven {
+            url 'https://jitpack.io'
+        }
     }
 }
 
@@ -57,6 +60,8 @@ dependencies {
     implementation wpi.deps.vendor.java()
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
+
+    implementation 'com.github.Oblarg.Oblog:lib:3.1.0'
 
     compile project(':pathgen')
     testImplementation 'junit:junit:4.12'
