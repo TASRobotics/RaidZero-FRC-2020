@@ -133,6 +133,7 @@ public class Drive extends Submodule {
         talonConfig.slot0.kP = DriveConstants.PRIMARY_P;
         talonConfig.slot0.kI = DriveConstants.PRIMARY_I;
         talonConfig.slot0.kD = DriveConstants.PRIMARY_D;
+        talonConfig.slot0.kF = 0.0;
         talonConfig.slot0.integralZone = DriveConstants.PRIMARY_INT_ZONE;
         talonConfig.slot0.closedLoopPeakOutput = 1.0;
         talonConfig.openloopRamp = 0.25;
@@ -186,6 +187,9 @@ public class Drive extends Submodule {
         }
         SmartDashboard.putNumber("Heading", pigeonHeading);
         SmartDashboard.putString("Current Pose", currentPose.toString());
+
+        SmartDashboard.putNumber("Left Encoder", leftLeader.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Right Encoder", rightLeader.getSelectedSensorPosition());
     }
 
     /**
