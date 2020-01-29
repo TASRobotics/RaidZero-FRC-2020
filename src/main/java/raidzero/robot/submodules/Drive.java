@@ -76,17 +76,17 @@ public class Drive extends Submodule {
     private Drive() {
         // Motors
         leftLeader = new LazyTalonFX(Constants.driveLeftLeaderId);
-        configureMotor(leftLeader, false, false);
+        configureMotor(leftLeader, false);
         
         leftFollower = new LazyTalonFX(Constants.driveLeftFollowerId);
-        configureMotor(leftFollower, false, false);
+        configureMotor(leftFollower, false);
         leftFollower.follow(leftLeader);
 
         rightLeader = new LazyTalonFX(Constants.driveRightLeaderId);
-        configureMotor(rightLeader, true, true);
+        configureMotor(rightLeader, true);
         
         rightFollower = new LazyTalonFX(Constants.driveRightFollowerId);
-        configureMotor(rightFollower, true, true);
+        configureMotor(rightFollower, true);
         rightFollower.follow(rightLeader);
 
         // Pigeon IMU
@@ -116,13 +116,11 @@ public class Drive extends Submodule {
      * 
      * @param motor the motor controller to configure
      * @param invertMotor whether to invert the motor output
-     * @param invertSensorPhase whether to invert the sensor output
      */
-    private void configureMotor(LazyTalonFX motor, boolean invertMotor, boolean invertSensorPhase) {
+    private void configureMotor(LazyTalonFX motor, boolean invertMotor) {
         motor.configFactoryDefault();
         motor.setNeutralMode(NeutralMode.Coast);
         motor.setInverted(invertMotor);
-        motor.setSensorPhase(invertSensorPhase);
     }
 
     /**
