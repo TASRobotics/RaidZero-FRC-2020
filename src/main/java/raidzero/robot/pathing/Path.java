@@ -6,6 +6,7 @@ import raidzero.pathgen.PathGenerator;
 import raidzero.pathgen.PathPoint;
 import raidzero.pathgen.Point;
 import raidzero.robot.Constants;
+import raidzero.robot.Constants.DriveConstants;
 
 public class Path {
 
@@ -16,8 +17,8 @@ public class Path {
     private boolean reversed;
 
     public Path(Point[] points, boolean reversed) {
-        this(points, reversed, Constants.DEFAULT_CRUISE_VELOCITY, 
-            Constants.DEFAULT_TARGET_ACCELERATION);
+        this(points, reversed, DriveConstants.DEFAULT_CRUISE_VELOCITY, 
+        DriveConstants.DEFAULT_TARGET_ACCELERATION);
     }
 
     public Path(Point[] points, boolean reversed, double cruiseVel, double targetAccel) {

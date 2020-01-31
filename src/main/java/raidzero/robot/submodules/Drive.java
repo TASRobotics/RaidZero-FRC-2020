@@ -16,6 +16,7 @@ import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidzero.robot.Constants;
+import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.wrappers.*;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.pathing.ProfileFollower;
@@ -140,25 +141,25 @@ public class Drive extends Submodule {
         leaderConfig.remoteFilter1.remoteSensorDeviceID = pigeon.getDeviceID();
         leaderConfig.remoteFilter1.remoteSensorSource = RemoteSensorSource.Pigeon_Yaw;
         leaderConfig.auxiliaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor1;
-        leaderConfig.auxiliaryPID.selectedFeedbackCoefficient = Constants.PIGEON_SCALE;
-        leaderConfig.auxPIDPolarity = Constants.AUX_POLARITY;
+        leaderConfig.auxiliaryPID.selectedFeedbackCoefficient = DriveConstants.PIGEON_SCALE;
+        leaderConfig.auxPIDPolarity = DriveConstants.AUX_POLARITY;
 
         // PIDF Gains for the distance part
-        leaderConfig.slot0.kP = Constants.PRIMARY_P;
-        leaderConfig.slot0.kI = Constants.PRIMARY_I;
-        leaderConfig.slot0.kD = Constants.PRIMARY_D;
-        leaderConfig.slot0.kF = Constants.PRIMARY_F;
-        leaderConfig.slot0.integralZone = Constants.PRIMARY_INT_ZONE;
+        leaderConfig.slot0.kP = DriveConstants.PRIMARY_P;
+        leaderConfig.slot0.kI = DriveConstants.PRIMARY_I;
+        leaderConfig.slot0.kD = DriveConstants.PRIMARY_D;
+        leaderConfig.slot0.kF = DriveConstants.PRIMARY_F;
+        leaderConfig.slot0.integralZone = DriveConstants.PRIMARY_INT_ZONE;
 
         // PIDF Gains for turning part
-        leaderConfig.slot1.kP = Constants.AUX_P;
-        leaderConfig.slot1.kI = Constants.AUX_I;
-        leaderConfig.slot1.kD = Constants.AUX_D;
-        leaderConfig.slot1.kF = Constants.AUX_F;
-        leaderConfig.slot1.integralZone = Constants.AUX_INT_ZONE;
+        leaderConfig.slot1.kP = DriveConstants.AUX_P;
+        leaderConfig.slot1.kI = DriveConstants.AUX_I;
+        leaderConfig.slot1.kD = DriveConstants.AUX_D;
+        leaderConfig.slot1.kF = DriveConstants.AUX_F;
+        leaderConfig.slot1.integralZone = DriveConstants.AUX_INT_ZONE;
 
-        leaderConfig.neutralDeadband = Constants.DRIVE_NEUTRAL_DEADBAND;
-        followerConfig.neutralDeadband = Constants.DRIVE_NEUTRAL_DEADBAND;
+        leaderConfig.neutralDeadband = DriveConstants.DRIVE_NEUTRAL_DEADBAND;
+        followerConfig.neutralDeadband = DriveConstants.DRIVE_NEUTRAL_DEADBAND;
 
         // Apply all settings
         profilingLeader.configAllSettings(leaderConfig);
@@ -172,8 +173,8 @@ public class Drive extends Submodule {
         profilingFollower.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.TIMEOUT_MS);
         pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 5, Constants.TIMEOUT_MS);
 
-        profilingLeader.changeMotionControlFramePeriod(Constants.TRANSMIT_PERIOD_MS);
-        profilingLeader.configMotionProfileTrajectoryPeriod(Constants.BASE_TRAJ_PERIOD_MS,
+        profilingLeader.changeMotionControlFramePeriod(DriveConstants.TRANSMIT_PERIOD_MS);
+        profilingLeader.configMotionProfileTrajectoryPeriod(DriveConstants.BASE_TRAJ_PERIOD_MS,
                                                             Constants.TIMEOUT_MS);
 
         mpFollower = new ProfileFollower(profilingLeader);
@@ -270,9 +271,9 @@ public class Drive extends Submodule {
             outputClosedLoop = mpFollower.getOutput();
         }
         SmartDashboard.putNumber("left inches", 
-            leftLeader.getSensorCollection().getIntegratedSensorPosition() / Constants.SENSOR_UNITS_PER_INCH);
+            leftLeader.getSensorCollection().getIntegratedSensorPosition() / DriveConstants.SENSOR_UNITS_PER_INCH);
         SmartDashboard.putNumber("right inches", 
-            -rightLeader.getSensorCollection().getIntegratedSensorPosition() / Constants.SENSOR_UNITS_PER_INCH);
+            -rightLeader.getSensorCollection().getIntegratedSensorPosition() / DriveConstants.SENSOR_UNITS_PER_INCH);
     }
 
     /**
