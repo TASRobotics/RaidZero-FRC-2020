@@ -1,5 +1,7 @@
 package raidzero.robot;
 
+import com.ctre.phoenix.motorcontrol.InvertType;
+
 public class Constants {
 
     /**
@@ -10,6 +12,9 @@ public class Constants {
     public static final int driveLeftFollowerId = 3;
     public static final int driveRightLeaderId = 0;
     public static final int driveRightFollowerId = 2;
+
+    public static final InvertType driveLeftInvert = InvertType.None;
+    public static final InvertType driveRightInvert = InvertType.InvertMotorOutput;
 
     public static final double HIGH_GEAR_RATIO = 9.98;
     public static final double LOW_GEAR_RATIO = 18.43;
@@ -33,8 +38,7 @@ public class Constants {
     public static final int hopperId = 5;
 
     // Closed-loop constants
-    public static final int REMOTE_0 = 0;
-    public static final int REMOTE_1 = 1;
+    public static final double DRIVE_NEUTRAL_DEADBAND = 0.001;
     public static final int PID_PRIMARY_SLOT = 0;
     public static final int PID_AUX_SLOT = 1;
     public static final int TIMEOUT_MS = 10;
@@ -57,7 +61,6 @@ public class Constants {
     public static final double SENSOR_UNITS_PER_INCH = 
         2048 * LOW_GEAR_RATIO / (WHEEL_DIAMETER_INCHES * Math.PI);
     public static final int MIN_POINTS_IN_TALON = 10;
-    public static final int CLOSED_LOOP_TIME_MS = 1;
     public static final int TRANSMIT_PERIOD_MS = 3;
 
     public static final double DEFAULT_CRUISE_VELOCITY = 4;

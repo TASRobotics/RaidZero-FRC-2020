@@ -4,11 +4,14 @@ import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -52,7 +55,7 @@ public class Drive extends Submodule {
     private ControlState controlState;
 
     // Profile follower
-    private ProfileFollower profileFollower;
+    private ProfileFollower mpFollower;
     
     // Tunable constants
     private double coef;
@@ -66,24 +69,29 @@ public class Drive extends Submodule {
     private Drive() {
         // Motors
         leftLeader = new LazyTalonFX(Constants.driveLeftLeaderId);
-        configureMotor(leftLeader, false);
+        configureMotor(leftLeader, Constants.driveLeftInvert);
         
         leftFollower = new LazyTalonFX(Constants.driveLeftFollowerId);
-        configureMotor(leftFollower, false);
+        configureMotor(leftFollower, Constants.driveLeftInvert);
         leftFollower.follow(leftLeader);
 
         rightLeader = new LazyTalonFX(Constants.driveRightLeaderId);
-        configureMotor(rightLeader, true);
+        configureMotor(rightLeader, Constants.driveRightInvert);
         
         rightFollower = new LazyTalonFX(Constants.driveRightFollowerId);
-        configureMotor(rightFollower, true);
+        configureMotor(rightFollower, Constants.driveRightInvert);
         rightFollower.follow(rightLeader);
 
         // Pigeon IMU
         pigeon = new PigeonIMU(Constants.pigeonId);
+        pigeon.configFactoryDefault();
+
+        // Setup the profiling leader & follower
+        profilingLeader = leftLeader;
+        profilingFollower = rightLeader;
 
         // Must be called after the pigeon is initialized
-        configureMotorClosedLoop();
+        configureMotorClosedLoop(Constants.driveLeftInvert);
 
         // Gear shift
         gearShift = new InactiveDoubleSolenoid(Constants.driveGearshiftForwardId, 
@@ -101,99 +109,137 @@ public class Drive extends Submodule {
      * Configures a motor controller.
      * 
      * @param motor the motor controller to configure
-     * @param invertMotor whether to invert the motor output
+     * @param inversion whether to invert the motor output
      */
-    private void configureMotor(LazyTalonFX motor, boolean invertMotor) {
+    private void configureMotor(LazyTalonFX motor, InvertType inversion) {
         motor.configFactoryDefault();
         motor.setNeutralMode(NeutralMode.Coast);
-        motor.setInverted(invertMotor);
+        motor.setInverted(inversion);
     }
 
     /**
      * Configures the motor controllers for closed-loop control.
+     * 
+     * @param leaderInversion whether the profiling leader is inverted or not
      */
-    private void configureMotorClosedLoop() {
-        profilingLeader = leftLeader;
-        profilingFollower = rightLeader;
+    private void configureMotorClosedLoop(InvertType leaderInversion) {
+        TalonFXConfiguration leaderConfig = new TalonFXConfiguration();
+        TalonFXConfiguration followerConfig = new TalonFXConfiguration();
 
-        // Use the integrated sensors on the falcons as feedback
-        profilingLeader.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor,
-                                                     Constants.PID_PRIMARY_SLOT, 
-                                                     Constants.TIMEOUT_MS);
+        // Use the integrated encoder on the falcons as feedback
+        followerConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
 
         // Configure the follower encoder as a remote sensor for the leader
-        profilingLeader.configRemoteFeedbackFilter(profilingFollower.getDeviceID(),
-                                                   RemoteSensorSource.TalonSRX_SelectedSensor,	
-                                                   Constants.REMOTE_0, 
-                                                   Constants.TIMEOUT_MS);
-        
+        leaderConfig.remoteFilter0.remoteSensorDeviceID = profilingFollower.getDeviceID();
+        leaderConfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.TalonFX_SelectedSensor;
+
+        // Configure robot distance math
+        setRobotDistanceConfigs(leaderInversion, leaderConfig);
+
         // Configure the Pigeon as the other Remote Slot on the leader
-        profilingLeader.configRemoteFeedbackFilter(pigeon.getDeviceID(),
-                                                   RemoteSensorSource.Pigeon_Yaw, 
-                                                   Constants.REMOTE_1,
-                                                   Constants.TIMEOUT_MS);
-
-        // Setup Sum signal to be used for distance
-        profilingLeader.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0,
-                                         Constants.TIMEOUT_MS);
-        profilingLeader.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.IntegratedSensor,
-                                         Constants.TIMEOUT_MS);
-
-        // Configure Sum [Sum of both IntegratedSensor] to be used for Primary PID Index
-        profilingLeader.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, 
-                                                     Constants.PID_PRIMARY_SLOT, 
-                                                     Constants.TIMEOUT_MS);
-
-        // Scale Feedback by 0.5 to half the sum of distance
-        profilingLeader.configSelectedFeedbackCoefficient(0.5, 
-                                                          Constants.PID_PRIMARY_SLOT, 
-                                                          Constants.TIMEOUT_MS);
-
-        // Configure Pigeon's Yaw to be used for Auxiliary PID Index
-        profilingLeader.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, 
-                                                     Constants.PID_AUX_SLOT, 
-                                                     Constants.TIMEOUT_MS);
-
-        // Scale the Feedback Sensor using a coefficient (Configured for 360 units of resolution)
-        profilingLeader.configSelectedFeedbackCoefficient(Constants.PIGEON_SCALE, 
-                                                          Constants.PID_AUX_SLOT, 
-                                                          Constants.TIMEOUT_MS);
-
-        // Set status frame periods to ensure we don't have stale data
-        profilingLeader.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20);
-        profilingLeader.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
-        profilingLeader.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20);
-        profilingLeader.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20);
-        profilingFollower.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5);
+        leaderConfig.remoteFilter1.remoteSensorDeviceID = pigeon.getDeviceID();
+        leaderConfig.remoteFilter1.remoteSensorSource = RemoteSensorSource.Pigeon_Yaw;
+        leaderConfig.auxiliaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor1;
+        leaderConfig.auxiliaryPID.selectedFeedbackCoefficient = Constants.PIGEON_SCALE;
+        leaderConfig.auxPIDPolarity = Constants.AUX_POLARITY;
 
         // PIDF Gains for the distance part
-        profilingLeader.config_kP(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_P);
-        profilingLeader.config_kI(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_I);
-        profilingLeader.config_kD(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_D);
-        profilingLeader.config_kF(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_F);
-        profilingLeader.config_IntegralZone(Constants.PID_PRIMARY_SLOT, Constants.PRIMARY_INT_ZONE);
+        leaderConfig.slot0.kP = Constants.PRIMARY_P;
+        leaderConfig.slot0.kI = Constants.PRIMARY_I;
+        leaderConfig.slot0.kD = Constants.PRIMARY_D;
+        leaderConfig.slot0.kF = Constants.PRIMARY_F;
+        leaderConfig.slot0.integralZone = Constants.PRIMARY_INT_ZONE;
 
         // PIDF Gains for turning part
-        profilingLeader.config_kP(Constants.PID_AUX_SLOT, Constants.AUX_P);
-        profilingLeader.config_kI(Constants.PID_AUX_SLOT, Constants.AUX_I);
-        profilingLeader.config_kD(Constants.PID_AUX_SLOT, Constants.AUX_D);
-        profilingLeader.config_kF(Constants.PID_AUX_SLOT, Constants.AUX_F);
-        profilingLeader.config_IntegralZone(Constants.PID_AUX_SLOT, Constants.AUX_INT_ZONE);
+        leaderConfig.slot1.kP = Constants.AUX_P;
+        leaderConfig.slot1.kI = Constants.AUX_I;
+        leaderConfig.slot1.kD = Constants.AUX_D;
+        leaderConfig.slot1.kF = Constants.AUX_F;
+        leaderConfig.slot1.integralZone = Constants.AUX_INT_ZONE;
 
-        // Set the period of the closed loops to be 1 ms
-        profilingLeader.configClosedLoopPeriod(Constants.PID_PRIMARY_SLOT, 
-                                               Constants.CLOSED_LOOP_TIME_MS,
-                                               Constants.TIMEOUT_MS);
-        profilingLeader.configClosedLoopPeriod(Constants.PID_AUX_SLOT, 
-                                               Constants.CLOSED_LOOP_TIME_MS,
-                                               Constants.TIMEOUT_MS);
-        profilingLeader.configAuxPIDPolarity(Constants.AUX_POLARITY, Constants.TIMEOUT_MS);
+        leaderConfig.neutralDeadband = Constants.DRIVE_NEUTRAL_DEADBAND;
+        followerConfig.neutralDeadband = Constants.DRIVE_NEUTRAL_DEADBAND;
+
+        // Apply all settings
+        profilingLeader.configAllSettings(leaderConfig);
+        profilingFollower.configAllSettings(followerConfig);
+
+        // Set status frame periods to ensure we don't have stale data
+        profilingLeader.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.TIMEOUT_MS);
+        profilingLeader.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.TIMEOUT_MS);
+        profilingLeader.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.TIMEOUT_MS);
+        profilingLeader.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.TIMEOUT_MS);
+        profilingFollower.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.TIMEOUT_MS);
+        pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 5, Constants.TIMEOUT_MS);
 
         profilingLeader.changeMotionControlFramePeriod(Constants.TRANSMIT_PERIOD_MS);
         profilingLeader.configMotionProfileTrajectoryPeriod(Constants.BASE_TRAJ_PERIOD_MS,
                                                             Constants.TIMEOUT_MS);
 
-        profileFollower = new ProfileFollower(profilingLeader);
+        mpFollower = new ProfileFollower(profilingLeader);
+    }
+
+    /** 
+	 * Determines if SensorSum or SensorDiff should be used 
+	 * for combining left/right sensors into Robot Distance.  
+	 * 
+	 * Assumes Aux Position is set as Remote Sensor 0.  
+	 * 
+	 * configAllSettings must still be called on the master config
+	 * after this function modifies the config values. 
+	 * 
+	 * @param masterInvertType Invert of the Master Talon
+	 * @param masterConfig Configuration object to fill
+	 */
+    private void setRobotDistanceConfigs(InvertType masterInvertType, TalonFXConfiguration masterConfig) {
+		/**
+		 * Determine if we need a Sum or Difference.
+		 * 
+		 * The auxiliary Talon FX will always be positive
+		 * in the forward direction because it's a selected sensor
+		 * over the CAN bus.
+		 * 
+		 * The master's native integrated sensor may not always be positive when forward because
+		 * sensor phase is only applied to *Selected Sensors*, not native
+		 * sensor sources.  And we need the native to be combined with the 
+		 * aux (other side's) distance into a single robot distance.
+		 */
+
+		/* THIS FUNCTION should not need to be modified. 
+		   This setup will work regardless of whether the master
+		   is on the Right or Left side since it only deals with
+		   distance magnitude.  */
+
+		/* Check if we're inverted */
+		if (masterInvertType == InvertType.InvertMotorOutput) {
+			/* 
+				If master is inverted, that means the integrated sensor
+				will be negative in the forward direction.
+				If master is inverted, the final sum/diff result will also be inverted.
+				This is how Talon FX corrects the sensor phase when inverting 
+				the motor direction.  This inversion applies to the *Selected Sensor*,
+				not the native value.
+				Will a sensor sum or difference give us a positive total magnitude?
+				Remember the Master is one side of your drivetrain distance and 
+				Auxiliary is the other side's distance.
+					Phase | Term 0   |   Term 1  | Result
+				Sum:  -1 *((-)Master + (+)Aux   )| NOT OK, will cancel each other out
+				Diff: -1 *((-)Master - (+)Aux   )| OK - This is what we want, magnitude will be correct and positive.
+				Diff: -1 *((+)Aux    - (-)Master)| NOT OK, magnitude will be correct but negative
+			*/
+			masterConfig.diff0Term = FeedbackDevice.IntegratedSensor; // Local Integrated Sensor
+			masterConfig.diff1Term = FeedbackDevice.RemoteSensor0;    // Aux Selected Sensor
+			masterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorDifference; // Diff0 - Diff1
+		} else {
+			// Master is not inverted, both sides are positive so we can sum them.
+			masterConfig.sum0Term = FeedbackDevice.RemoteSensor0;    // Aux Selected Sensor
+			masterConfig.sum1Term = FeedbackDevice.IntegratedSensor; // Local IntegratedSensor
+			masterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorSum; // Sum0 + Sum1
+		}
+
+		/* Since the Distance is the sum of the two sides, divide by 2 so the total isn't double
+		   the real-world value */
+		masterConfig.primaryPID.selectedFeedbackCoefficient = 0.5;
     }
 
     /**
@@ -220,8 +266,8 @@ public class Drive extends Submodule {
     @Override
     public void update(double timestamp) {
         if (controlState == ControlState.PATH_FOLLOWING) {
-            profileFollower.update();
-            outputClosedLoop = profileFollower.getOutput();
+            mpFollower.update();
+            outputClosedLoop = mpFollower.getOutput();
         }
         SmartDashboard.putNumber("left inches", 
             leftLeader.getSensorCollection().getIntegratedSensorPosition() / Constants.SENSOR_UNITS_PER_INCH);
@@ -345,15 +391,15 @@ public class Drive extends Submodule {
      * @param path the path to follow
      */
     public void setDrivePath(Path path) {
-        if (profileFollower != null) {
+        if (mpFollower != null) {
             // Stops & resets everything
             stop();
             zero();
             outputClosedLoop = SetValueMotionProfile.Disable.value;
-            profileFollower.reset();
+            mpFollower.reset();
 
-            profileFollower.setReverse(path.isReversed());
-            profileFollower.start(path.getPathPoints());
+            mpFollower.setReverse(path.isReversed());
+            mpFollower.start(path.getPathPoints());
             controlState = ControlState.PATH_FOLLOWING;
         }
     }
@@ -364,9 +410,9 @@ public class Drive extends Submodule {
      * @return if the drive is finished pathing
      */
     public boolean isFinishedWithPath() {
-        if (profileFollower == null || controlState != ControlState.PATH_FOLLOWING) {
+        if (mpFollower == null || controlState != ControlState.PATH_FOLLOWING) {
             return false;
         }
-        return profileFollower.isFinished();
+        return mpFollower.isFinished();
     }
 }
