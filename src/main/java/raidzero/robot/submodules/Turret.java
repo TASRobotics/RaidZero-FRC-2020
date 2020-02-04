@@ -36,6 +36,7 @@ public class Turret extends Submodule {
     @Override
     public void init() {
         motor = new LazyTalonSRX(Constants.puppy);
+        motor.setInverted(true);
 
         motor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
             LimitSwitchNormal.NormallyClosed);
@@ -49,7 +50,7 @@ public class Turret extends Submodule {
 
     @Override
     public void run() {
-        switch(mode){
+        switch (mode){
             case pow:
                 motor.set(ControlMode.PercentOutput,speed);
                 break;
@@ -57,10 +58,10 @@ public class Turret extends Submodule {
                 motor.set(ControlMode.MotionMagic, pos);
                 break;
         }
-        if(motor.getSensorCollection().isRevLimitSwitchClosed()) {
+        if (motor.getSensorCollection().isRevLimitSwitchClosed()) {
             zero();
         }
-        System.out.println(motor.getSensorCollection().getQuadraturePosition());
+        //System.out.println(motor.getSensorCollection().getQuadraturePosition());
     }
 
     @Override
@@ -79,6 +80,6 @@ public class Turret extends Submodule {
     }
 
     public void rotateManual(double pow) {
-        speed = pow;
+        speed = pow * 0.25;
     }
 }
