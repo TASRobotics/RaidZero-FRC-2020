@@ -12,7 +12,7 @@ HOST = '192.168.66.16'
 #HOST = '127.0.0.1'
 BASE_PORT = 5802
 socks = [None] * 4
-cap = cv2.VideoCapture(0)
+#cap = cv2.VideoCapture(0)
 
 
 
@@ -22,19 +22,18 @@ def openSocket():
         socks[i] = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         socks[i].settimeout(60)
 
-def sendData(id):
+def sendData(id, out):
     global socks
-    global cap
-    ret, fm = cap.read() #camera.getFrame(id)
-    cv2.imshow('fr', fm)
-    cv2.waitKey(1)
+    #ret, fm = cap.read() #camera.getFrame(id)
+    #cv2.imshow('fr', fm)
+    #cv2.waitKey(1)
     
-    frame = cv2.resize(fm, (256, 144))
-    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR555)
-    frame = np.reshape(frame, (12, -1))
-    out = [None] * 12
-    for i in range(12):
-        out[i] = bytes(str(i), 'utf8') + frame[i].tostring()
+    #frame = cv2.resize(fm, (256, 144))
+    #frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR555)
+    #frame = np.reshape(frame, (12, -1))
+    #out = [None] * 12
+    #for i in range(12):
+    #    out[i] = bytes(str(i), 'utf8') + frame[i].tostring()
 
     for i in range(12):
         socks[id].sendto( out[i],(HOST, BASE_PORT + id) )
