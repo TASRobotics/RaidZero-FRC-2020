@@ -2,14 +2,16 @@ package raidzero.robot.submodules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
+import raidzero.robot.Constants;
 import raidzero.robot.wrappers.LazyTalonSRX;
 
 public class Climb extends Submodule {
 
-    private static LazyTalonSRX motor;
     private static Climb instance = null;
 
-    private static double power = 0.0;
+    private LazyTalonSRX climbMotor;
+
+    private double outputOpenLoop = 0.0;
 
     public static Climb getInstance() {
         if (instance == null) {
@@ -18,28 +20,26 @@ public class Climb extends Submodule {
         return instance;
     }
 
-    private Climb() {
-    }
-    
-    @Override
-    public void init() {
-        motor = new LazyTalonSRX(12);
-    }
+    private Climb() {}
 
     @Override
-    public void update(double timestamp) {
+    public void init() {
+        climbMotor = new LazyTalonSRX(Constants.climbMotorId);
+        climbMotor.configFactoryDefault();
     }
 
     @Override
     public void run() {
-        motor.set(ControlMode.PercentOutput, power);
+        climbMotor.set(ControlMode.PercentOutput, outputOpenLoop);
     }
 
     @Override
     public void stop() {
+        outputOpenLoop = 0;
+        climbMotor.set(ControlMode.PercentOutput, 0);
     }
 
-    public void climb(double speed) {
-        power = speed;
+    public void climb(double input) {
+        outputOpenLoop = input;
     }
 }

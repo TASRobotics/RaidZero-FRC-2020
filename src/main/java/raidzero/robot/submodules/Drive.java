@@ -8,6 +8,7 @@ import raidzero.robot.wrappers.InactiveDoubleSolenoid;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import raidzero.robot.Constants;
+
 public class Drive extends Submodule {
 
     public static enum GearShift {
@@ -35,27 +36,25 @@ public class Drive extends Submodule {
         return instance;
     }
 
-    private Drive() {
-    }
+    private Drive() {}
 
     @Override
     public void init() {
         /**
          * Motors
          */
-        //omg can i please put the motors into arrays plsssss
         leftLeader = new LazyTalonFX(Constants.driveLeftLeaderId);
-        configureMotor(leftLeader, false, false);
+        configureMotor(leftLeader, false);
         
         leftFollower = new LazyTalonFX(Constants.driveLeftFollowerId);
-        configureMotor(leftFollower, false, false);
+        configureMotor(leftFollower, false);
         leftFollower.follow(leftLeader);
 
         rightLeader = new LazyTalonFX(Constants.driveRightLeaderId);
-        configureMotor(rightLeader, true, true);
+        configureMotor(rightLeader, true);
         
         rightFollower = new LazyTalonFX(Constants.driveRightFollowerId);
-        configureMotor(rightFollower, true, true);
+        configureMotor(rightFollower, true);
         rightFollower.follow(rightLeader);
 
         /**
@@ -73,16 +72,15 @@ public class Drive extends Submodule {
         coef = Constants.driveCoef;
     }
 
-    private void configureMotor(LazyTalonFX motor, boolean invertMotor, boolean invertSensorPhase) {
+    private void configureMotor(LazyTalonFX motor, boolean invertMotor) {
         motor.configFactoryDefault();
         motor.setNeutralMode(NeutralMode.Brake);
-        motor.setSensorPhase(invertSensorPhase);
         motor.setInverted(invertMotor);
     }
 
     @Override
     public void update(double timestamp) {
-        outputLeftDrive =  coef * Math.copySign(Math.pow(outputLeftDrive, exp), outputLeftDrive);
+        outputLeftDrive = coef * Math.copySign(Math.pow(outputLeftDrive, exp), outputLeftDrive);
         outputRightDrive = coef * Math.copySign(Math.pow(outputRightDrive, exp), outputRightDrive);
     }
 

@@ -1,6 +1,9 @@
 package raidzero.robot.submodules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
+
 import raidzero.robot.wrappers.LazyTalonSRX;
 
 import raidzero.robot.wrappers.InactiveDoubleSolenoid;
@@ -9,14 +12,19 @@ import raidzero.robot.Constants;
 
 public class WheelOfFortune extends Submodule {
 
+    public static enum ControlState {
+        OPEN_LOOP, POSITION
+    };
+
     private static WheelOfFortune instance = null;
 
-    private static LazyTalonSRX wheel;
-    private static InactiveDoubleSolenoid solenoid;
+    private LazyTalonSRX wofMotor;
+    private InactiveDoubleSolenoid solenoid;
 
-    private static double velo = 0;
-    private static double pos = 0;
-    private static boolean gMan = false;
+    private double outputOpenLoop = 0;
+    private double outputPosition = 0;
+
+    private ControlState controlState = ControlState.OPEN_LOOP;
 
     public static WheelOfFortune getInstance() {
         if (instance == null) {
@@ -25,65 +33,60 @@ public class WheelOfFortune extends Submodule {
         return instance;
     }
 
-    private WheelOfFortune() {
-    }
+    private WheelOfFortune() {}
 
     @Override
     public void init() {
-        wheel = new LazyTalonSRX(Constants.gayPride);
-        solenoid = new InactiveDoubleSolenoid(Constants.rainbows, Constants.ponies);
+        wofMotor = new LazyTalonSRX(Constants.wheelOfFortuneMotorId);
+        wofMotor.configFactoryDefault();
+
+        TalonSRXConfiguration config = new TalonSRXConfiguration();
+        config.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
+        config.slot0.kF = Constants.wofF;
+        config.slot0.kP = Constants.wofP;
+        config.slot0.kI = Constants.wofI;
+        config.slot0.kD = Constants.wofD;
+        wofMotor.configAllSettings(config);
+
+        solenoid = new InactiveDoubleSolenoid(Constants.wheelOfFortuneUpId, Constants.wheelOfFortuneDownId);
         solenoid.setActive(true);
         solenoid.set(Value.kOff);
-
-        wheel.config_kF(Constants.POSITION_CONTROL_SLOT, Constants.gayPrideF);
-        wheel.config_kP(Constants.POSITION_CONTROL_SLOT, Constants.gayPrideP);
-        wheel.config_kI(Constants.POSITION_CONTROL_SLOT, Constants.gayPrideI);
-        wheel.config_kD(Constants.POSITION_CONTROL_SLOT, Constants.gayPrideD);
-    }
-
-    @Override
-    public void update(double timestamp) {
     }
 
     @Override
     public void run() {
-        velocityControl();        
-    }
-
-    private void velocityControl() {
-        if(gMan) {
-            wheel.set(ControlMode.PercentOutput, velo);
-            return;
+        switch (controlState) {
+            case OPEN_LOOP:
+                wofMotor.set(ControlMode.PercentOutput, outputOpenLoop);
+                break;
+            case POSITION:
+                wofMotor.set(ControlMode.MotionMagic, outputPosition);
+                break;
         }
-        wheel.set(ControlMode.MotionMagic, pos);
     }
 
     @Override
     public void stop() {
-        velo = 0;
-        pos = 0;
-        wheel.set(ControlMode.PercentOutput, 0);
+        outputOpenLoop = 0;
+        outputPosition = 0;
+        wofMotor.set(ControlMode.PercentOutput, 0);
         solenoid.set(Value.kOff);
     }
 
-    private void manual(double speed) {
-        velo = speed;
+    private void spinOpenLoop(double input) {
+        controlState = ControlState.OPEN_LOOP;
+        outputOpenLoop = input;
     }
 
-    public void rotate(double input, boolean manual) {
-        gMan = manual;
-        if(manual) {
-            manual(input);
-            return;
-        }
-        pos = input;
+    public void spinToPosition(double position) {
+        controlState = ControlState.POSITION;
+        outputPosition = position;
     }
 
     public void engage(boolean value) {
-        if(value == true) {
+        if (value) {
             solenoid.set(Value.kForward);
-        }
-        if(value == false) {
+        } else {
             solenoid.set(Value.kReverse);
         }
     }

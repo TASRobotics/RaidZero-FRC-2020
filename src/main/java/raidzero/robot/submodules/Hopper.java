@@ -10,8 +10,9 @@ public class Hopper extends Submodule {
 
     private static Hopper instance = null;
 
-    private static LazyTalonSRX mover;
-    private static double power;
+    private LazyTalonSRX hopperMotor;
+    
+    private double outputOpenLoop = 0;
 
     public static Hopper getInstance() {
         if (instance == null) {
@@ -20,48 +21,48 @@ public class Hopper extends Submodule {
         return instance;
     }
 
-    private Hopper() {
-        mover = new LazyTalonSRX(Constants.myDog);
-        mover.configFactoryDefault();
-        mover.setNeutralMode(NeutralMode.Brake);
-        mover.setInverted(true);
-    }
+    private Hopper() {}
 
     @Override
-    public void update(double timestamp) {
+    public void init() {
+        hopperMotor = new LazyTalonSRX(Constants.hopperMotorId);
+        hopperMotor.configFactoryDefault();
+        hopperMotor.setNeutralMode(NeutralMode.Brake);
+        hopperMotor.setInverted(true);
     }
 
     @Override
     public void run() {
-        mover.set(ControlMode.PercentOutput, power);
+        hopperMotor.set(ControlMode.PercentOutput, outputOpenLoop);
     }
 
     @Override
     public void stop() {
-        power = 0.0;
-        mover.set(ControlMode.PercentOutput, 0);
+        outputOpenLoop = 0.0;
+        hopperMotor.set(ControlMode.PercentOutput, 0);
     }
 
     public void moveBalls(int p1, double p2) {
-        if(p1 == -1) {
+        // TODO: Refactor & clarify code (remove controller specific code here)
+        if (p1 == -1) {
             player2Ctrl(p2);
             return;
         }
-        if(p1 >= 315 || p1 <= 45) {
-            power = 1;
+        if (p1 >= 315 || p1 <= 45) {
+            outputOpenLoop = 1;
             return;
         }
-        if(p1 >= 225 && p1 <= 135) {
-            power = -1;
+        if (p1 >= 225 && p1 <= 135) {
+            outputOpenLoop = -1;
             return;
         }
     }
 
-    private static void player2Ctrl(double joy) {
-        if(Math.abs(joy) < Constants.joystickDeadband){
-            power = 0;
+    private void player2Ctrl(double joy) {
+        if (Math.abs(joy) < Constants.joystickDeadband) {
+            outputOpenLoop = 0;
             return;
         }
-        power = joy;
+        outputOpenLoop = joy;
     }
 }
