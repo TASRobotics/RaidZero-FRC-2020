@@ -5,13 +5,9 @@ import edu.wpi.first.wpilibj.Timer;
 import raidzero.robot.auto.AutoRunner;
 import raidzero.robot.auto.sequences.TestSequence;
 import raidzero.robot.submodules.Drive;
-import raidzero.robot.submodules.Hopper;
-import raidzero.robot.submodules.Intake;
 import raidzero.robot.submodules.Limelight;
-import raidzero.robot.submodules.Shooter;
 import raidzero.robot.teleop.Teleop;
 import raidzero.robot.submodules.SubmoduleManager;
-import raidzero.robot.submodules.Turret;
 
 /**
  * The main robot class.
@@ -24,10 +20,6 @@ public class Robot extends TimedRobot {
     private static final Teleop teleop = Teleop.getInstance();
 
     private static final Drive moduleDrive = Drive.getInstance();
-    //private static final Turret moduleTurret = Turret.getInstance();
-    //private static final Shooter moduleShooter = Shooter.getInstance();
-    private static final Hopper moduleHopper = Hopper.getInstance();
-    private static final Intake moduleIntake = Intake.getInstance();
     private static final Limelight moduleLimelight = Limelight.getInstance();
 
     /**
@@ -38,10 +30,6 @@ public class Robot extends TimedRobot {
         // Register all submodules here
         SubmoduleManager.getInstance().setSubmodules(
             moduleDrive,
-            //moduleTurret,
-            //moduleShooter,
-            moduleHopper,
-            moduleIntake,
             moduleLimelight
         );
     }
