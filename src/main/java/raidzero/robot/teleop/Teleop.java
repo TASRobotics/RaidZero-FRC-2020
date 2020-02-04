@@ -120,10 +120,22 @@ public class Teleop {
          */
         turret.rotateManual(p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft));
 
+        /**
+         * Climb
+         */
+
+        // Enable climb
+        if(p1.getStartButton()) {
+            if(p2.getStartButtonPressed()) {
+                climb.unlock();
+            }
+        }
+
+        // Climb Code
         if(p2.getBButton()) {
-            climb.climb(-1);
-        } else if(p2.getXButton()) {
             climb.climb(1);
+        } else if(p2.getXButton()) {
+            climb.climb(-1);
         } else {
             climb.climb(0);
         }

@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
         intake,
         hopper,
         turret,
-        //wheelOfFortune
+        //wheelOfFortune,
         climb
     };
 
