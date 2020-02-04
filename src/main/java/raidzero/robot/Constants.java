@@ -31,8 +31,8 @@ public class Constants {
 
     // Solenoid IDs
     // Forward should make the 
-    public static final int driveGearshiftForwardId = 1;
-    public static final int driveGearshiftReverseId = 0;
+    public static final int driveGearshiftForwardId = 0;
+    public static final int driveGearshiftReverseId = 1;
 
     // Joystick to Output mapping
     public static final double driveExponent = 2;
@@ -80,6 +80,13 @@ public class Constants {
     public static final double gayPrideP = 0;
     public static final double gayPrideI = 0;
     public static final double gayPrideD = 0;
+
+    public static final double shooterMaxSpeed = 18300;
+
+    public static final double shooterF = shooterMaxSpeed / 1024;
+    public static final double shooterP = 0;
+    public static final double shooterI = 0;
+    public static final double shooterD = 0;
 
     public static final int POSITION_CONTROL_SLOT = 1;
 }

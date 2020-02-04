@@ -75,7 +75,7 @@ public class Drive extends Submodule {
 
     private void configureMotor(LazyTalonFX motor, boolean invertMotor, boolean invertSensorPhase) {
         motor.configFactoryDefault();
-        motor.setNeutralMode(NeutralMode.Coast);
+        motor.setNeutralMode(NeutralMode.Brake);
         motor.setSensorPhase(invertSensorPhase);
         motor.setInverted(invertMotor);
     }
