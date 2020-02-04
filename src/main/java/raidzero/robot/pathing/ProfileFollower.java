@@ -11,6 +11,7 @@ import raidzero.pathgen.PathGenerator;
 import raidzero.pathgen.PathPoint;
 import raidzero.pathgen.Point;
 import raidzero.robot.Constants;
+import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.submodules.Drive.GearShift;
 import raidzero.robot.utils.EncoderUtils;
 
@@ -48,7 +49,7 @@ public class ProfileFollower {
 
         setValue = SetValueMotionProfile.Disable;
         status = new MotionProfileStatus();
-        notifier.startPeriodic(0.001 * Constants.TRANSMIT_PERIOD_MS);
+        notifier.startPeriodic(0.001 * DriveConstants.TRANSMIT_PERIOD_MS);
         state = State.FillPoints;
 
         reversed = false;
@@ -94,7 +95,7 @@ public class ProfileFollower {
                 break;
             case WaitPoints:
                 leaderTalon.getMotionProfileStatus(status);
-                if (status.btmBufferCnt > Constants.MIN_POINTS_IN_TALON) {
+                if (status.btmBufferCnt > DriveConstants.MIN_POINTS_IN_TALON) {
                     setValue = SetValueMotionProfile.Enable;
                     state = State.Run;
                 }
@@ -184,8 +185,8 @@ public class ProfileFollower {
             // auxiliaryPos takes in units of 3600 ticks, but angle is in 360 degress
             tp.auxiliaryPos = waypoints[i].angle * 10;
             tp.useAuxPID = true;
-            tp.profileSlotSelect0 = Constants.PID_PRIMARY_SLOT;
-            tp.profileSlotSelect1 = Constants.PID_AUX_SLOT;
+            tp.profileSlotSelect0 = DriveConstants.PID_PRIMARY_SLOT;
+            tp.profileSlotSelect1 = DriveConstants.PID_AUX_SLOT;
             tp.zeroPos = false;
 
             if (i == 0) {
