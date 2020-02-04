@@ -7,8 +7,9 @@ import raidzero.robot.wrappers.LazyTalonSRX;
 
 public class Climb extends Submodule {
 
-    private static LazyTalonSRX motor;
     private static Climb instance = null;
+    
+    private static LazyTalonSRX motor;
 
     private static boolean unlocked = false;
     private static double power = 0.0;
@@ -32,10 +33,6 @@ public class Climb extends Submodule {
     }
 
     @Override
-    public void update(double timestamp) {
-    }
-
-    @Override
     public void run() {
         if(unlocked) {
             motor.set(ControlMode.PercentOutput, power);
@@ -54,8 +51,8 @@ public class Climb extends Submodule {
         unlocked = true;
     }
 
-    public void climb(double speed) {
-        power = speed;
+    public void climb(double input) {
+        power = input;
     }
 
 }

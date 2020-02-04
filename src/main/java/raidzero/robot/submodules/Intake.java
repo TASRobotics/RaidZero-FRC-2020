@@ -15,12 +15,12 @@ public class Intake extends Submodule {
 
     private static Intake instance = null;
 
-    private static LazyTalonSRX motor;
-    private static InactiveDoubleSolenoid solenoid;
+    private LazyTalonSRX intakeMotor;
+    private InactiveDoubleSolenoid solenoid;
     
-    private static double power = 0.0;
+    private double outputOpenLoop = 0.0;
 
-    private static Value position = Value.kOff;
+    private Value position = Value.kOff;
 
     public static Intake getInstance() {
         if (instance == null) {
@@ -29,44 +29,39 @@ public class Intake extends Submodule {
         return instance;
     }
 
-    private Intake() {
-    }
+    private Intake() {}
 
     @Override
     public void init() {
-        
-        motor = new LazyTalonSRX(Constants.intakeMotor);
-        motor.configFactoryDefault();
-        motor.setNeutralMode(NeutralMode.Brake);
-        motor.setInverted(true);
+        intakeMotor = new LazyTalonSRX(Constants.intakeMotorId);
+        intakeMotor.configFactoryDefault();
+        intakeMotor.setNeutralMode(NeutralMode.Brake);
+        intakeMotor.setInverted(true);
 
-        solenoid = new InactiveDoubleSolenoid(Constants.intakeOut, Constants.intakeIn);
+        solenoid = new InactiveDoubleSolenoid(Constants.intakeOutId, Constants.intakeInId);
         solenoid.setActive(true);
     }
 
     @Override
-    public void update(double timestamp) {
-    }
-
-    @Override
     public void run() {
-        motor.set(ControlMode.PercentOutput, power);
+        intakeMotor.set(ControlMode.PercentOutput, outputOpenLoop);
     }
 
     @Override
     public void stop() {
         position = Value.kOff;
         solenoid.set(Value.kOff);
-        power = 0;
-        motor.set(ControlMode.PercentOutput, 0);
+
+        outputOpenLoop = 0;
+        intakeMotor.set(ControlMode.PercentOutput, 0);
     }
 
     public void suck(double trigger) {
-        if(Math.abs(trigger) > Constants.joystickDeadband) {
-            power = trigger;
+        if (Math.abs(trigger) < Constants.joystickDeadband) {
+            outputOpenLoop = 0;
             return;
         }
-        power = 0;
+        outputOpenLoop = trigger;
     }
 
     public void invertStraw() {
@@ -75,7 +70,7 @@ public class Intake extends Submodule {
     }
 
     private void invertPos() {
-        if(position == Value.kReverse) {
+        if (position == Value.kReverse) {
             position = Value.kForward;
             return;
         }

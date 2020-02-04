@@ -27,12 +27,12 @@ public class Teleop {
      * Local Variables
      */
     private Drive drive = Drive.getInstance();
-    private Shooter shitter = Shooter.getInstance();
-    private Intake sucky = Intake.getInstance();
-    private Hopper move = Hopper.getInstance();
+    private Shooter shooter = Shooter.getInstance();
+    private Intake intake = Intake.getInstance();
+    private Hopper hopper = Hopper.getInstance();
     private Turret turret = Turret.getInstance();
     private Climb climb = Climb.getInstance();
-    private static InactiveCompressor compressor = new InactiveCompressor();
+    private InactiveCompressor compressor = InactiveCompressor.getInstance();
 
     private XboxController p1 = new XboxController(0);
     private XboxController p2 = new XboxController(1);
@@ -72,18 +72,17 @@ public class Teleop {
         /**
          * Compressor
          */
-        if(p1.getBButtonPressed()) {
+        if (p1.getBButtonPressed()) {
             compressor.changeState();
         }        
 
         /**
          * E stop that we have control over
          */
-        if(p1.getBackButtonPressed()){
-            while(!p1.getStartButtonPressed()){
+        if (p1.getBackButtonPressed()){
+            while (!p1.getStartButtonPressed()){
                 SubmoduleManager.getInstance().stop();
-                System.out.println
-                    ("ESTOPPED: press the 'start' button on controller 1 to re-enable");
+                System.out.println("ESTOPPED: press the 'start' button on controller 1 to re-enable");
             }
         }
         /**
@@ -100,20 +99,20 @@ public class Teleop {
         /**
          * Ejecter
          */
-        shitter.shoot(p2.getY(Hand.kLeft), p2.getAButton());
+        shooter.shoot(p2.getY(Hand.kLeft), p2.getAButton());
 
         /**
          * Sucker
          */
-        sucky.suck(p1.getTriggerAxis(Hand.kRight) - p1.getTriggerAxis(Hand.kLeft));
-        if(p1.getBumperPressed(Hand.kLeft)) {
-            sucky.invertStraw();
+        intake.suck(p1.getTriggerAxis(Hand.kRight) - p1.getTriggerAxis(Hand.kLeft));
+        if (p1.getBumperPressed(Hand.kLeft)) {
+            intake.invertStraw();
         }
 
         /**
          * Hopper
          */
-        move.moveBalls(p1.getPOV(), p2.getY(Hand.kRight));
+        hopper.moveBalls(p1.getPOV(), p2.getY(Hand.kRight));
 
         /**
          * Turret

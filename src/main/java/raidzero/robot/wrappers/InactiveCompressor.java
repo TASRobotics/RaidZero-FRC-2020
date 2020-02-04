@@ -2,9 +2,11 @@ package raidzero.robot.wrappers;
 
 import edu.wpi.first.wpilibj.Compressor;
 
-public class InactiveCompressor extends Compressor{
+public class InactiveCompressor extends Compressor {
+
     private static InactiveCompressor instance = null;
-    private static boolean state = true;
+    
+    private boolean state = true;
 
     public static InactiveCompressor getInstance() {
         if (instance == null) {
@@ -19,10 +21,10 @@ public class InactiveCompressor extends Compressor{
 
     public void changeState() {
         state = !state;
-        if(state) {
+        if (state) {
             super.start();
-            return;
+        } else {
+            super.stop();
         }
-        super.stop();
     }
 }

@@ -11,7 +11,6 @@ public class Constants {
      * hopper 5
      * turret 6
      * rotator 7
-     * 
      */
     /**
      * Pneumatic ID's
@@ -46,47 +45,49 @@ public class Constants {
     /**
      * Shooter Constants
      */
-    public static final int shooter = 1;
-    public static final IdleMode shooterIdle = IdleMode.kCoast;
+    public static final int shooterMotorId = 8;
+    public static final IdleMode shooterIdleMode = IdleMode.kCoast;
     public static final boolean shooterInvert = true;
+
+    public static final double shooterMaxSpeed = 18300; // in ticks per 100ms
+
+    public static final double shooterF = shooterMaxSpeed / 1023.0;
+    public static final double shooterP = 0;
+    public static final double shooterI = 0; // Shouldn't be touched
+    public static final double shooterD = 0; // Shouldn't be touched
 
     /**
      * Intake Constants
      */
-    public static final int intakeMotor = 4;
-    public static final int intakeOut = 2;
-    public static final int intakeIn = 3;
+    public static final int intakeMotorId = 4;
+    public static final int intakeOutId = 2;
+    public static final int intakeInId = 3;
 
     /**
      * Hopper Constants
      */
-    public static final int myDog = 5;
+    public static final int hopperMotorId = 5;
 
     /**
-     * Turret
+     * Turret Constants
      */
-    public static final int puppy = 6;
+    public static final int turretMotorId = 6;
     public static final double degToTic = 1000; //random # for now
 
     /**
-     * Gaywheel
+     * Wheel of Fortune Constants
      */
-    public static final int gayPride = 7;
-    public static final int rainbows = 4;
-    public static final int ponies = 5;
+    public static final int wheelOfFortuneMotorId = 7;
+    public static final int wheelOfFortuneUpId = 4;
+    public static final int wheelOfFortuneDownId = 5;
 
-    // PID Constants
-    public static final double gayPrideF = 0;
-    public static final double gayPrideP = 0;
-    public static final double gayPrideI = 0;
-    public static final double gayPrideD = 0;
+    public static final double wofF = 0;
+    public static final double wofP = 0;
+    public static final double wofI = 0;
+    public static final double wofD = 0;
 
-    public static final double shooterMaxSpeed = 18300;
-
-    public static final double shooterF = shooterMaxSpeed / 1024;
-    public static final double shooterP = 0;
-    public static final double shooterI = 0;
-    public static final double shooterD = 0;
-
-    public static final int POSITION_CONTROL_SLOT = 1;
+    /**
+     * Climb Constants
+     */
+    public static final int climbMotorId = 12;
 }

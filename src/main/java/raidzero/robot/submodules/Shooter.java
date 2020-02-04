@@ -24,10 +24,7 @@ public class Shooter extends Submodule {
     }
 
     private Shooter() {
-        /**
-         * Epididymis Init
-         */
-        motor = new LazyTalonFX(8);
+        motor = new LazyTalonFX(Constants.shooterMotorId);
         motor.setInverted(Constants.shooterInvert);
         motor.setNeutralMode(NeutralMode.Coast);
         
@@ -44,10 +41,6 @@ public class Shooter extends Submodule {
     }
 
     @Override
-    public void update(double timestamp) {
-    }
-
-    @Override
     public void run() {
         //motor.set(ControlMode.PercentOutput, shooterSpeed);
         motor.set(ControlMode.Velocity, shooterSpeed);
@@ -57,7 +50,7 @@ public class Shooter extends Submodule {
     @Override
     public void stop() {
         shooterSpeed = 0;
-        motor.set(ControlMode.PercentOutput,0);
+        motor.set(ControlMode.PercentOutput, 0);
     }
 
     public void shoot(double speed, boolean freeze) {

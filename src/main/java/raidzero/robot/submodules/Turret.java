@@ -3,25 +3,28 @@ package raidzero.robot.submodules;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import raidzero.robot.wrappers.LazyTalonSRX;
 
 import raidzero.robot.Constants;
 
 public class Turret extends Submodule {
+
     /**
      * 63:1
      */
-    public static enum Mode {
-        pow, pos
+    public static enum ControlState {
+        OPEN_LOOP, POSITION
     };
 
     private static Turret instance = null;
 
-    private static LazyTalonSRX motor;
+    private LazyTalonSRX turretMotor;
     
-    private static double speed = 0;
-    private static double pos = 0;
-    private static Mode mode = Mode.pow;
+    private double outputOpenLoop = 0;
+    private double outputPosition = 0;
+    private ControlState controlState = ControlState.OPEN_LOOP;
 
     public static Turret getInstance() {
         if (instance == null) {
@@ -30,17 +33,18 @@ public class Turret extends Submodule {
         return instance;
     }
 
-    private Turret() {
-    }
+    private Turret() {}
 
     @Override
     public void init() {
-        motor = new LazyTalonSRX(Constants.puppy);
-        motor.setInverted(true);
+        turretMotor = new LazyTalonSRX(Constants.turretMotorId);
+        turretMotor.configFactoryDefault();
+        turretMotor.setNeutralMode(NeutralMode.Brake);
+        turretMotor.setInverted(true);
 
-        motor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+        turretMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
             LimitSwitchNormal.NormallyClosed);
-        motor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+        turretMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
             LimitSwitchNormal.NormallyClosed);
     }
 
@@ -50,36 +54,36 @@ public class Turret extends Submodule {
 
     @Override
     public void run() {
-        switch (mode){
-            case pow:
-                motor.set(ControlMode.PercentOutput,speed);
+        switch (controlState) {
+            case OPEN_LOOP:
+                turretMotor.set(ControlMode.PercentOutput, outputOpenLoop);
                 break;
-            case pos:
-                motor.set(ControlMode.MotionMagic, pos);
+            case POSITION:
+                turretMotor.set(ControlMode.MotionMagic, outputPosition);
                 break;
         }
-        if (motor.getSensorCollection().isRevLimitSwitchClosed()) {
+        if (turretMotor.getSensorCollection().isRevLimitSwitchClosed()) {
             zero();
         }
-        //System.out.println(motor.getSensorCollection().getQuadraturePosition());
     }
 
     @Override
     public void stop() {
-        speed = 0;
-        motor.set(ControlMode.PercentOutput, 0);
+        outputOpenLoop = 0;
+        turretMotor.set(ControlMode.PercentOutput, 0);
     }
 
     @Override
     public void zero() {
-        motor.setSelectedSensorPosition(0);
+        turretMotor.setSelectedSensorPosition(0);
     }
 
     public void rotate(double deg) {
-        pos = deg * Constants.degToTic;
+        outputPosition = deg * Constants.degToTic;
     }
 
     public void rotateManual(double pow) {
-        speed = pow * 0.25;
+        // TODO: Factor out the constant
+        outputOpenLoop = pow * 0.25;
     }
 }
