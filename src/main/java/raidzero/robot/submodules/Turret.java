@@ -1,13 +1,16 @@
 package raidzero.robot.submodules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 
 import raidzero.robot.wrappers.LazyTalonSRX;
 
 import raidzero.robot.Constants;
+import raidzero.robot.Constants.TurretConstants;
 
 public class Turret extends Submodule {
 
@@ -42,10 +45,20 @@ public class Turret extends Submodule {
         turretMotor.setNeutralMode(NeutralMode.Brake);
         turretMotor.setInverted(true);
 
-        turretMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
-            LimitSwitchNormal.NormallyClosed);
-        turretMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
-            LimitSwitchNormal.NormallyClosed);
+        TalonSRXConfiguration config = new TalonSRXConfiguration();
+        config.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
+        config.reverseLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
+        config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+        config.forwardLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
+        config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+
+        config.slot0.kF = TurretConstants.kF;
+        config.slot0.kP = TurretConstants.kP;
+        config.slot0.kI = TurretConstants.kI;
+        config.slot0.kD = TurretConstants.kD;
+        config.slot0.integralZone = TurretConstants.kIntegralZone;
+
+        turretMotor.configAllSettings(config);
     }
 
     @Override
@@ -79,7 +92,7 @@ public class Turret extends Submodule {
     }
 
     public void rotate(double deg) {
-        outputPosition = deg * Constants.degToTic;
+        outputPosition = deg * TurretConstants.degreesToTicks;
     }
 
     public void rotateManual(double pow) {

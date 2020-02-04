@@ -8,6 +8,7 @@ import raidzero.robot.wrappers.InactiveDoubleSolenoid;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import raidzero.robot.Constants;
+import raidzero.robot.Constants.DriveConstants;
 
 public class Drive extends Submodule {
 
@@ -68,8 +69,8 @@ public class Drive extends Submodule {
         /**
          * Relation Control
          */
-        exp = Constants.driveExponent;
-        coef = Constants.driveCoef;
+        exp = DriveConstants.joystickExponent;
+        coef = DriveConstants.joystickCoefficient;
     }
 
     private void configureMotor(LazyTalonFX motor, boolean invertMotor) {

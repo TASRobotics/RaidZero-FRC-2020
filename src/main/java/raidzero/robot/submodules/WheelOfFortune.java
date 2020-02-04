@@ -4,11 +4,12 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 
-import raidzero.robot.wrappers.LazyTalonSRX;
-
-import raidzero.robot.wrappers.InactiveDoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+
+import raidzero.robot.wrappers.LazyTalonSRX;
+import raidzero.robot.wrappers.InactiveDoubleSolenoid;
 import raidzero.robot.Constants;
+import raidzero.robot.Constants.WheelOfFortuneConstants;
 
 public class WheelOfFortune extends Submodule {
 
@@ -42,10 +43,12 @@ public class WheelOfFortune extends Submodule {
 
         TalonSRXConfiguration config = new TalonSRXConfiguration();
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
-        config.slot0.kF = Constants.wofF;
-        config.slot0.kP = Constants.wofP;
-        config.slot0.kI = Constants.wofI;
-        config.slot0.kD = Constants.wofD;
+        config.slot0.kF = WheelOfFortuneConstants.kF;
+        config.slot0.kP = WheelOfFortuneConstants.kP;
+        config.slot0.kI = WheelOfFortuneConstants.kI;
+        config.slot0.kD = WheelOfFortuneConstants.kD;
+        config.slot0.integralZone = WheelOfFortuneConstants.kIntegralZone;
+
         wofMotor.configAllSettings(config);
 
         solenoid = new InactiveDoubleSolenoid(Constants.wheelOfFortuneUpId, Constants.wheelOfFortuneDownId);

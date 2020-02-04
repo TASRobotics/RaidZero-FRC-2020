@@ -1,5 +1,6 @@
 package raidzero.robot;
 
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 public class Constants {
@@ -19,75 +20,84 @@ public class Constants {
      * Wheel 4, 5
      */
 
-    /**
-     * Drivetrain Constants
-     */
     // Motor IDs
     public static final int driveLeftLeaderId = 1;
     public static final int driveLeftFollowerId = 3;
     public static final int driveRightLeaderId = 0;
     public static final int driveRightFollowerId = 2;
 
-    // Solenoid IDs
-    // Forward should make the 
     public static final int driveGearshiftForwardId = 0;
     public static final int driveGearshiftReverseId = 1;
 
-    // Joystick to Output mapping
-    public static final double driveExponent = 2;
-    public static final double driveCoef = 1;
+    public static final int shooterMotorId = 8;
+
+    public static final int intakeMotorId = 4;
+
+    public static final int intakeOutId = 2;
+    public static final int intakeInId = 3;
+
+    public static final int hopperMotorId = 5;
+
+    public static final int turretMotorId = 6;
+
+    public static final int wheelOfFortuneMotorId = 7;
+
+    public static final int wheelOfFortuneUpId = 4;
+    public static final int wheelOfFortuneDownId = 5;
+
+    public static final int climbMotorId = 12;
 
     /**
-     * Joystick Constants
+     * Drivetrain Constants
      */
-    public static final double joystickDeadband = 0.1;
+    public static final class DriveConstants {
+        // Joystick to Output mapping
+        public static final double joystickExponent = 2;
+        public static final double joystickCoefficient = 1;
+    }   
 
     /**
      * Shooter Constants
      */
-    public static final int shooterMotorId = 8;
-    public static final IdleMode shooterIdleMode = IdleMode.kCoast;
-    public static final boolean shooterInvert = true;
+    public static final class ShooterConstants {
+        public static final IdleMode shooterIdleMode = IdleMode.kCoast;
+        public static final InvertType inversion = InvertType.InvertMotorOutput;
 
-    public static final double shooterMaxSpeed = 18300; // in ticks per 100ms
+        public static final double maxSpeed = 18300; // in ticks per 100ms
 
-    public static final double shooterF = shooterMaxSpeed / 1023.0;
-    public static final double shooterP = 0;
-    public static final double shooterI = 0; // Shouldn't be touched
-    public static final double shooterD = 0; // Shouldn't be touched
-
-    /**
-     * Intake Constants
-     */
-    public static final int intakeMotorId = 4;
-    public static final int intakeOutId = 2;
-    public static final int intakeInId = 3;
-
-    /**
-     * Hopper Constants
-     */
-    public static final int hopperMotorId = 5;
+        public static final double kF = maxSpeed / 1023.0;
+        public static final double kP = 0;
+        public static final double kI = 0; // Shouldn't be touched
+        public static final double kD = 0; // Shouldn't be touched
+        public static final int kIntegralZone = 0; // Shouldn't be touched
+    }
 
     /**
      * Turret Constants
      */
-    public static final int turretMotorId = 6;
-    public static final double degToTic = 1000; //random # for now
+    public static final class TurretConstants {
+        public static final double degreesToTicks = 1000; //random # for now
+
+        public static final double kF = 0;
+        public static final double kP = 0;
+        public static final double kI = 0;
+        public static final double kD = 0;
+        public static final int kIntegralZone = 0;
+    }
 
     /**
      * Wheel of Fortune Constants
      */
-    public static final int wheelOfFortuneMotorId = 7;
-    public static final int wheelOfFortuneUpId = 4;
-    public static final int wheelOfFortuneDownId = 5;
-
-    public static final double wofF = 0;
-    public static final double wofP = 0;
-    public static final double wofI = 0;
-    public static final double wofD = 0;
-
+    public static final class WheelOfFortuneConstants {
+        public static final double kF = 0;
+        public static final double kP = 0;
+        public static final double kI = 0;
+        public static final double kD = 0;
+        public static final int kIntegralZone = 0;
+    }
+    
     /**
-     * Climb Constants
+     * Joystick Constants
      */
-    public static final int climbMotorId = 12;
+    public static final double joystickDeadband = 0.1;
 }
