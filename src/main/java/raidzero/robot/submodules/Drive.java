@@ -1,3 +1,4 @@
+
 package raidzero.robot.submodules;
 
 import com.ctre.phoenix.motion.SetValueMotionProfile;
@@ -70,7 +71,10 @@ public class Drive extends Submodule {
     private double outputRightDrive = 0.0;
     private int outputClosedLoop = 0;
 
-    private Drive() {
+    private Drive() {}
+
+    @Override
+    public void init() {
         // Motors
         leftLeader = new LazyTalonFX(Constants.driveLeftLeaderId);
         configureMotor(leftLeader, Constants.driveLeftInvert);
@@ -102,8 +106,8 @@ public class Drive extends Submodule {
             Constants.driveGearshiftReverseId);
 
         // Joystick-to-output mapping
-        exp = Constants.DRIVE_JOYSTICK_EXPONENT;
-        coef = Constants.DRIVE_JOYSTICK_COEF;
+        exp = DriveConstants.joystickExponent;
+        coef = DriveConstants.joystickCoefficient;
 
         // Control state
         controlState = ControlState.OPEN_LOOP;
@@ -393,9 +397,11 @@ public class Drive extends Submodule {
     private Value gearSolenoidValue(GearShift gear) {
         if (gear == GearShift.HIGH) {
             return Value.kForward;
-        } else {
+        }
+        if (gear == GearShift.LOW) {
             return Value.kReverse;
         }
+        return Value.kOff;
     }
 
     /**
