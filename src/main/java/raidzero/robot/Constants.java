@@ -148,8 +148,7 @@ public class Constants {
 
     public static final String LIMELIGHT_NAME_SHOOTER = "limelight";
 
-    public static final double KP_AIM = 0.006;
-	public static final double MINIMUM_POWER = 0.2;
+    public static final double KP_AIM = 0.02;
 
-    public static final double ANGLE_ADJUST_THRESHOLD = 1.0;   
+    public static final double ANGLE_ADJUST_THRESHOLD = 0.5;   
 }

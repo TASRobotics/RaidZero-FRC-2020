@@ -3,6 +3,7 @@ package raidzero.robot.teleop;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import raidzero.robot.auto.actions.TurnToGoal;
 import raidzero.robot.submodules.Climb;
 import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.Intake;
@@ -34,6 +35,8 @@ public class Teleop {
 
     private XboxController p1 = new XboxController(0);
     private XboxController p2 = new XboxController(1);
+
+    private TurnToGoal turnToGoal = new TurnToGoal();
 
     /**
      * Runs at the start of teleop.
@@ -102,7 +105,9 @@ public class Teleop {
         /**
          * Intake
          */
-        intake.suck(p1.getTriggerAxis(Hand.kRight) - p1.getTriggerAxis(Hand.kLeft));
+        intake.suck(
+            0.625 * (p1.getTriggerAxis(Hand.kRight) - p1.getTriggerAxis(Hand.kLeft))
+        );
         if (p1.getBumperPressed(Hand.kLeft)) {
             intake.invertStraw();
         }
@@ -115,7 +120,10 @@ public class Teleop {
         /**
          * Turret
          */
-        turret.rotateManual(p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft));
+        turret.rotateManual(
+            0.25 * (p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft))
+        );
+        //turnToGoal.update();
 
         /**
          * Climb

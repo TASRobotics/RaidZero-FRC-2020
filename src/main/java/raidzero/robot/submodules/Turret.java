@@ -62,10 +62,6 @@ public class Turret extends Submodule {
     }
 
     @Override
-    public void update(double timestamp) {
-    }
-
-    @Override
     public void run() {
         switch (controlState) {
             case OPEN_LOOP:
@@ -95,8 +91,7 @@ public class Turret extends Submodule {
         outputPosition = deg * TurretConstants.degreesToTicks;
     }
 
-    public void rotateManual(double pow) {
-        // TODO: Factor out the constant
-        outputOpenLoop = pow * 0.25;
+    public void rotateManual(double input) {
+        outputOpenLoop = input;
     }
 }

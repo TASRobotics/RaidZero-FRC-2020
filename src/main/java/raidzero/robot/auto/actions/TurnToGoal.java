@@ -4,13 +4,14 @@ import edu.wpi.first.wpiutil.math.MathUtil;
 import raidzero.robot.Constants;
 import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.Limelight;
+import raidzero.robot.submodules.Turret;
 
 /**
  * Action for turning the drive towards the goal using vision.
  */
 public class TurnToGoal implements Action {
 
-    private static final Drive drive = Drive.getInstance();
+    private static final Turret turret = Turret.getInstance();
     private static final Limelight limelight = Limelight.getInstance();
 
     private double headingError;
@@ -26,35 +27,28 @@ public class TurnToGoal implements Action {
     @Override
     public void update() {
         if (!limelight.hasTarget()) {
-            drive.stop();
+            turret.stop();
             return;
 		}
-		headingError = limelight.getTx();
+        headingError = limelight.getTx();
+        //System.out.println("Heading error: " + headingError);
 		
 		double steeringAdjust = 0.0;
 		// Steering adjust P controller with offset
-		if (headingError > Constants.ANGLE_ADJUST_THRESHOLD) {
-			steeringAdjust = Constants.KP_AIM * headingError + Constants.MINIMUM_POWER;
-		} else if (headingError < -Constants.ANGLE_ADJUST_THRESHOLD) {
-			steeringAdjust = Constants.KP_AIM * headingError - Constants.MINIMUM_POWER;
-		}
+        steeringAdjust = Constants.KP_AIM * headingError;
+        System.out.println("Heading error: " + steeringAdjust);
 
-		// Tank drive with steering and heading adjust, applying a percentage speed limit
-		double leftOutput = MathUtil.clamp(steeringAdjust, -0.75, 0.75);
-		double rightOutput = MathUtil.clamp(-steeringAdjust, -0.75, 0.75);
-
-		drive.tank(leftOutput, rightOutput);
+		turret.rotateManual(MathUtil.clamp(steeringAdjust, -0.2, 0.2));
     }
 
     @Override
     public void done() {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' finished!");
-        drive.stop();
+        turret.stop();
     }
 
     @Override
     public void start() {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
-        drive.setOpenLoop();
     }
 }

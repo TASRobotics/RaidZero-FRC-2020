@@ -3,9 +3,7 @@ package raidzero.robot.auto.sequences;
 import java.util.Arrays;
 
 import raidzero.pathgen.Point;
-import raidzero.robot.auto.actions.DrivePath;
-import raidzero.robot.auto.actions.SeriesAction;
-import raidzero.robot.auto.actions.WaitAction;
+import raidzero.robot.auto.actions.*;
 import raidzero.robot.pathing.Path;
 
 public class TestSequence extends AutoSequence {

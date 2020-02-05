@@ -44,7 +44,6 @@ public class Shooter extends Submodule {
     public void run() {
         //motor.set(ControlMode.PercentOutput, shooterSpeed);
         shooterMotor.set(ControlMode.Velocity, shooterSpeed);
-        System.out.println(shooterMotor.getSelectedSensorVelocity());
     }
 
     @Override
