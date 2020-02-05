@@ -57,7 +57,7 @@ public class Shooter extends Submodule {
         if (freeze) {
             return;
         }
-        if (Math.abs(speed) < Constants.joystickDeadband) {
+        if (Math.abs(speed) < Constants.JOYSTICK_DEADBAND) {
             shooterSpeed = 0;
             return;
         }

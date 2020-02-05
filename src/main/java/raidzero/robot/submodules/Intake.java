@@ -57,7 +57,7 @@ public class Intake extends Submodule {
     }
 
     public void suck(double trigger) {
-        if (Math.abs(trigger) < Constants.joystickDeadband) {
+        if (Math.abs(trigger) < Constants.JOYSTICK_DEADBAND) {
             outputOpenLoop = 0;
             return;
         }

@@ -59,7 +59,7 @@ public class Hopper extends Submodule {
     }
 
     private void player2Ctrl(double joy) {
-        if (Math.abs(joy) < Constants.joystickDeadband) {
+        if (Math.abs(joy) < Constants.JOYSTICK_DEADBAND) {
             outputOpenLoop = 0;
             return;
         }
