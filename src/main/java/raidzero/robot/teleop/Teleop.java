@@ -26,7 +26,6 @@ public class Teleop {
     public void onStart() {
         drive.stop();
         drive.setGearShift(GearShift.LOW);
-        //turret.stop();
     }
 
     /**
