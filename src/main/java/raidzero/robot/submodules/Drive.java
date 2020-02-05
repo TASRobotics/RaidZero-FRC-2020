@@ -91,15 +91,15 @@ public class Drive extends Submodule {
         pigeon.configFactoryDefault();
 
         // Setup the profiling leader & follower
-        profilingLeader = leftLeader;
-        profilingFollower = rightLeader;
+        profilingLeader = rightLeader;
+        profilingFollower = leftLeader;
 
         // Must be called after the pigeon is initialized
-        configureMotorClosedLoop(Constants.driveLeftInvert);
+        configureMotorClosedLoop(Constants.driveRightInvert);
 
         // Gear shift
         gearShiftSolenoid = new InactiveDoubleSolenoid(Constants.driveGearshiftForwardId, 
-			Constants.driveGearshiftReverseId);
+            Constants.driveGearshiftReverseId);
 
         // Joystick-to-output mapping
         exp = Constants.DRIVE_JOYSTICK_EXPONENT;
@@ -273,7 +273,6 @@ public class Drive extends Submodule {
             mpFollower.update();
             outputClosedLoop = mpFollower.getOutput();
         }
-
         SmartDashboard.putNumber("left inches", 
             EncoderUtils.ticksToInches(
                 leftLeader.getSensorCollection().getIntegratedSensorPosition(), 
@@ -316,8 +315,8 @@ public class Drive extends Submodule {
         outputRightDrive = 0.0;
 
         // TODO: Make sure we don't ever directly set motor outputs
-        leftLeader.set(ControlMode.PercentOutput, 0.0);
-        rightLeader.set(ControlMode.PercentOutput, 0.0);
+        leftLeader.set(ControlMode.Disabled, 0.0);
+        rightLeader.set(ControlMode.Disabled, 0.0);
     }
 
     /**

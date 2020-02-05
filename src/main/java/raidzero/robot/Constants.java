@@ -51,9 +51,9 @@ public class Constants {
         public static final int PRIMARY_INT_ZONE = 50;
 
         public static final double AUX_F = 0;//0.60 * 1023.0 / (440.0 * 10.0); // Maximum was 440 dps
-        public static final double AUX_P = 2.0;
+        public static final double AUX_P = 4;
         public static final double AUX_I = 0;
-        public static final double AUX_D = 4.0;
+        public static final double AUX_D = 0.4;//4.0;
         public static final int AUX_INT_ZONE = 20;
         public static final boolean AUX_POLARITY = false;
 
@@ -66,7 +66,7 @@ public class Constants {
         public static final int MIN_POINTS_IN_TALON = 10;
         public static final int TRANSMIT_PERIOD_MS = 3;
 
-        public static final double DEFAULT_CRUISE_VELOCITY = 4;
+        public static final double DEFAULT_CRUISE_VELOCITY = 9;
         public static final double DEFAULT_TARGET_ACCELERATION = 8;
     }
 
