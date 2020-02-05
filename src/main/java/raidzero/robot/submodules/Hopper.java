@@ -24,7 +24,7 @@ public class Hopper extends Submodule {
     private Hopper() {}
 
     @Override
-    public void init() {
+    public void onInit() {
         hopperMotor = new LazyTalonSRX(Constants.hopperMotorId);
         hopperMotor.configFactoryDefault();
         hopperMotor.setNeutralMode(NeutralMode.Brake);

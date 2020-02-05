@@ -74,7 +74,7 @@ public class Drive extends Submodule {
     private Drive() {}
 
     @Override
-    public void init() {
+    public void onInit() {
         // Motors
         leftLeader = new LazyTalonFX(Constants.driveLeftLeaderId);
         configureMotor(leftLeader, Constants.driveLeftInvert);

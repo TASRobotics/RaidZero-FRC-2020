@@ -25,7 +25,7 @@ public class Climb extends Submodule {
     private Climb() {}
     
     @Override
-    public void init() {
+    public void onInit() {
         climbMotor = new LazyTalonSRX(Constants.climbMotorId);
         climbMotor.configFactoryDefault();
         climbMotor.setNeutralMode(NeutralMode.Brake);

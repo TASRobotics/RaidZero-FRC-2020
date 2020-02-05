@@ -29,13 +29,13 @@ public class SubmoduleManager {
     }
 
     /**
-     * Calls the {@link Submodule#init()} method for all 
+     * Calls the {@link Submodule#onInit()} method for all 
      * submodules.
      * 
      * @param timestamp
      */
     public void onInit() {
-        submodules.forEach(o -> o.init());
+        submodules.forEach(o -> o.onInit());
     }
 
     /**

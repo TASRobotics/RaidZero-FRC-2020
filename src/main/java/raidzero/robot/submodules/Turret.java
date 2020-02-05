@@ -39,7 +39,7 @@ public class Turret extends Submodule {
     private Turret() {}
 
     @Override
-    public void init() {
+    public void onInit() {
         turretMotor = new LazyTalonSRX(Constants.turretMotorId);
         turretMotor.configFactoryDefault();
         turretMotor.setNeutralMode(NeutralMode.Brake);

@@ -37,7 +37,7 @@ public class WheelOfFortune extends Submodule {
     private WheelOfFortune() {}
 
     @Override
-    public void init() {
+    public void onInit() {
         wofMotor = new LazyTalonSRX(Constants.wheelOfFortuneMotorId);
         wofMotor.configFactoryDefault();
 

@@ -32,7 +32,7 @@ public class Intake extends Submodule {
     private Intake() {}
 
     @Override
-    public void init() {
+    public void onInit() {
         intakeMotor = new LazyTalonSRX(Constants.intakeMotorId);
         intakeMotor.configFactoryDefault();
         intakeMotor.setNeutralMode(NeutralMode.Brake);

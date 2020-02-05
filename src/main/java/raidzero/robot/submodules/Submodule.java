@@ -15,7 +15,7 @@ public abstract class Submodule {
     /**
      * Called once when the submodule is initialized.
      */
-    public void init() {}
+    public void onInit() {}
 
     /**
      * Reads cached inputs & calculate outputs.
