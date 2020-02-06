@@ -11,7 +11,7 @@ public class WaitAction implements Action {
     private double startTime;
 
     /**
-     * Construct a WaitAction
+     * Constructs a WaitAction.
      * 
      * @param seconds time in seconds
      */
@@ -25,13 +25,15 @@ public class WaitAction implements Action {
     }
 
     @Override
-    public void update() {}
-
-    @Override
-    public void done() {}
-
-    @Override
     public void start() {
         startTime = Timer.getFPGATimestamp();
+    }
+
+    @Override
+    public void update() {
+    }
+
+    @Override
+    public void done() {
     }
 }

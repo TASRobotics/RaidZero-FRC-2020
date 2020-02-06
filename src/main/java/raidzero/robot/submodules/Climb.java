@@ -35,14 +35,14 @@ public class Climb extends Submodule {
     @Override
     public void run() {
         if (!unlocked) {
-            outputOpenLoop = 0;
+            outputOpenLoop = 0.0;
         }
         climbMotor.set(ControlMode.PercentOutput, outputOpenLoop);
     }
 
     @Override
     public void stop() {
-        outputOpenLoop = 0;
+        outputOpenLoop = 0.0;
         climbMotor.set(ControlMode.PercentOutput, 0);
     }
 
@@ -50,8 +50,12 @@ public class Climb extends Submodule {
         unlocked = true;
     }
 
-    public void climb(double input) {
-        outputOpenLoop = input;
+    /**
+     * Climbs using percent output.
+     * 
+     * @param percentOutput percent output in [-1, 1]
+     */
+    public void climb(double percentOutput) {
+        outputOpenLoop = percentOutput;
     }
-
 }

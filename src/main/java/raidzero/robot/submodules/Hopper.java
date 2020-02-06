@@ -42,27 +42,12 @@ public class Hopper extends Submodule {
         hopperMotor.set(ControlMode.PercentOutput, 0);
     }
 
-    public void moveBalls(int p1, double p2) {
-        // TODO: Refactor & clarify code (remove controller specific code here)
-        if (p1 == -1) {
-            player2Ctrl(p2);
-            return;
-        }
-        if (p1 >= 315 || p1 <= 45) {
-            outputOpenLoop = 1;
-            return;
-        }
-        if (p1 >= 225 && p1 <= 135) {
-            outputOpenLoop = -1;
-            return;
-        }
-    }
-
-    private void player2Ctrl(double joy) {
-        if (Math.abs(joy) < Constants.JOYSTICK_DEADBAND) {
-            outputOpenLoop = 0;
-            return;
-        }
-        outputOpenLoop = joy;
+    /**
+     * Moves the conveyor belt using percent output.
+     * 
+     * @param percentOutput the percent output in [-1, 1]
+     */
+    public void moveBelt(double percentOutput) {
+        outputOpenLoop = percentOutput;
     }
 }

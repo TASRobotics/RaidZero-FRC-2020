@@ -22,8 +22,8 @@ public class WheelOfFortune extends Submodule {
     private LazyTalonSRX wofMotor;
     private InactiveDoubleSolenoid solenoid;
 
-    private double outputOpenLoop = 0;
-    private double outputPosition = 0;
+    private double outputOpenLoop = 0.0;
+    private double outputPosition = 0.0;
 
     private ControlState controlState = ControlState.OPEN_LOOP;
 
@@ -70,15 +70,15 @@ public class WheelOfFortune extends Submodule {
 
     @Override
     public void stop() {
-        outputOpenLoop = 0;
-        outputPosition = 0;
+        outputOpenLoop = 0.0;
+        outputPosition = 0.0;
         wofMotor.set(ControlMode.PercentOutput, 0);
         solenoid.set(Value.kOff);
     }
 
-    private void spinOpenLoop(double input) {
+    private void spinOpenLoop(double percentOutput) {
         controlState = ControlState.OPEN_LOOP;
-        outputOpenLoop = input;
+        outputOpenLoop = percentOutput;
     }
 
     public void spinToPosition(double position) {

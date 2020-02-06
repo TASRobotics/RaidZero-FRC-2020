@@ -59,10 +59,6 @@ public class Drive extends Submodule {
 
     // Profile follower
     private ProfileFollower mpFollower;
-    
-    // Tunable constants
-    private double coef;
-    private double exp;
 
     private GearShift currentGearShift;
 
@@ -104,10 +100,6 @@ public class Drive extends Submodule {
         // Gear shift
         gearShiftSolenoid = new InactiveDoubleSolenoid(Constants.driveGearshiftForwardId, 
             Constants.driveGearshiftReverseId);
-
-        // Joystick-to-output mapping
-        exp = DriveConstants.joystickExponent;
-        coef = DriveConstants.joystickCoefficient;
 
         // Control state
         controlState = ControlState.OPEN_LOOP;
@@ -167,6 +159,9 @@ public class Drive extends Submodule {
 
         leaderConfig.neutralDeadband = DriveConstants.DRIVE_NEUTRAL_DEADBAND;
         followerConfig.neutralDeadband = DriveConstants.DRIVE_NEUTRAL_DEADBAND;
+
+        //leaderConfig.openloopRamp = 1.0;
+        //followerConfig.openloopRamp = 1.0;
 
         // Apply all settings
         profilingLeader.configAllSettings(leaderConfig);
@@ -317,8 +312,8 @@ public class Drive extends Submodule {
 
         outputLeftDrive = 0.0;
         outputRightDrive = 0.0;
+        outputClosedLoop = SetValueMotionProfile.Disable.value;
 
-        // TODO: Make sure we don't ever directly set motor outputs
         leftLeader.set(ControlMode.Disabled, 0.0);
         rightLeader.set(ControlMode.Disabled, 0.0);
     }
@@ -332,13 +327,15 @@ public class Drive extends Submodule {
          * setSelectedSensorPosition would set the sensor sum for the PID,
          * which is not what we want to do.
          */
-        leftLeader.getSensorCollection().setIntegratedSensorPosition(0, Constants.TIMEOUT_MS);
-        rightLeader.getSensorCollection().setIntegratedSensorPosition(0, Constants.TIMEOUT_MS);
+        leftLeader.getSensorCollection().setIntegratedSensorPosition(0.0, Constants.TIMEOUT_MS);
+        rightLeader.getSensorCollection().setIntegratedSensorPosition(0.0, Constants.TIMEOUT_MS);
         pigeon.setYaw(0.0);
     }
 
     /**
      * Switches the base to open-loop control mode.
+     * 
+     * Note: Should be called after finishing motion profiling.
      */
     public void setOpenLoop() {
         controlState = ControlState.OPEN_LOOP;
@@ -347,18 +344,12 @@ public class Drive extends Submodule {
     /**
      * Tank drive mode for open-loop control.
      * 
-     * @param leftJoystick value of the left joystick in [-1, 1]
-     * @param rightJoystick value of the right joystick in [-1, 1]
+     * @param left left percent output in [-1, 1]
+     * @param right right percent output in [-1, 1]
      */
-    public void tank(double leftJoystick, double rightJoystick) {
-        if (Math.abs(leftJoystick) < Constants.JOYSTICK_DEADBAND) {
-            leftJoystick = 0.0;
-        }
-        if (Math.abs(rightJoystick) < Constants.JOYSTICK_DEADBAND) {
-            rightJoystick = 0.0;
-        }
-        outputLeftDrive = Math.copySign(coef * Math.pow(leftJoystick, exp), leftJoystick);
-        outputRightDrive = Math.copySign(coef * Math.pow(rightJoystick, exp), rightJoystick);
+    public void tank(double left, double right) {
+        outputLeftDrive = left;
+        outputRightDrive = right;
     }
 
     /**
@@ -368,12 +359,6 @@ public class Drive extends Submodule {
      * @param rightJoystick value of the right joystick in [-1, 1]
      */
     public void arcade(double leftJoystick, double rightJoystick) {
-        if (Math.abs(leftJoystick) < Constants.JOYSTICK_DEADBAND) {
-            leftJoystick = 0.0;
-        }
-        if (Math.abs(rightJoystick) < Constants.JOYSTICK_DEADBAND) {
-            rightJoystick = 0.0;
-        }
         outputLeftDrive = leftJoystick + rightJoystick;
         outputRightDrive = leftJoystick - rightJoystick;
     }
@@ -414,7 +399,6 @@ public class Drive extends Submodule {
             // Stops & resets everything
             stop();
             zero();
-            outputClosedLoop = SetValueMotionProfile.Disable.value;
             mpFollower.reset();
 
             mpFollower.setGearShift(currentGearShift);

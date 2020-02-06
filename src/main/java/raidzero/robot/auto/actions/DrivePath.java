@@ -26,17 +26,18 @@ public class DrivePath implements Action {
     }
 
     @Override
-    public void update() {}
+    public void start() {
+        System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
+        drive.setDrivePath(path);
+    }
+
+    @Override
+    public void update() {
+    }
 
     @Override
     public void done() {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' finished!");
         drive.stop();
-    }
-
-    @Override
-    public void start() {
-        System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
-        drive.setDrivePath(path);
     }
 }

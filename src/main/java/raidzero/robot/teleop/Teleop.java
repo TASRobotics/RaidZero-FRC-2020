@@ -3,6 +3,7 @@ package raidzero.robot.teleop;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.auto.actions.TurnToGoal;
 import raidzero.robot.submodules.Climb;
 import raidzero.robot.submodules.Drive;
@@ -12,6 +13,7 @@ import raidzero.robot.submodules.SubmoduleManager;
 import raidzero.robot.submodules.Hopper;
 import raidzero.robot.submodules.Turret;
 import raidzero.robot.submodules.Drive.GearShift;
+import raidzero.robot.utils.JoystickUtils;
 import raidzero.robot.wrappers.InactiveCompressor;
 
 public class Teleop {
@@ -89,8 +91,20 @@ public class Teleop {
         /**
          * Drivetrain
          */
-        //drive.tank(-p1.getY(Hand.kLeft), -p1.getY(Hand.kRight));
-        drive.arcade(-p1.getY(Hand.kLeft), p1.getX(Hand.kRight));
+        /*drive.tank(
+            JoystickUtils.monomialScale(
+                JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
+                DriveConstants.joystickExponent, 
+                DriveConstants.joystickCoefficient), 
+            JoystickUtils.monomialScale(
+                JoystickUtils.deadband(-p1.getY(Hand.kRight)),
+                DriveConstants.joystickExponent,
+                DriveConstants.joystickCoefficient)
+        );*/
+        drive.arcade(
+            JoystickUtils.deadband(-p1.getY(Hand.kLeft)), 
+            JoystickUtils.deadband(p1.getX(Hand.kRight))
+        );
         if (p1.getBumper(Hand.kRight)) {
             drive.setGearShift(GearShift.HIGH);
         } else if (p1.getBumperReleased(Hand.kRight)) {
@@ -98,15 +112,16 @@ public class Teleop {
         }
 
         /**
-         * Ejecter
+         * Shooter
          */
-        shooter.shoot(p2.getY(Hand.kLeft), p2.getAButton());
+        shooter.shoot(JoystickUtils.deadband(p2.getY(Hand.kLeft)), p2.getAButton());
 
         /**
          * Intake
          */
-        intake.suck(
-            0.625 * (p1.getTriggerAxis(Hand.kRight) - p1.getTriggerAxis(Hand.kLeft))
+        intake.intakeBalls(
+            JoystickUtils.deadband(
+                0.625 * (p1.getTriggerAxis(Hand.kRight) - p1.getTriggerAxis(Hand.kLeft)))
         );
         if (p1.getBumperPressed(Hand.kLeft)) {
             intake.invertStraw();
@@ -115,7 +130,14 @@ public class Teleop {
         /**
          * Hopper
          */
-        hopper.moveBalls(p1.getPOV(), p2.getY(Hand.kRight));
+        int p1Pov = p1.getPOV();
+        if (p1Pov == -1) {
+            hopper.moveBelt(JoystickUtils.deadband(p2.getY(Hand.kRight)));
+        } else if (p1Pov >= 315 || p1Pov <= 45) {
+            hopper.moveBelt(1.0);
+        } else if (p1Pov >= 225 && p1Pov <= 135) {
+            hopper.moveBelt(-1.0);
+        }
 
         /**
          * Turret
@@ -137,11 +159,11 @@ public class Teleop {
 
         // Climb Code
         if (p2.getBButton()) {
-            climb.climb(1);
+            climb.climb(1.0);
         } else if (p2.getXButton()) {
-            climb.climb(-1);
+            climb.climb(-1.0);
         } else {
-            climb.climb(0);
+            climb.climb(0.0);
         }
     }
 }

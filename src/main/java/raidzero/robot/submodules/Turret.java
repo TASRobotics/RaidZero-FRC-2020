@@ -25,8 +25,8 @@ public class Turret extends Submodule {
 
     private LazyTalonSRX turretMotor;
     
-    private double outputOpenLoop = 0;
-    private double outputPosition = 0;
+    private double outputOpenLoop = 0.0;
+    private double outputPosition = 0.0;
     private ControlState controlState = ControlState.OPEN_LOOP;
 
     public static Turret getInstance() {
@@ -78,7 +78,7 @@ public class Turret extends Submodule {
 
     @Override
     public void stop() {
-        outputOpenLoop = 0;
+        outputOpenLoop = 0.0;
         turretMotor.set(ControlMode.PercentOutput, 0);
     }
 
@@ -87,11 +87,21 @@ public class Turret extends Submodule {
         turretMotor.setSelectedSensorPosition(0);
     }
 
-    public void rotate(double deg) {
-        outputPosition = deg * TurretConstants.degreesToTicks;
+    /**
+     * Rotates the turret to the specified angle using closed-loop PID.
+     * 
+     * @param angle the angle to rotate to
+     */
+    public void rotateToAngle(double angle) {
+        outputPosition = angle * TurretConstants.degreesToTicks;
     }
 
-    public void rotateManual(double input) {
-        outputOpenLoop = input;
+    /**
+     * Rotates the turret using open-loop control.
+     * 
+     * @param percentOutput the percent output in [-1, 1]
+     */
+    public void rotateManual(double percentOutput) {
+        outputOpenLoop = percentOutput;
     }
 }

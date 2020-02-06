@@ -25,6 +25,13 @@ public class ParallelAction implements Action {
     }
 
     @Override
+    public void start() {
+        for (Action action : actions) {
+            action.start();
+        }
+    }
+
+    @Override
     public void update() {
         for (Action action : actions) {
             action.update();
@@ -35,13 +42,6 @@ public class ParallelAction implements Action {
     public void done() {
         for (Action action : actions) {
             action.done();
-        }
-    }
-
-    @Override
-    public void start() {
-        for (Action action : actions) {
-            action.start();
         }
     }
 }

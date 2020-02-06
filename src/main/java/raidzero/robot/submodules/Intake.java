@@ -52,18 +52,22 @@ public class Intake extends Submodule {
         position = Value.kOff;
         solenoid.set(Value.kOff);
 
-        outputOpenLoop = 0;
+        outputOpenLoop = 0.0;
         intakeMotor.set(ControlMode.PercentOutput, 0);
     }
 
-    public void suck(double trigger) {
-        if (Math.abs(trigger) < Constants.JOYSTICK_DEADBAND) {
-            outputOpenLoop = 0;
-            return;
-        }
-        outputOpenLoop = trigger;
+    /**
+     * Spins the intake using percent output.
+     * 
+     * @param percentOutput the percent output in [-1, 1]
+     */
+    public void intakeBalls(double percentOutput) {
+        outputOpenLoop = percentOutput;
     }
 
+    /**
+     * Moves the intake out or in depending on what state it is in.
+     */
     public void invertStraw() {
         invertPos();
         solenoid.set(position);

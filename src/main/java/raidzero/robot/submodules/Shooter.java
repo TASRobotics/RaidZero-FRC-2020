@@ -15,7 +15,7 @@ public class Shooter extends Submodule {
     private static LazyTalonFX shooterMotor;
     private static Shooter instance = null;
 
-    private static double shooterSpeed = 0.0;
+    private double shooterSpeed = 0.0;
 
     public static Shooter getInstance() {
         if (instance == null) {
@@ -48,16 +48,12 @@ public class Shooter extends Submodule {
 
     @Override
     public void stop() {
-        shooterSpeed = 0;
+        shooterSpeed = 0.0;
         shooterMotor.set(ControlMode.PercentOutput, 0);
     }
 
     public void shoot(double speed, boolean freeze) {
         if (freeze) {
-            return;
-        }
-        if (Math.abs(speed) < Constants.JOYSTICK_DEADBAND) {
-            shooterSpeed = 0;
             return;
         }
         shooterSpeed = speed * ShooterConstants.maxSpeed;

@@ -7,7 +7,7 @@ import raidzero.robot.submodules.Limelight;
 import raidzero.robot.submodules.Turret;
 
 /**
- * Action for turning the drive towards the goal using vision.
+ * Action for turning the turret towards the goal using vision.
  */
 public class TurnToGoal implements Action {
 
@@ -16,12 +16,16 @@ public class TurnToGoal implements Action {
 
     private double headingError;
 
-    public TurnToGoal() {
-    }
+    public TurnToGoal() {}
 
     @Override
     public boolean isFinished() {
         return Math.abs(headingError) < Constants.ANGLE_ADJUST_THRESHOLD;
+    }
+
+    @Override
+    public void start() {
+        System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
     }
 
     @Override
@@ -31,11 +35,9 @@ public class TurnToGoal implements Action {
             return;
 		}
         headingError = limelight.getTx();
-        //System.out.println("Heading error: " + headingError);
-		
-		double steeringAdjust = 0.0;
+
 		// Steering adjust P controller with offset
-        steeringAdjust = Constants.KP_AIM * headingError;
+        double steeringAdjust = Constants.KP_AIM * headingError;
         System.out.println("Heading error: " + steeringAdjust);
 
 		turret.rotateManual(MathUtil.clamp(steeringAdjust, -0.2, 0.2));
@@ -45,10 +47,5 @@ public class TurnToGoal implements Action {
     public void done() {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' finished!");
         turret.stop();
-    }
-
-    @Override
-    public void start() {
-        System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
     }
 }
