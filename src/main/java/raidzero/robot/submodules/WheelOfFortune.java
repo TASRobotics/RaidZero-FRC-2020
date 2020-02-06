@@ -52,7 +52,6 @@ public class WheelOfFortune extends Submodule {
         wofMotor.configAllSettings(config);
 
         solenoid = new InactiveDoubleSolenoid(Constants.wheelOfFortuneUpId, Constants.wheelOfFortuneDownId);
-        solenoid.setActive(true);
         solenoid.set(Value.kOff);
     }
 
@@ -73,10 +72,9 @@ public class WheelOfFortune extends Submodule {
         outputOpenLoop = 0.0;
         outputPosition = 0.0;
         wofMotor.set(ControlMode.PercentOutput, 0);
-        solenoid.set(Value.kOff);
     }
 
-    private void spinOpenLoop(double percentOutput) {
+    public void spin(double percentOutput) {
         controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = percentOutput;
     }

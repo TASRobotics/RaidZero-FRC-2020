@@ -3,7 +3,6 @@ package raidzero.robot.teleop;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.auto.actions.TurnToGoal;
 import raidzero.robot.submodules.Climb;
 import raidzero.robot.submodules.Drive;
@@ -12,6 +11,7 @@ import raidzero.robot.submodules.Shooter;
 import raidzero.robot.submodules.SubmoduleManager;
 import raidzero.robot.submodules.Hopper;
 import raidzero.robot.submodules.Turret;
+import raidzero.robot.submodules.WheelOfFortune;
 import raidzero.robot.submodules.Drive.GearShift;
 import raidzero.robot.utils.JoystickUtils;
 import raidzero.robot.wrappers.InactiveCompressor;
@@ -34,6 +34,7 @@ public class Teleop {
     private Turret turret = Turret.getInstance();
     private Climb climb = Climb.getInstance();
     private InactiveCompressor compressor = InactiveCompressor.getInstance();
+    private WheelOfFortune wheelOfFortune = WheelOfFortune.getInstance();
 
     private XboxController p1 = new XboxController(0);
     private XboxController p2 = new XboxController(1);
@@ -62,7 +63,7 @@ public class Teleop {
          * Bumpers: Shift [Right(while held down): high gear]
          * Triggers: Intake [Right: In, Left: Out]
          * DPad: Hopper [Up: In, Down: out]
-         * B buttom: compressor on/off
+         * B button: compressor on/off
          *  
          * P2
          * Left joystick: Shooter
@@ -77,7 +78,7 @@ public class Teleop {
          */
         if (p1.getBButtonPressed()) {
             compressor.changeState();
-        }        
+        }
 
         /**
          * E stop that we have control over
@@ -146,6 +147,18 @@ public class Teleop {
             0.25 * (p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft))
         );
         //turnToGoal.update();
+
+        /**
+         * Wheel of Fortune
+         */
+        if (p1.getYButtonPressed()) {
+            wheelOfFortune.engage(true);
+        } else if (p1.getAButtonPressed()) {
+            wheelOfFortune.engage(false);
+        }
+        /*wheelOfFortune.spin(
+            JoystickUtils.deadband(p1.getTriggerAxis(Hand.kRight))
+        );*/
 
         /**
          * Climb
