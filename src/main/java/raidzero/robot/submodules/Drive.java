@@ -1,8 +1,10 @@
+
 package raidzero.robot.submodules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
@@ -57,10 +59,6 @@ public class Drive extends Submodule {
     private TrajectoryFollower trajectoryFollower;
 
     private DifferentialDriveOdometry odometry;
-    
-    // Tunable constants
-    private double coef;
-    private double exp;
 
     private GearShift currentGearShift;
 
@@ -73,25 +71,30 @@ public class Drive extends Submodule {
     private double outputRightVelocity = 0.0; // in sensor units / 100 ms
     private double outputRightFeedforward = 0.0; // in volts
 
-    private Drive() {
+    private Drive() {}
+
+    @Override
+    public void onInit() {
         // Motors
         leftLeader = new LazyTalonFX(Constants.driveLeftLeaderId);
-        configureMotor(leftLeader, false);
+        configureMotor(leftLeader, Constants.driveLeftInvert);
         
         leftFollower = new LazyTalonFX(Constants.driveLeftFollowerId);
-        configureMotor(leftFollower, false);
+        configureMotor(leftFollower, Constants.driveLeftInvert);
         leftFollower.follow(leftLeader);
 
         rightLeader = new LazyTalonFX(Constants.driveRightLeaderId);
-        configureMotor(rightLeader, true);
+        configureMotor(rightLeader, Constants.driveRightInvert);
         
         rightFollower = new LazyTalonFX(Constants.driveRightFollowerId);
-        configureMotor(rightFollower, true);
+        configureMotor(rightFollower, Constants.driveRightInvert);
         rightFollower.follow(rightLeader);
 
         // Pigeon IMU
         pigeon = new Pigeon(Constants.pigeonId);
+        pigeon.configFactoryDefault();
 
+        // Must be called after the pigeon is initialized
         configureMotorClosedLoop();
 
         // Everything must be zeroed before constructing odometry
@@ -101,11 +104,7 @@ public class Drive extends Submodule {
 
         // Gear shift
         gearShiftSolenoid = new InactiveDoubleSolenoid(Constants.driveGearshiftForwardId, 
-			Constants.driveGearshiftReverseId);
-
-        // Joystick-to-output mapping
-        exp = Constants.DRIVE_JOYSTICK_EXPONENT;
-        coef = Constants.DRIVE_JOYSTICK_COEF;
+            Constants.driveGearshiftReverseId);
 
         // Control state
         controlState = ControlState.OPEN_LOOP;
@@ -115,12 +114,12 @@ public class Drive extends Submodule {
      * Configures a motor controller.
      * 
      * @param motor the motor controller to configure
-     * @param invertMotor whether to invert the motor output
+     * @param inversion whether to invert the motor output
      */
-    private void configureMotor(LazyTalonFX motor, boolean invertMotor) {
+    private void configureMotor(LazyTalonFX motor, InvertType inversion) {
         motor.configFactoryDefault();
         motor.setNeutralMode(NeutralMode.Coast);
-        motor.setInverted(invertMotor);
+        motor.setInverted(inversion);
     }
 
     /**
@@ -129,14 +128,13 @@ public class Drive extends Submodule {
     private void configureMotorClosedLoop() {
         TalonFXConfiguration talonConfig = new TalonFXConfiguration();
         talonConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
-        talonConfig.neutralDeadband = 0.1;
+        talonConfig.neutralDeadband = DriveConstants.DRIVE_NEUTRAL_DEADBAND;
         talonConfig.slot0.kP = DriveConstants.PRIMARY_P;
         talonConfig.slot0.kI = DriveConstants.PRIMARY_I;
         talonConfig.slot0.kD = DriveConstants.PRIMARY_D;
         talonConfig.slot0.kF = 0.0;
         talonConfig.slot0.integralZone = DriveConstants.PRIMARY_INT_ZONE;
         talonConfig.slot0.closedLoopPeakOutput = 1.0;
-        talonConfig.openloopRamp = 0.25;
 
         leftLeader.configAllSettings(talonConfig);
         rightLeader.configAllSettings(talonConfig);
@@ -262,14 +260,12 @@ public class Drive extends Submodule {
     /**
      * Tank drive mode for open-loop control.
      * 
-     * @param leftJoystick value of the left joystick in [-1, 1]
-     * @param rightJoystick value of the right joystick in [-1, 1]
+     * @param left left percent output in [-1, 1]
+     * @param right right percent output in [-1, 1]
      */
-    public void tank(double leftJoystick, double rightJoystick) {
-        leftJoystick = JoystickUtils.deadband(leftJoystick);
-        rightJoystick = JoystickUtils.deadband(rightJoystick);
-        outputLeftDrive = Math.copySign(coef * Math.pow(leftJoystick, exp), leftJoystick);
-        outputRightDrive = Math.copySign(coef * Math.pow(rightJoystick, exp), rightJoystick);
+    public void tank(double left, double right) {
+        outputLeftDrive = left;
+        outputRightDrive = right;
     }
 
     /**
@@ -313,10 +309,8 @@ public class Drive extends Submodule {
      * @param rightJoystick value of the right joystick in [-1, 1]
      */
     public void arcade(double leftJoystick, double rightJoystick) {
-        leftJoystick = JoystickUtils.deadband(leftJoystick);
-        rightJoystick = JoystickUtils.deadband(rightJoystick);
-        outputLeftDrive = MathUtil.clamp(leftJoystick + rightJoystick, -1.0, 1.0);
-        outputRightDrive = MathUtil.clamp(leftJoystick - rightJoystick, -1.0, 1.0);
+        outputLeftDrive = leftJoystick + rightJoystick;
+        outputRightDrive = leftJoystick - rightJoystick;
     }
 
     /**
@@ -338,9 +332,11 @@ public class Drive extends Submodule {
     private Value gearSolenoidValue(GearShift gear) {
         if (gear == GearShift.HIGH) {
             return Value.kForward;
-        } else {
+        }
+        if (gear == GearShift.LOW) {
             return Value.kReverse;
         }
+        return Value.kOff;
     }
 
     /**

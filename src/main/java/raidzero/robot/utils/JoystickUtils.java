@@ -16,4 +16,17 @@ public class JoystickUtils {
         }
         return input;
     }
+
+    /**
+     * Scales a joystick input using a monomial.
+     * 
+     * @param input joystick input in [-1, 1]
+     * @param exp power of the monomial
+     * @param coef coefficient of the monomial
+     * @return scaled input
+     */
+    public static double monomialScale(double input, double exp, 
+        double coef) {
+        return Math.copySign(coef * Math.pow(input, exp), input);
+    }
 }

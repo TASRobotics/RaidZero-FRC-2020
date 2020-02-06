@@ -29,6 +29,16 @@ public class SubmoduleManager {
     }
 
     /**
+     * Calls the {@link Submodule#onInit()} method for all 
+     * submodules.
+     * 
+     * @param timestamp
+     */
+    public void onInit() {
+        submodules.forEach(o -> o.onInit());
+    }
+
+    /**
      * Calls the {@link Submodule#onStart(double)} method for all 
      * submodules.
      * 

@@ -6,13 +6,18 @@ import edu.wpi.first.wpilibj.Timer;
 import raidzero.robot.auto.AutoRunner;
 import raidzero.robot.auto.sequences.TestSequence;
 import raidzero.robot.submodules.Drive;
-import raidzero.robot.submodules.Hopper;
-import raidzero.robot.submodules.Intake;
 import raidzero.robot.submodules.Limelight;
-import raidzero.robot.submodules.Shooter;
 import raidzero.robot.teleop.Teleop;
-import raidzero.robot.submodules.SubmoduleManager;
+import raidzero.robot.submodules.Climb;
+import raidzero.robot.submodules.Drive;
+import raidzero.robot.submodules.Shooter;
 import raidzero.robot.submodules.Turret;
+import raidzero.robot.submodules.WheelOfFortune;
+import raidzero.robot.submodules.Hopper;
+import raidzero.robot.submodules.Submodule;
+import raidzero.robot.submodules.SubmoduleManager;
+import raidzero.robot.submodules.Intake;
+import raidzero.robot.teleop.Teleop;
 
 /**
  * The main robot class.
@@ -25,11 +30,13 @@ public class Robot extends TimedRobot {
     private static final Teleop teleop = Teleop.getInstance();
 
     private static final Drive moduleDrive = Drive.getInstance();
-    //private static final Turret moduleTurret = Turret.getInstance();
-    //private static final Shooter moduleShooter = Shooter.getInstance();
-    private static final Hopper moduleHopper = Hopper.getInstance();
-    private static final Intake moduleIntake = Intake.getInstance();
     private static final Limelight moduleLimelight = Limelight.getInstance();
+    private static final Shooter moduleShooter = Shooter.getInstance();
+    private static final Intake moduleIntake = Intake.getInstance();
+    private static final Hopper moduleHopper = Hopper.getInstance();
+    private static final Turret moduleTurret = Turret.getInstance();
+    private static final WheelOfFortune moduleWheelOfFortune = WheelOfFortune.getInstance();
+    private static final Climb moduleClimb = Climb.getInstance();
 
     /**
      * Runs only once at the start of robot code execution.
@@ -40,14 +47,16 @@ public class Robot extends TimedRobot {
         Logger.configureLoggingAndConfig(this, false);
 
         // Register all submodules here
-        SubmoduleManager.getInstance().setSubmodules(
+        submoduleManager.setSubmodules(
             moduleDrive,
-            //moduleTurret,
-            //moduleShooter,
-            moduleHopper,
+            moduleShooter,
             moduleIntake,
-            moduleLimelight
+            moduleHopper,
+            moduleTurret,
+            //moduleWheelOfFortune,
+            moduleClimb
         );
+        submoduleManager.onInit();
     }
 
     /**

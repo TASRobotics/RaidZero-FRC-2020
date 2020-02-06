@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class InactiveDoubleSolenoid extends DoubleSolenoid {
     
-    protected boolean active = false;
+    protected boolean active = true;
 
     public InactiveDoubleSolenoid(final int forwardChannel, final int reverseChannel) {
         super(forwardChannel, reverseChannel);

@@ -2,15 +2,18 @@ package raidzero.robot.submodules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-
-import edu.wpi.first.wpiutil.math.MathUtil;
-import raidzero.robot.Constants;
-import raidzero.robot.utils.JoystickUtils;
 import raidzero.robot.wrappers.LazyTalonSRX;
+
+import raidzero.robot.Constants;
 
 public class Hopper extends Submodule {
 
     private static Hopper instance = null;
+
+    private LazyTalonSRX hopperMotor;
+    
+    private double outputOpenLoop = 0;
+
     public static Hopper getInstance() {
         if (instance == null) {
             instance = new Hopper();
@@ -18,60 +21,33 @@ public class Hopper extends Submodule {
         return instance;
     }
 
-    public static enum ControlState {
-        OPEN_LOOP
-    };
+    private Hopper() {}
 
-    private LazyTalonSRX hopperMotor;
-
-    // Control states
-    private ControlState controlState;
-
-    private double outputOpenLoop = 0.0;
-
-    private Hopper() {
-        hopperMotor = new LazyTalonSRX(Constants.hopperId);
-        hopperMotor.configFactoryDefault();
-        hopperMotor.setInverted(true);
-        hopperMotor.setNeutralMode(NeutralMode.Brake);
-    }
-
-    /**
-     * Moves the hopper using open-loop control.
-     * 
-     * @param output open-loop output in [-1, 1], + is counterclockwise
-     */
-    public void move(double output) {
-        outputOpenLoop = MathUtil.clamp(JoystickUtils.deadband(output), -1.0, 1.0);
-    }
-
-    /**
-     * Resets all outputs on start.
-     * 
-     * @param timestamp
-     */
     @Override
-    public void onStart(double timestamp) {
-        controlState = ControlState.OPEN_LOOP;
-        outputOpenLoop = 0.0;
+    public void onInit() {
+        hopperMotor = new LazyTalonSRX(Constants.hopperMotorId);
+        hopperMotor.configFactoryDefault();
+        hopperMotor.setNeutralMode(NeutralMode.Brake);
+        hopperMotor.setInverted(true);
+    }
+
+    @Override
+    public void run() {
+        hopperMotor.set(ControlMode.PercentOutput, outputOpenLoop);
     }
 
     @Override
     public void stop() {
-        controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = 0.0;
-        hopperMotor.set(ControlMode.PercentOutput, 0.0);
+        hopperMotor.set(ControlMode.PercentOutput, 0);
     }
 
     /**
-     * Runs the turret motor.
+     * Moves the conveyor belt using percent output.
+     * 
+     * @param percentOutput the percent output in [-1, 1]
      */
-    @Override
-    public void run() {
-        switch (controlState){
-            case OPEN_LOOP:
-                hopperMotor.set(ControlMode.PercentOutput, outputOpenLoop);
-                break;
-        }
+    public void moveBelt(double percentOutput) {
+        outputOpenLoop = percentOutput;
     }
 }

@@ -1,15 +1,22 @@
 package raidzero.robot.submodules;
 
+import raidzero.robot.wrappers.LazyTalonFX;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import raidzero.robot.Constants;
-import raidzero.robot.utils.JoystickUtils;
-import raidzero.robot.wrappers.LazyTalonFX;
+import raidzero.robot.Constants.ShooterConstants;
 
 public class Shooter extends Submodule {
 
+    private static LazyTalonFX shooterMotor;
     private static Shooter instance = null;
+
+    private double shooterSpeed = 0.0;
+
     public static Shooter getInstance() {
         if (instance == null) {
             instance = new Shooter();
@@ -17,64 +24,38 @@ public class Shooter extends Submodule {
         return instance;
     }
 
-    public static enum ControlState {
-        OPEN_LOOP, VELOCITY_CONTROL
-    };
-
-    private LazyTalonFX shooterMotor;
-
-    // Control states
-    private ControlState controlState;
-
-    private double outputOpenLoop = 0.0;
-    private double outputVelocity = 0.0;
-
     private Shooter() {
-        shooterMotor = new LazyTalonFX(Constants.shooterId);
-        shooterMotor.setInverted(true);
+        shooterMotor = new LazyTalonFX(Constants.shooterMotorId);
+        shooterMotor.setInverted(ShooterConstants.inversion);
         shooterMotor.setNeutralMode(NeutralMode.Coast);
+        
+        TalonFXConfiguration config = new TalonFXConfiguration();
+        config.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+        config.slot0.kF = ShooterConstants.kF;
+        config.slot0.kP = ShooterConstants.kP;
+        config.slot0.kI = ShooterConstants.kI;
+        config.slot0.kD = ShooterConstants.kD;
+        config.slot0.integralZone = ShooterConstants.kIntegralZone;
+
+        shooterMotor.configAllSettings(config);
     }
 
-    /**
-     * Turns the turret using open-loop control.
-     * 
-     * @param output open-loop output in [-1, 1], + is counterclockwise
-     */
-    public void spin(double output) {
-        outputOpenLoop = JoystickUtils.deadband(output);
-    }
-
-    /**
-     * Resets all outputs on start.
-     * 
-     * @param timestamp
-     */
     @Override
-    public void onStart(double timestamp) {
-        controlState = ControlState.OPEN_LOOP;
-        outputOpenLoop = 0.0;
+    public void run() {
+        //motor.set(ControlMode.PercentOutput, shooterSpeed);
+        shooterMotor.set(ControlMode.Velocity, shooterSpeed);
     }
 
     @Override
     public void stop() {
-        controlState = ControlState.OPEN_LOOP;
-        outputOpenLoop = 0.0;
-        shooterMotor.set(ControlMode.PercentOutput, 0.0);
+        shooterSpeed = 0.0;
+        shooterMotor.set(ControlMode.PercentOutput, 0);
     }
 
-    /**
-     * Runs the turret motor.
-     */
-    @Override
-    public void run() {
-        switch (controlState){
-            case OPEN_LOOP:
-                shooterMotor.set(ControlMode.PercentOutput, outputOpenLoop);
-                break;
-            case VELOCITY_CONTROL:
-                shooterMotor.set(ControlMode.Velocity, outputVelocity);
-                break;
+    public void shoot(double speed, boolean freeze) {
+        if (freeze) {
+            return;
         }
-        
+        shooterSpeed = speed * ShooterConstants.maxSpeed;
     }
 }

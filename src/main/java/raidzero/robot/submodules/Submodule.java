@@ -13,9 +13,12 @@ public abstract class Submodule {
     public void onStart(double timestamp) {}
 
     /**
+     * Called once when the submodule is initialized.
+     */
+    public void onInit() {}
+
+    /**
      * Reads cached inputs & calculate outputs.
-     * 
-     * @param timestamp
      */
     public void update(double timestamp) {}
     

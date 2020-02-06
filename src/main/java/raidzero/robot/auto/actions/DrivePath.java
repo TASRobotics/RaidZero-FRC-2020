@@ -45,15 +45,6 @@ public class DrivePath implements Action {
     }
 
     @Override
-    public void update() {}
-
-    @Override
-    public void done() {
-        System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' finished!");
-        drive.stop();
-    }
-
-    @Override
     public void start() {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
         if (isFirstPath) {
@@ -65,5 +56,14 @@ public class DrivePath implements Action {
         }
         drive.setGearShift(GearShift.LOW);
         drive.setDrivePath(path);
+    }
+
+    @Override
+    public void update() {
+    }
+    
+    public void done() {
+        System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' finished!");
+        drive.stop();
     }
 }
