@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
             moduleIntake,
             moduleHopper,
             moduleTurret,
-            //moduleWheelOfFortune,
+            moduleWheelOfFortune,
             moduleClimb,
             moduleLimelight
         );
