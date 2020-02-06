@@ -16,14 +16,12 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpiutil.math.MathUtil;
 import raidzero.robot.Constants;
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.wrappers.*;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.pathing.TrajectoryFollower;
 import raidzero.robot.utils.EncoderUtils;
-import raidzero.robot.utils.JoystickUtils;
 
 public class Drive extends Submodule {
 
@@ -224,8 +222,7 @@ public class Drive extends Submodule {
         outputLeftFeedforward = 0.0;
         outputRightVelocity = 0.0;
         outputRightFeedforward = 0.0;
-
-        // TODO: Make sure we don't ever directly set motor outputs
+        
         leftLeader.set(ControlMode.PercentOutput, 0.0);
         rightLeader.set(ControlMode.PercentOutput, 0.0);
     }

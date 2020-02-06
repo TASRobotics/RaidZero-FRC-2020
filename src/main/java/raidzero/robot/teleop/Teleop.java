@@ -3,7 +3,6 @@ package raidzero.robot.teleop;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.auto.actions.TurnToGoal;
 import raidzero.robot.submodules.Climb;
 import raidzero.robot.submodules.Drive;
