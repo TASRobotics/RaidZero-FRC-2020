@@ -70,21 +70,23 @@ public class Robot extends TimedRobot {
     stick = new XboxController(0);
 
     leftMaster = new WPI_TalonFX(1);
+	leftMaster.configFactoryDefault();
     leftMaster.setInverted(false);
-    leftMaster.setSensorPhase(false);
     leftMaster.setNeutralMode(NeutralMode.Brake);
 
     rightMaster = new WPI_TalonFX(0);
+	rightMaster.configFactoryDefault();
     rightMaster.setInverted(true);
-    rightMaster.setSensorPhase(true);
     rightMaster.setNeutralMode(NeutralMode.Brake);
 
     WPI_TalonFX leftSlave0 = new WPI_TalonFX(3);
+	leftSlave0.configFactoryDefault();
     leftSlave0.setInverted(false);
     leftSlave0.follow(leftMaster);
     leftSlave0.setNeutralMode(NeutralMode.Brake);
 
     WPI_TalonFX rightSlave0 = new WPI_TalonFX(2);
+	rightSlave0.configFactoryDefault();
     rightSlave0.setInverted(true);
     rightSlave0.follow(rightMaster);
     rightSlave0.setNeutralMode(NeutralMode.Brake);
