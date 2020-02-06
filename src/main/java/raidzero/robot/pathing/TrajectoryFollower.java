@@ -3,6 +3,7 @@ package raidzero.robot.pathing;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,7 +29,14 @@ public class TrajectoryFollower {
      */
     public TrajectoryFollower(DifferentialDriveKinematics kinematics) {
         controller = new RamseteController();
-        this.kinematics = kinematics;        
+        /*controller = new RamseteController() {
+            @Override
+            public ChassisSpeeds calculate(Pose2d currentPose, Pose2d poseRef, double linearVelocityRefMeters,
+                    double angularVelocityRefRadiansPerSecond) {
+                return new ChassisSpeeds(linearVelocityRefMeters, 0.0, angularVelocityRefRadiansPerSecond);
+            }
+        };*/
+        this.kinematics = kinematics;
     }
 
     /**

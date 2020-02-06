@@ -73,11 +73,7 @@ public class Constants {
         public static final double PIGEON_SCALE = 3600.0 / 8192.0;
 
         // kF should stay at 0 since the drive is using an arbitrary feedforward term
-        public static final double PRIMARY_F = 0.0;
-        public static final double PRIMARY_P = 0;
-        public static final double PRIMARY_I = 0;
-        public static final double PRIMARY_D = 0;
-        public static final int PRIMARY_INT_ZONE = 50;
+        public static final double PRIMARY_P = 0; // 0.188
 
         public static final double METERS_PER_INCH = 0.0254;
         public static final double INCHES_PER_METER = 1.0 / 0.0254;
@@ -95,32 +91,31 @@ public class Constants {
          * https://docs.wpilib.org/en/latest/docs/software/wpilib-tools/robot-characterization/index.html
          */
         // Voltage needed to overcome the motor's static friction.
-        public static final double kS = 0.0;
+        public static final double kS = 0.0186;
 
         // Voltage needed to hold (or "cruise") at a given constant velocity.
-        public static final double kV = 0.0;
+        public static final double kV = 4.36;
 
         // Voltage needed to induce a given acceleration in the motor shaft.
-        public static final double kA = 0.0;
+        public static final double kA = 0.303;
 
         public static final SimpleMotorFeedforward FEED_FORWARD = 
             new SimpleMotorFeedforward(kS, kV, kA);
 
         public static final double MAX_VELOCITY = 3.0; // in m/s
-        public static final double MAX_ACCELERATION = 3.0; // in m/s
+        public static final double MAX_ACCELERATION = 2.0; // in m/s
 
-        // TODO: Measure this!
-        public static final double TRACK_WIDTH_METERS = 0.5;
+        public static final double TRACK_WIDTH_METERS = 1.032;
         public static final DifferentialDriveKinematics DRIVE_KINEMATICS = 
             new DifferentialDriveKinematics(TRACK_WIDTH_METERS);
 
-        public static final double MAX_VOLTAGE = 11;
+        public static final double MAX_VOLTAGE = 11.0;
         public static final DifferentialDriveVoltageConstraint VOLTAGE_CONSTRAINT = 
             new DifferentialDriveVoltageConstraint(FEED_FORWARD, DRIVE_KINEMATICS, MAX_VOLTAGE);
 
         // Joystick to Output mapping
-        public static final double joystickExponent = 1;
-        public static final double joystickCoefficient = 1;
+        public static final double joystickExponent = 1.0;
+        public static final double joystickCoefficient = 1.0;
     }
 
     /**
@@ -132,7 +127,7 @@ public class Constants {
 
         public static final double maxSpeed = 18300; // in ticks per 100ms
 
-        public static final double kF = maxSpeed / 1023.0;
+        public static final double kF = 1023.0 / maxSpeed;
         public static final double kP = 0;
         public static final double kI = 0; // Shouldn't be touched
         public static final double kD = 0; // Shouldn't be touched

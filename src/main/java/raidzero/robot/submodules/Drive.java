@@ -105,7 +105,7 @@ public class Drive extends Submodule {
             Constants.driveGearshiftReverseId);
 
         // Control state
-        controlState = ControlState.OPEN_LOOP;
+        setOpenLoop();
     }
 
     /**
@@ -127,11 +127,11 @@ public class Drive extends Submodule {
         TalonFXConfiguration talonConfig = new TalonFXConfiguration();
         talonConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
         talonConfig.neutralDeadband = DriveConstants.DRIVE_NEUTRAL_DEADBAND;
-        talonConfig.slot0.kP = DriveConstants.PRIMARY_P;
-        talonConfig.slot0.kI = DriveConstants.PRIMARY_I;
-        talonConfig.slot0.kD = DriveConstants.PRIMARY_D;
         talonConfig.slot0.kF = 0.0;
-        talonConfig.slot0.integralZone = DriveConstants.PRIMARY_INT_ZONE;
+        talonConfig.slot0.kP = DriveConstants.PRIMARY_P;
+        talonConfig.slot0.kI = 0.0;
+        talonConfig.slot0.kD = 0.0;
+        talonConfig.slot0.integralZone = 0;
         talonConfig.slot0.closedLoopPeakOutput = 1.0;
 
         leftLeader.configAllSettings(talonConfig);
@@ -181,11 +181,7 @@ public class Drive extends Submodule {
             // Update trajectory follower here
             tankVelocity(trajectoryFollower.update(currentPose));
         }
-        SmartDashboard.putNumber("Heading", pigeonHeading);
         SmartDashboard.putString("Current Pose", currentPose.toString());
-
-        SmartDashboard.putNumber("Left Encoder", leftLeader.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Right Encoder", rightLeader.getSelectedSensorPosition());
     }
 
     /**
@@ -213,7 +209,7 @@ public class Drive extends Submodule {
      */
     @Override
     public void stop() {
-        controlState = ControlState.OPEN_LOOP;
+        setOpenLoop();
 
         outputLeftDrive = 0.0;
         outputRightDrive = 0.0;
@@ -222,9 +218,9 @@ public class Drive extends Submodule {
         outputLeftFeedforward = 0.0;
         outputRightVelocity = 0.0;
         outputRightFeedforward = 0.0;
-        
-        leftLeader.set(ControlMode.PercentOutput, 0.0);
-        rightLeader.set(ControlMode.PercentOutput, 0.0);
+
+        leftLeader.set(ControlMode.Disabled, 0.0);
+        rightLeader.set(ControlMode.Disabled, 0.0);
     }
 
     /**
@@ -286,17 +282,26 @@ public class Drive extends Submodule {
         outputRightVelocity = EncoderUtils.metersPerSecToTicksPer100ms(rightVelocity, 
             currentGearShift);
 
-        double leftAcceleration = (leftVelocity - EncoderUtils.ticksToMeters(
-            leftLeader.getSelectedSensorPosition(), currentGearShift))
-                / DriveConstants.LOOP_PERIOD_SECONDS;
-        double rightAcceleration = (rightVelocity - EncoderUtils.ticksToMeters(
-            rightLeader.getSelectedSensorVelocity(), currentGearShift))
-                / DriveConstants.LOOP_PERIOD_SECONDS;
+        double leftCurrentVelocity = EncoderUtils.ticksToMeters(
+            leftLeader.getSelectedSensorVelocity(), currentGearShift);
+        double leftAcceleration = (leftVelocity - leftCurrentVelocity) 
+            / DriveConstants.LOOP_PERIOD_SECONDS;
+        double rightCurrentVelocity = EncoderUtils.ticksToMeters(
+            rightLeader.getSelectedSensorVelocity(), currentGearShift);
+        double rightAcceleration = (rightVelocity - rightCurrentVelocity)
+            / DriveConstants.LOOP_PERIOD_SECONDS;
+
+        SmartDashboard.putNumber("left_measure", leftCurrentVelocity);
+        SmartDashboard.putNumber("left_ref", leftVelocity);
+        SmartDashboard.putNumber("right_measure", rightCurrentVelocity);
+        SmartDashboard.putNumber("right_ref", rightVelocity);
         
         outputLeftFeedforward = DriveConstants.FEED_FORWARD.calculate(
             leftVelocity, leftAcceleration);
         outputRightFeedforward = DriveConstants.FEED_FORWARD.calculate(
             rightVelocity, rightAcceleration);
+        SmartDashboard.putNumber("left_FF", outputLeftFeedforward);
+        SmartDashboard.putNumber("right_FF", outputRightFeedforward);
     }
 
     /**
