@@ -49,9 +49,6 @@ public class Intake extends Submodule {
 
     @Override
     public void stop() {
-        position = Value.kOff;
-        solenoid.set(Value.kOff);
-
         outputOpenLoop = 0.0;
         intakeMotor.set(ControlMode.PercentOutput, 0);
     }

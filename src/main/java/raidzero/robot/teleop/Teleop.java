@@ -64,6 +64,7 @@ public class Teleop {
          * Triggers: Intake [Right: In, Left: Out]
          * DPad: Hopper [Up: In, Down: out]
          * B button: compressor on/off
+         * Right bumper: Hold to use right joystick to turn wheel of fortune
          *  
          * P2
          * Left joystick: Shooter
@@ -102,10 +103,14 @@ public class Teleop {
                 DriveConstants.joystickExponent,
                 DriveConstants.joystickCoefficient)
         );*/
-        drive.arcade(
-            JoystickUtils.deadband(-p1.getY(Hand.kLeft)), 
-            JoystickUtils.deadband(p1.getX(Hand.kRight))
-        );
+        if (!p1.getBumper(Hand.kRight)) {
+            drive.arcade(
+                JoystickUtils.deadband(-p1.getY(Hand.kLeft)), 
+                JoystickUtils.deadband(p1.getX(Hand.kRight))
+            );
+        } else {
+            drive.tank(0.0, 0.0);
+        }
         if (p1.getBumper(Hand.kRight)) {
             drive.setGearShift(GearShift.HIGH);
         } else if (p1.getBumperReleased(Hand.kRight)) {
@@ -156,9 +161,13 @@ public class Teleop {
         } else if (p1.getAButtonPressed()) {
             wheelOfFortune.engage(false);
         }
-        /*wheelOfFortune.spin(
-            JoystickUtils.deadband(p1.getTriggerAxis(Hand.kRight))
-        );*/
+        if (p1.getBumper(Hand.kRight)) {
+            wheelOfFortune.spin(
+                JoystickUtils.deadband(p1.getY(Hand.kRight))
+            );
+        } else {
+            wheelOfFortune.stop();
+        }
 
         /**
          * Climb
