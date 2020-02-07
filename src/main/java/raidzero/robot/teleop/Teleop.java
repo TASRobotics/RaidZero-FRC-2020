@@ -64,7 +64,6 @@ public class Teleop {
          * Triggers: Intake [Right: In, Left: Out]
          * DPad: Hopper [Up: In, Down: out]
          * B button: compressor on/off
-         * Right bumper: Hold to use right joystick to turn wheel of fortune
          *  
          * P2
          * Left joystick: Shooter
@@ -72,6 +71,7 @@ public class Teleop {
          * Right joystick: Hopper [Up: In, Down: Out]
          * Triggers: Turret [Right: Clockwise, Left: Counterclockwise]
          * Left bumper: Use left joystick to aim
+         * Right bumper: Hold to use P2 right joystick to turn wheel of fortune
          */
 
         /**
@@ -103,14 +103,10 @@ public class Teleop {
                 DriveConstants.joystickExponent,
                 DriveConstants.joystickCoefficient)
         );*/
-        if (!p1.getBumper(Hand.kRight)) {
-            drive.arcade(
-                JoystickUtils.deadband(-p1.getY(Hand.kLeft)), 
-                JoystickUtils.deadband(p1.getX(Hand.kRight))
-            );
-        } else {
-            drive.tank(0.0, 0.0);
-        }
+        drive.arcade(
+            JoystickUtils.deadband(-p1.getY(Hand.kLeft)), 
+            JoystickUtils.deadband(p1.getX(Hand.kRight))
+        );
         if (p1.getBumper(Hand.kRight)) {
             drive.setGearShift(GearShift.HIGH);
         } else if (p1.getBumperReleased(Hand.kRight)) {
@@ -137,7 +133,7 @@ public class Teleop {
          * Hopper
          */
         int p1Pov = p1.getPOV();
-        if (p1Pov == -1) {
+        if (p1Pov == -1 && !p2.getBumper(Hand.kRight)) {
             hopper.moveBelt(JoystickUtils.deadband(p2.getY(Hand.kRight)));
         } else if (p1Pov >= 315 || p1Pov <= 45) {
             hopper.moveBelt(1.0);
@@ -161,9 +157,9 @@ public class Teleop {
         } else if (p1.getAButtonPressed()) {
             wheelOfFortune.engage(false);
         }
-        if (p1.getBumper(Hand.kRight)) {
+        if (p2.getBumper(Hand.kRight)) {
             wheelOfFortune.spin(
-                JoystickUtils.deadband(p1.getY(Hand.kRight))
+                JoystickUtils.deadband(p2.getY(Hand.kRight))
             );
         } else {
             wheelOfFortune.stop();
