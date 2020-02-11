@@ -2,7 +2,7 @@ package raidzero.robot.auto.actions;
 
 import edu.wpi.first.wpiutil.math.MathUtil;
 import raidzero.robot.Constants;
-import raidzero.robot.submodules.Drive;
+import raidzero.robot.Constants.LimelightConstants;
 import raidzero.robot.submodules.Limelight;
 import raidzero.robot.submodules.Turret;
 
@@ -20,7 +20,7 @@ public class TurnToGoal implements Action {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(headingError) < Constants.ANGLE_ADJUST_THRESHOLD;
+        return Math.abs(headingError) < LimelightConstants.ANGLE_ADJUST_THRESHOLD;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class TurnToGoal implements Action {
         headingError = limelight.getTx();
 
 		// Steering adjust P controller with offset
-        double steeringAdjust = Constants.KP_AIM * headingError;
+        double steeringAdjust = LimelightConstants.AIM_KP * headingError;
         System.out.println("Heading error: " + steeringAdjust);
 
 		turret.rotateManual(MathUtil.clamp(steeringAdjust, -0.2, 0.2));

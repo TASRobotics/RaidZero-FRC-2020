@@ -6,6 +6,8 @@ import raidzero.robot.wrappers.LazyTalonSRX;
 import raidzero.robot.wrappers.InactiveDoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import raidzero.robot.Constants;
+import raidzero.robot.Constants.IntakeConstants;
+
 import java.lang.Math;
 
 /**
@@ -33,13 +35,13 @@ public class Intake extends Submodule {
 
     @Override
     public void onInit() {
-        intakeMotor = new LazyTalonSRX(Constants.intakeMotorId);
+        intakeMotor = new LazyTalonSRX(IntakeConstants.MOTOR_ID);
         intakeMotor.configFactoryDefault();
-        intakeMotor.setNeutralMode(NeutralMode.Brake);
-        intakeMotor.setInverted(true);
+        intakeMotor.setNeutralMode(IntakeConstants.NEUTRAL_MODE);
+        intakeMotor.setInverted(IntakeConstants.INVERSION);
 
-        solenoid = new InactiveDoubleSolenoid(Constants.intakeOutId, Constants.intakeInId);
-        solenoid.setActive(true);
+        solenoid = new InactiveDoubleSolenoid(IntakeConstants.INTAKE_FORWARD_ID, 
+            IntakeConstants.INTAKE_REVERSE_ID);
     }
 
     @Override

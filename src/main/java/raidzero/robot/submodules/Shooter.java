@@ -9,13 +9,14 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import raidzero.robot.Constants;
 import raidzero.robot.Constants.ShooterConstants;
+import raidzero.robot.Constants.TurretConstants;
 
 public class Shooter extends Submodule {
 
     private static LazyTalonFX shooterMotor;
     private static Shooter instance = null;
 
-    private double shooterSpeed = 0.0;
+    private double outputSpeed = 0.0;
 
     public static Shooter getInstance() {
         if (instance == null) {
@@ -28,37 +29,42 @@ public class Shooter extends Submodule {
 
     @Override
     public void onInit() {
-        shooterMotor = new LazyTalonFX(Constants.shooterMotorId);
-        shooterMotor.setInverted(ShooterConstants.inversion);
-        shooterMotor.setNeutralMode(NeutralMode.Coast);
+        shooterMotor = new LazyTalonFX(TurretConstants.MOTOR_ID);
+        shooterMotor.configFactoryDefault();
+        shooterMotor.setNeutralMode(ShooterConstants.NEUTRAL_MODE);
+        shooterMotor.setInverted(ShooterConstants.INVERSION);
         
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
-        config.slot0.kF = ShooterConstants.kF;
-        config.slot0.kP = ShooterConstants.kP;
-        config.slot0.kI = ShooterConstants.kI;
-        config.slot0.kD = ShooterConstants.kD;
-        config.slot0.integralZone = ShooterConstants.kIntegralZone;
+        config.slot0.kF = ShooterConstants.K_F;
+        config.slot0.kP = ShooterConstants.K_P;
+        config.slot0.kI = ShooterConstants.K_I;
+        config.slot0.kD = ShooterConstants.K_D;
+        config.slot0.integralZone = ShooterConstants.K_INTEGRAL_ZONE;
 
         shooterMotor.configAllSettings(config);
     }
 
     @Override
     public void run() {
-        //motor.set(ControlMode.PercentOutput, shooterSpeed);
-        shooterMotor.set(ControlMode.Velocity, shooterSpeed);
+        shooterMotor.set(ControlMode.Velocity, outputSpeed);
     }
 
     @Override
     public void stop() {
-        shooterSpeed = 0.0;
+        outputSpeed = 0.0;
         shooterMotor.set(ControlMode.PercentOutput, 0);
+    }
+
+    @Override
+    public void zero() {
+        shooterMotor.getSensorCollection().setIntegratedSensorPosition(0.0, Constants.TIMEOUT_MS);
     }
 
     public void shoot(double speed, boolean freeze) {
         if (freeze) {
             return;
         }
-        shooterSpeed = speed * ShooterConstants.maxSpeed;
+        outputSpeed = speed * ShooterConstants.MAX_SPEED;
     }
 }

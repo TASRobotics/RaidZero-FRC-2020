@@ -38,20 +38,23 @@ public class WheelOfFortune extends Submodule {
 
     @Override
     public void onInit() {
-        wofMotor = new LazyTalonSRX(Constants.wheelOfFortuneMotorId);
+        wofMotor = new LazyTalonSRX(WheelOfFortuneConstants.MOTOR_ID);
         wofMotor.configFactoryDefault();
+        wofMotor.setNeutralMode(WheelOfFortuneConstants.NEUTRAL_MODE);
+        wofMotor.setInverted(WheelOfFortuneConstants.INVERSION);
 
         TalonSRXConfiguration config = new TalonSRXConfiguration();
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
-        config.slot0.kF = WheelOfFortuneConstants.kF;
-        config.slot0.kP = WheelOfFortuneConstants.kP;
-        config.slot0.kI = WheelOfFortuneConstants.kI;
-        config.slot0.kD = WheelOfFortuneConstants.kD;
-        config.slot0.integralZone = WheelOfFortuneConstants.kIntegralZone;
+        config.slot0.kF = WheelOfFortuneConstants.K_F;
+        config.slot0.kP = WheelOfFortuneConstants.K_P;
+        config.slot0.kI = WheelOfFortuneConstants.K_I;
+        config.slot0.kD = WheelOfFortuneConstants.K_D;
+        config.slot0.integralZone = WheelOfFortuneConstants.K_INTEGRAL_ZONE;
 
         wofMotor.configAllSettings(config);
 
-        solenoid = new InactiveDoubleSolenoid(Constants.wheelOfFortuneUpId, Constants.wheelOfFortuneDownId);
+        solenoid = new InactiveDoubleSolenoid(WheelOfFortuneConstants.WOF_FORWARD_ID, 
+            WheelOfFortuneConstants.WOF_REVERSE_ID);
         solenoid.set(Value.kOff);
     }
 

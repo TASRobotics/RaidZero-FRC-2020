@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import raidzero.robot.wrappers.LazyTalonSRX;
 
 import raidzero.robot.Constants;
+import raidzero.robot.Constants.HopperConstants;
 
 public class Hopper extends Submodule {
 
@@ -25,7 +26,7 @@ public class Hopper extends Submodule {
 
     @Override
     public void onInit() {
-        hopperMotor = new LazyTalonSRX(Constants.hopperMotorId);
+        hopperMotor = new LazyTalonSRX(HopperConstants.MOTOR_ID);
         hopperMotor.configFactoryDefault();
         hopperMotor.setNeutralMode(NeutralMode.Brake);
         hopperMotor.setInverted(true);

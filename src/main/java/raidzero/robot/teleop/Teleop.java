@@ -3,6 +3,8 @@ package raidzero.robot.teleop;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import raidzero.robot.Constants.IntakeConstants;
+import raidzero.robot.Constants.TurretConstants;
 import raidzero.robot.auto.actions.TurnToGoal;
 import raidzero.robot.submodules.Climb;
 import raidzero.robot.submodules.Drive;
@@ -33,8 +35,8 @@ public class Teleop {
     private Hopper hopper = Hopper.getInstance();
     private Turret turret = Turret.getInstance();
     private Climb climb = Climb.getInstance();
-    private InactiveCompressor compressor = InactiveCompressor.getInstance();
     private WheelOfFortune wheelOfFortune = WheelOfFortune.getInstance();
+    private InactiveCompressor compressor = InactiveCompressor.getInstance();
 
     private XboxController p1 = new XboxController(0);
     private XboxController p2 = new XboxController(1);
@@ -123,7 +125,8 @@ public class Teleop {
          */
         intake.intakeBalls(
             JoystickUtils.deadband(
-                0.625 * (p1.getTriggerAxis(Hand.kRight) - p1.getTriggerAxis(Hand.kLeft)))
+                IntakeConstants.CONTROL_SCALING_FACTOR * 
+                    (p1.getTriggerAxis(Hand.kRight) - p1.getTriggerAxis(Hand.kLeft)))
         );
         if (p1.getBumperPressed(Hand.kLeft)) {
             intake.invertStraw();
@@ -145,7 +148,8 @@ public class Teleop {
          * Turret
          */
         turret.rotateManual(
-            0.25 * (p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft))
+            TurretConstants.CONTROL_SCALING_FACTOR * 
+                (p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft))
         );
         //turnToGoal.update();
 

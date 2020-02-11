@@ -4,19 +4,16 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import raidzero.robot.auto.AutoRunner;
 import raidzero.robot.auto.sequences.TestSequence;
+import raidzero.robot.teleop.Teleop;
 import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.Limelight;
-import raidzero.robot.teleop.Teleop;
 import raidzero.robot.submodules.Climb;
-import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.Shooter;
 import raidzero.robot.submodules.Turret;
 import raidzero.robot.submodules.WheelOfFortune;
 import raidzero.robot.submodules.Hopper;
-import raidzero.robot.submodules.Submodule;
 import raidzero.robot.submodules.SubmoduleManager;
 import raidzero.robot.submodules.Intake;
-import raidzero.robot.teleop.Teleop;
 
 /**
  * The main robot class.
@@ -50,7 +47,8 @@ public class Robot extends TimedRobot {
             moduleHopper,
             moduleTurret,
             moduleWheelOfFortune,
-            moduleClimb
+            moduleClimb,
+            moduleLimelight
         );
         submoduleManager.onInit();
     }

@@ -1,6 +1,7 @@
 package raidzero.robot;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 public class Constants {
@@ -20,44 +21,23 @@ public class Constants {
      * Wheel 4, 5
      */
 
-    // Motor IDs
-    public static final int driveLeftLeaderId = 1;
-    public static final int driveLeftFollowerId = 3;
-    public static final int driveRightLeaderId = 0;
-    public static final int driveRightFollowerId = 2;
-
-    public static final InvertType driveLeftInvert = InvertType.None;
-    public static final InvertType driveRightInvert = InvertType.InvertMotorOutput;
-
-    // Solenoid IDs
-    public static final int driveGearshiftForwardId = 0;
-    public static final int driveGearshiftReverseId = 1;
-
-    // Pigeon ID
-    public static final int pigeonId = 0;
-
-    public static final int shooterMotorId = 8;
-
-    public static final int intakeMotorId = 4;
-
-    public static final int intakeOutId = 2;
-    public static final int intakeInId = 3;
-
-    public static final int hopperMotorId = 5;
-
-    public static final int turretMotorId = 6;
-
-    public static final int wheelOfFortuneMotorId = 7;
-
-    public static final int wheelOfFortuneUpId = 4;
-    public static final int wheelOfFortuneDownId = 5;
-
-    public static final int climbMotorId = 12;
-
     /**
      * Drivetrain Constants
      */
     public static final class DriveConstants {
+        public static final int LEFT_LEADER_ID = 1;
+        public static final int LEFT_FOLLOWER_ID = 3;
+        public static final int RIGHT_LEADER_ID = 0;
+        public static final int RIGHT_FOLLOWER_ID = 2;
+
+        public static final int GEARSHIFT_FORWARD_ID = 0;
+        public static final int GEARSHIFT_REVERSE_ID = 1;
+
+        public static final int PIGEON_ID = 0;
+
+        public static final InvertType LEFT_INVERSION = InvertType.None;
+        public static final InvertType RIGHT_INVERSION = InvertType.InvertMotorOutput;
+
         public static final double HIGH_GEAR_RATIO = 9.98;
         public static final double LOW_GEAR_RATIO = 18.43;
     
@@ -95,48 +75,114 @@ public class Constants {
         public static final double DEFAULT_TARGET_ACCELERATION = 8;
 
         // Joystick to Output mapping
-        public static final double joystickExponent = 1;
-        public static final double joystickCoefficient = 1;
+        public static final double JOYSTICK_EXPONENT = 1;
+        public static final double JOYSTICK_COEFFICIENT = 1;
     }
 
     /**
      * Shooter Constants
      */
     public static final class ShooterConstants {
-        public static final IdleMode shooterIdleMode = IdleMode.kCoast;
-        public static final InvertType inversion = InvertType.InvertMotorOutput;
+        public static final int MOTOR_ID = 8;
 
-        public static final double maxSpeed = 18300; // in ticks per 100ms
+        public static final NeutralMode NEUTRAL_MODE = NeutralMode.Coast;
+        public static final InvertType INVERSION = InvertType.InvertMotorOutput;
 
-        public static final double kF = maxSpeed / 1023.0;
-        public static final double kP = 0;
-        public static final double kI = 0; // Shouldn't be touched
-        public static final double kD = 0; // Shouldn't be touched
-        public static final int kIntegralZone = 0; // Shouldn't be touched
+        public static final double MAX_SPEED = 18300; // in ticks per 100ms
+
+        public static final double K_F = MAX_SPEED / 1023.0;
+        public static final double K_P = 0;
+        public static final double K_I = 0; // Shouldn't be touched
+        public static final double K_D = 0; // Shouldn't be touched
+        public static final int K_INTEGRAL_ZONE = 0; // Shouldn't be touched
     }
 
     /**
      * Turret Constants
      */
     public static final class TurretConstants {
-        public static final double degreesToTicks = 1000; //random # for now
+        public static final int MOTOR_ID = 6;
 
-        public static final double kF = 0;
-        public static final double kP = 0;
-        public static final double kI = 0;
-        public static final double kD = 0;
-        public static final int kIntegralZone = 0;
+        public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
+        public static final InvertType INVERSION = InvertType.InvertMotorOutput;
+
+        public static final double CONTROL_SCALING_FACTOR = 0.25;
+
+        public static final double DEGREES_TO_TICKS = 1000; //random # for now
+
+        public static final double K_F = 0;
+        public static final double K_P = 0;
+        public static final double K_I = 0;
+        public static final double K_D = 0;
+        public static final int K_INTEGRAL_ZONE = 0;
+    }
+
+    /**
+     * Intake Constants
+     */
+    public static final class IntakeConstants {
+        public static final int MOTOR_ID = 4;
+
+        public static final int INTAKE_FORWARD_ID = 2;
+        public static final int INTAKE_REVERSE_ID = 3;
+
+        public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
+        public static final InvertType INVERSION = InvertType.InvertMotorOutput;
+
+        public static final double CONTROL_SCALING_FACTOR = 0.625;
+    }
+
+    /**
+     * Hopper Constants
+     */
+    public static final class HopperConstants {
+        public static final int MOTOR_ID = 5;
     }
 
     /**
      * Wheel of Fortune Constants
      */
     public static final class WheelOfFortuneConstants {
-        public static final double kF = 0;
-        public static final double kP = 0;
-        public static final double kI = 0;
-        public static final double kD = 0;
-        public static final int kIntegralZone = 0;
+        public static final int MOTOR_ID = 7;
+
+        public static final int WOF_FORWARD_ID = 4;
+        public static final int WOF_REVERSE_ID = 5;
+
+        public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
+        public static final InvertType INVERSION = InvertType.None;
+
+        public static final double K_F = 0;
+        public static final double K_P = 0;
+        public static final double K_I = 0;
+        public static final double K_D = 0;
+        public static final int K_INTEGRAL_ZONE = 0;
+    }
+
+    /**
+     * Climb Constants
+     */
+    public static final class ClimbConstants {
+        public static final int MOTOR_ID = 12;
+
+        public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
+        public static final InvertType INVERSION = InvertType.InvertMotorOutput;
+    }
+
+    /**
+     * Limelight Constants
+     */
+    public static final class LimelightConstants {
+        public static final String NAME = "limelight";
+
+        public static final double MOUNTING_ANGLE = 45.0; // in degrees
+        public static final double MOUNTING_HEIGHT = 0.5; // in meters
+
+        public static final double AIM_KP = 0.02;
+        public static final double ANGLE_ADJUST_THRESHOLD = 0.5;
+    }
+
+    public static final class FieldConstants {
+        public static final double GOAL_HEIGHT = 0.0; // in meters
     }
     
     /**
@@ -144,11 +190,5 @@ public class Constants {
      */
     public static final double JOYSTICK_DEADBAND = 0.05;
 
-    public static final int TIMEOUT_MS = 10;
-
-    public static final String LIMELIGHT_NAME_SHOOTER = "limelight";
-
-    public static final double KP_AIM = 0.02;
-
-    public static final double ANGLE_ADJUST_THRESHOLD = 0.5;   
+    public static final int TIMEOUT_MS = 10;     
 }

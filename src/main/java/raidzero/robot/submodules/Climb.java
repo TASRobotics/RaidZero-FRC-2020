@@ -3,7 +3,7 @@ package raidzero.robot.submodules;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import raidzero.robot.Constants;
+import raidzero.robot.Constants.ClimbConstants;
 import raidzero.robot.wrappers.LazyTalonSRX;
 
 public class Climb extends Submodule {
@@ -26,10 +26,10 @@ public class Climb extends Submodule {
     
     @Override
     public void onInit() {
-        climbMotor = new LazyTalonSRX(Constants.climbMotorId);
+        climbMotor = new LazyTalonSRX(ClimbConstants.MOTOR_ID);
         climbMotor.configFactoryDefault();
-        climbMotor.setNeutralMode(NeutralMode.Brake);
-        climbMotor.setInverted(true);
+        climbMotor.setNeutralMode(ClimbConstants.NEUTRAL_MODE);
+        climbMotor.setInverted(ClimbConstants.INVERSION);
     }
 
     @Override
@@ -46,6 +46,9 @@ public class Climb extends Submodule {
         climbMotor.set(ControlMode.PercentOutput, 0);
     }
 
+    /**
+     * Unlocks the climb.
+     */
     public void unlock() {
         unlocked = true;
     }

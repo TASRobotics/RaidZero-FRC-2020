@@ -72,34 +72,39 @@ public class Drive extends Submodule {
     @Override
     public void onInit() {
         // Motors
-        leftLeader = new LazyTalonFX(Constants.driveLeftLeaderId);
-        configureMotor(leftLeader, Constants.driveLeftInvert);
+        leftLeader = new LazyTalonFX(DriveConstants.LEFT_LEADER_ID);
+        configureMotor(leftLeader, DriveConstants.LEFT_INVERSION);
         
-        leftFollower = new LazyTalonFX(Constants.driveLeftFollowerId);
-        configureMotor(leftFollower, Constants.driveLeftInvert);
+        leftFollower = new LazyTalonFX(DriveConstants.LEFT_FOLLOWER_ID);
+        configureMotor(leftFollower, DriveConstants.LEFT_INVERSION);
         leftFollower.follow(leftLeader);
 
-        rightLeader = new LazyTalonFX(Constants.driveRightLeaderId);
-        configureMotor(rightLeader, Constants.driveRightInvert);
+        rightLeader = new LazyTalonFX(DriveConstants.RIGHT_LEADER_ID);
+        configureMotor(rightLeader, DriveConstants.RIGHT_INVERSION);
         
-        rightFollower = new LazyTalonFX(Constants.driveRightFollowerId);
-        configureMotor(rightFollower, Constants.driveRightInvert);
+        rightFollower = new LazyTalonFX(DriveConstants.RIGHT_FOLLOWER_ID);
+        configureMotor(rightFollower, DriveConstants.RIGHT_INVERSION);
         rightFollower.follow(rightLeader);
 
         // Pigeon IMU
-        pigeon = new PigeonIMU(Constants.pigeonId);
+        pigeon = new PigeonIMU(DriveConstants.PIGEON_ID);
         pigeon.configFactoryDefault();
 
-        // Setup the profiling leader & follower
-        profilingLeader = rightLeader;
+        /* 
+         * Setup the profiling leader & follower
+         * 
+         * Note: if this changes, the argument to configureMotorClosedLoop must reflect the
+         * inversion of the leader motor
+         */
+        profilingLeader = rightLeader; 
         profilingFollower = leftLeader;
 
         // Must be called after the pigeon is initialized
-        configureMotorClosedLoop(Constants.driveRightInvert);
+        configureMotorClosedLoop(DriveConstants.RIGHT_INVERSION);
 
         // Gear shift
-        gearShiftSolenoid = new InactiveDoubleSolenoid(Constants.driveGearshiftForwardId, 
-            Constants.driveGearshiftReverseId);
+        gearShiftSolenoid = new InactiveDoubleSolenoid(DriveConstants.GEARSHIFT_FORWARD_ID, 
+            DriveConstants.GEARSHIFT_REVERSE_ID);
 
         // Control state
         controlState = ControlState.OPEN_LOOP;

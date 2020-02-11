@@ -40,10 +40,10 @@ public class Turret extends Submodule {
 
     @Override
     public void onInit() {
-        turretMotor = new LazyTalonSRX(Constants.turretMotorId);
+        turretMotor = new LazyTalonSRX(TurretConstants.MOTOR_ID);
         turretMotor.configFactoryDefault();
-        turretMotor.setNeutralMode(NeutralMode.Brake);
-        turretMotor.setInverted(true);
+        turretMotor.setNeutralMode(TurretConstants.NEUTRAL_MODE);
+        turretMotor.setInverted(TurretConstants.INVERSION);
 
         TalonSRXConfiguration config = new TalonSRXConfiguration();
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
@@ -52,11 +52,11 @@ public class Turret extends Submodule {
         config.forwardLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
         config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
 
-        config.slot0.kF = TurretConstants.kF;
-        config.slot0.kP = TurretConstants.kP;
-        config.slot0.kI = TurretConstants.kI;
-        config.slot0.kD = TurretConstants.kD;
-        config.slot0.integralZone = TurretConstants.kIntegralZone;
+        config.slot0.kF = TurretConstants.K_F;
+        config.slot0.kP = TurretConstants.K_P;
+        config.slot0.kI = TurretConstants.K_I;
+        config.slot0.kD = TurretConstants.K_D;
+        config.slot0.integralZone = TurretConstants.K_INTEGRAL_ZONE;
 
         turretMotor.configAllSettings(config);
     }
@@ -93,7 +93,7 @@ public class Turret extends Submodule {
      * @param angle the angle to rotate to
      */
     public void rotateToAngle(double angle) {
-        outputPosition = angle * TurretConstants.degreesToTicks;
+        outputPosition = angle * TurretConstants.DEGREES_TO_TICKS;
     }
 
     /**
