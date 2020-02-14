@@ -4,6 +4,9 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import raidzero.robot.utils.InterpolatingDouble;
+import raidzero.robot.utils.InterpolatingTreeMap;
+
 public class Constants {
     /**
      * TalonSRX IDs
@@ -89,6 +92,8 @@ public class Constants {
         public static final InvertType INVERSION = InvertType.InvertMotorOutput;
 
         public static final double MAX_SPEED = 18300; // in ticks per 100ms
+        public static final double ERROR_TOLERANCE = 500; // TODO: Make sure this is good
+        public static final double APPROACH_SETPOINT_TIMEOUT = 4; // in seconds
 
         public static final double K_F = MAX_SPEED / 1023.0;
         public static final double K_P = 0;
@@ -181,8 +186,23 @@ public class Constants {
         public static final double ANGLE_ADJUST_THRESHOLD = 0.5;
     }
 
+    /**
+     * Field Constants
+     */
     public static final class FieldConstants {
         public static final double GOAL_HEIGHT = 0.0; // in meters
+    }
+
+    // Distance (m/s) to Speed (percent) Lookup Table
+    public static final InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> 
+        DISTANCE_TO_SPEED = new InterpolatingTreeMap<>(20);
+    static {
+        // TODO: Perhaps load this from a file?
+        DISTANCE_TO_SPEED.put(new InterpolatingDouble(0.0), new InterpolatingDouble(0.0));
+        DISTANCE_TO_SPEED.put(new InterpolatingDouble(1.0), new InterpolatingDouble(1.0));
+        DISTANCE_TO_SPEED.put(new InterpolatingDouble(2.0), new InterpolatingDouble(1.0));
+        DISTANCE_TO_SPEED.put(new InterpolatingDouble(3.0), new InterpolatingDouble(1.0));
+        DISTANCE_TO_SPEED.put(new InterpolatingDouble(4.0), new InterpolatingDouble(1.0));
     }
     
     /**
@@ -190,5 +210,5 @@ public class Constants {
      */
     public static final double JOYSTICK_DEADBAND = 0.05;
 
-    public static final int TIMEOUT_MS = 10;     
+    public static final int TIMEOUT_MS = 10;
 }

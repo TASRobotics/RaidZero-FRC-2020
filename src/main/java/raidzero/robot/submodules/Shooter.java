@@ -4,7 +4,6 @@ import raidzero.robot.wrappers.LazyTalonFX;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import raidzero.robot.Constants;
@@ -61,10 +60,25 @@ public class Shooter extends Submodule {
         shooterMotor.getSensorCollection().setIntegratedSensorPosition(0.0, Constants.TIMEOUT_MS);
     }
 
+    /**
+     * Fires up the shooter.
+     * 
+     * @param speed speed of the shooter in [-1.0, 1.0]
+     * @param freeze whether to disregard the speed and keep the previous speed
+     */
     public void shoot(double speed, boolean freeze) {
         if (freeze) {
             return;
         }
         outputSpeed = speed * ShooterConstants.MAX_SPEED;
+    }
+
+    /**
+     * Returns whether the shooter is up to the setpoint speed.
+     * 
+     * @return whether the shooter is up to speed
+     */
+    public boolean isUpToSpeed() {
+        return Math.abs(shooterMotor.getClosedLoopError()) < ShooterConstants.ERROR_TOLERANCE;
     }
 }
