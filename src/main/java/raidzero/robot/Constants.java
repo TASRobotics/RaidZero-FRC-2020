@@ -2,7 +2,6 @@ package raidzero.robot;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.revrobotics.CANSparkMax.IdleMode;
 
 import raidzero.robot.utils.InterpolatingDouble;
 import raidzero.robot.utils.InterpolatingTreeMap;

@@ -1,14 +1,10 @@
 package raidzero.robot.submodules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import raidzero.robot.wrappers.LazyTalonSRX;
 import raidzero.robot.wrappers.InactiveDoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import raidzero.robot.Constants;
 import raidzero.robot.Constants.IntakeConstants;
-
-import java.lang.Math;
 
 /**
  * Sucks BOBA balls and definitely not other balls

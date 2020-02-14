@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 import raidzero.robot.wrappers.LazyTalonSRX;
 import raidzero.robot.wrappers.InactiveDoubleSolenoid;
-import raidzero.robot.Constants;
 import raidzero.robot.Constants.WheelOfFortuneConstants;
 
 public class WheelOfFortune extends Submodule {
