@@ -7,6 +7,7 @@ import raidzero.robot.auto.sequences.TestSequence;
 import raidzero.robot.teleop.Teleop;
 import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.Limelight;
+import raidzero.robot.submodules.AdjustableHood;
 import raidzero.robot.submodules.Climb;
 import raidzero.robot.submodules.Shooter;
 import raidzero.robot.submodules.Turret;
@@ -28,6 +29,7 @@ public class Robot extends TimedRobot {
     private static final Drive moduleDrive = Drive.getInstance();
     private static final Limelight moduleLimelight = Limelight.getInstance();
     private static final Shooter moduleShooter = Shooter.getInstance();
+    private static final AdjustableHood moduleAdjustableHood = AdjustableHood.getInstance();
     private static final Intake moduleIntake = Intake.getInstance();
     private static final Hopper moduleHopper = Hopper.getInstance();
     private static final Turret moduleTurret = Turret.getInstance();
@@ -43,6 +45,7 @@ public class Robot extends TimedRobot {
         submoduleManager.setSubmodules(
             moduleDrive,
             moduleShooter,
+            moduleAdjustableHood,
             moduleIntake,
             moduleHopper,
             moduleTurret,

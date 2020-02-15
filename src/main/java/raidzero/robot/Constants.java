@@ -102,6 +102,25 @@ public class Constants {
     }
 
     /**
+     * Adjustable Hood Constants
+     */
+    public static final class AdjustableHoodConstants {
+        public static final int MOTOR_ID = 11;
+
+        public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
+        public static final InvertType INVERSION = InvertType.None;
+        public static final boolean SENSOR_PHASE = true;
+
+        public static final double GEAR_RATIO = 45.0;
+
+        public static final double K_F = 0;
+        public static final double K_P = 0;
+        public static final double K_I = 0;
+        public static final double K_D = 0;
+        public static final int K_INTEGRAL_ZONE = 0;
+    }
+
+    /**
      * Turret Constants
      */
     public static final class TurretConstants {
