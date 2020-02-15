@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.Notifier;
 import raidzero.pathgen.PathGenerator;
 import raidzero.pathgen.PathPoint;
 import raidzero.pathgen.Point;
-import raidzero.robot.Constants;
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.submodules.Drive.GearShift;
 import raidzero.robot.utils.EncoderUtils;

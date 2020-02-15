@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import raidzero.robot.wrappers.LazyTalonSRX;
 
-import raidzero.robot.Constants;
 import raidzero.robot.Constants.HopperConstants;
 
 public class Hopper extends Submodule {

@@ -77,7 +77,7 @@ public class VisionAssistedShooting implements Action {
      * @return estimated distance in meters
      */
     private double estimateDistance(double angle) {
-        return (FieldConstants.GOAL_HEIGHT - LimelightConstants.MOUNTING_HEIGHT) / 
+        return (FieldConstants.GOAL_HEIGHT - LimelightConstants.MOUNTING_HEIGHT) /
             Math.tan(Math.toRadians(LimelightConstants.MOUNTING_ANGLE + angle));
     }
 }
