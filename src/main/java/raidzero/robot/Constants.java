@@ -52,10 +52,10 @@ public class Constants {
         public static final double PIGEON_SCALE = 3600.0 / 8192.0;
 
         public static final double PRIMARY_F = 0.8 * 1023.0 / 20348;
-        public static final double PRIMARY_P = 0.01; // 1023 / (30 * 2000)
-        public static final double PRIMARY_I = 0;
-        public static final double PRIMARY_D = 0;
-        public static final int PRIMARY_INT_ZONE = 50;
+        public static final double PRIMARY_P = 0.4; // 1023 / (30 * 2000)
+        public static final double PRIMARY_I = 0.00001;
+        public static final double PRIMARY_D = 1.8;
+        public static final int PRIMARY_INT_ZONE = 100;
 
         public static final double AUX_F = 0;
         public static final double AUX_P = 4;

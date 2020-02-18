@@ -20,9 +20,9 @@ public class TestSequence extends AutoSequence {
 
     private static final Point[] TEST_WAYPOINTS2 = {
         new Point(0, 0, 0),
-        new Point(200, 0, 0),
+        new Point(100, 0, 0),
     };
-    private static final Path PATH2 = new Path(TEST_WAYPOINTS2, true);
+    private static final Path PATH2 = new Path(TEST_WAYPOINTS2, false);
 
     public TestSequence() {
 
@@ -32,7 +32,7 @@ public class TestSequence extends AutoSequence {
     public void sequence() {
         addAction(new SeriesAction(
             Arrays.asList(
-                new DrivePath(PATH),
+                //new DrivePath(PATH),
                 new DrivePath(PATH2)
             )
         ));
