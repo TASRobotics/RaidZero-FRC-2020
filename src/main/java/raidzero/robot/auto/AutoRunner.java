@@ -1,13 +1,39 @@
 package raidzero.robot.auto;
 
-import raidzero.robot.auto.sequences.AutoSequence;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import raidzero.robot.auto.sequences.*;
 
 /**
- * Class that manages an autonomous sequence.
+ * Class that manages autonomous sequences.
  */
 public class AutoRunner {
 
+    private SendableChooser<AutoSequence> chooser;
+
     private AutoSequence selectedSequence;
+
+    private AutoSequence[] availableSequences = {
+        new TestSequence(),
+        new EightCellTrenchSequence()
+    };
+
+    public AutoRunner() {
+        chooser = new SendableChooser<>();
+        chooser.setDefaultOption("None", new EmptySequence());
+        for (AutoSequence sequence : availableSequences) {
+            chooser.addOption(sequence.getName(), sequence);
+        }
+        SmartDashboard.putData("Auto Selection", chooser);
+    }
+
+    /**
+     * Reads the selected autonomous sequence from the SendableChooser.
+     */
+    public void readSendableSequence() {
+        selectSequence(chooser.getSelected());
+    }
 
     /**
      * Selects an autonomous sequence to run.

@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import raidzero.robot.Constants.IntakeConstants;
 import raidzero.robot.Constants.TurretConstants;
+import raidzero.robot.auto.actions.DebugLimelightDistance;
 import raidzero.robot.auto.actions.TurnToGoal;
 import raidzero.robot.submodules.Climb;
 import raidzero.robot.submodules.Drive;
@@ -41,7 +42,7 @@ public class Teleop {
     private XboxController p1 = new XboxController(0);
     private XboxController p2 = new XboxController(1);
 
-    private TurnToGoal turnToGoal = new TurnToGoal();
+    private DebugLimelightDistance debugDistance = new DebugLimelightDistance();
 
     /**
      * Runs at the start of teleop.
@@ -49,6 +50,8 @@ public class Teleop {
     public void onStart() {
         drive.stop();
         drive.setGearShift(GearShift.LOW);
+
+        debugDistance.start();
     }
 
     /**
@@ -187,5 +190,7 @@ public class Teleop {
         } else {
             climb.climb(0.0);
         }
+
+        debugDistance.update();
     }
 }

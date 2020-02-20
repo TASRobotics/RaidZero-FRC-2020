@@ -133,6 +133,8 @@ public class Constants {
 
         public static final double DEGREES_TO_TICKS = 1000; //random # for now
 
+        public static final double MAX_INPUT_PERCENTAGE = 0.3;
+
         public static final double K_F = 0;
         public static final double K_P = 0;
         public static final double K_I = 0;
@@ -201,6 +203,8 @@ public class Constants {
         public static final double MOUNTING_HEIGHT = 0.5; // in meters
 
         public static final double AIM_KP = 0.02;
+        public static final double AIM_KI = 0.0;
+        public static final double AIM_KD = 0.0;
         public static final double ANGLE_ADJUST_THRESHOLD = 0.5;
     }
 

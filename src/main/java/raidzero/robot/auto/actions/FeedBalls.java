@@ -14,13 +14,21 @@ public class FeedBalls implements Action {
     private static final Hopper hopper = Hopper.getInstance();
 
     private double startTime = 0.0;
+    private double duration = 0.0;
 
-    public FeedBalls() {}
+    /**
+     * Constructs a FeedBalls action.
+     * 
+     * @param duration duration to feed the balls for
+     */
+    public FeedBalls(double duration) {
+        this.duration = duration;
+    }
 
     @Override
     public boolean isFinished() {
         // TODO: Obviously make this configurable and not based on time...
-        return Timer.getFPGATimestamp() - startTime > 2.0;
+        return Timer.getFPGATimestamp() - startTime > duration;
     }
 
     @Override

@@ -45,9 +45,9 @@ public class AdjustableHood extends Submodule {
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
 
         config.forwardLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
-        config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+        config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
         config.reverseLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
-        config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+        config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
 
         config.slot0.kF = AdjustableHoodConstants.K_F;
         config.slot0.kP = AdjustableHoodConstants.K_P;

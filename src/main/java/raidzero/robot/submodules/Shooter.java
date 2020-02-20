@@ -63,14 +63,14 @@ public class Shooter extends Submodule {
     /**
      * Fires up the shooter.
      * 
-     * @param speed speed of the shooter in [-1.0, 1.0]
+     * @param percentSpeed speed of the shooter in [-1.0, 1.0]
      * @param freeze whether to disregard the speed and keep the previous speed
      */
-    public void shoot(double speed, boolean freeze) {
+    public void shoot(double percentSpeed, boolean freeze) {
         if (freeze) {
             return;
         }
-        outputSpeed = speed * ShooterConstants.MAX_SPEED;
+        outputSpeed = percentSpeed * ShooterConstants.MAX_SPEED;
     }
 
     /**

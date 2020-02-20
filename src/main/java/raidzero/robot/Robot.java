@@ -23,7 +23,6 @@ public class Robot extends TimedRobot {
 
     private static final SubmoduleManager submoduleManager = SubmoduleManager.getInstance();
 
-    private AutoRunner autoRunner = new AutoRunner();
     private static final Teleop teleop = Teleop.getInstance();
 
     private static final Drive moduleDrive = Drive.getInstance();
@@ -35,6 +34,8 @@ public class Robot extends TimedRobot {
     private static final Turret moduleTurret = Turret.getInstance();
     private static final WheelOfFortune moduleWheelOfFortune = WheelOfFortune.getInstance();
     private static final Climb moduleClimb = Climb.getInstance();
+
+    private AutoRunner autoRunner;
 
     /**
      * Runs only once at the start of robot code execution.
@@ -54,6 +55,8 @@ public class Robot extends TimedRobot {
             moduleLimelight
         );
         submoduleManager.onInit();
+
+        autoRunner = new AutoRunner();
     }
 
     /**
@@ -73,8 +76,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         submoduleManager.onStart(Timer.getFPGATimestamp());
 
-        // TODO: Autonomous selection code here
-        autoRunner.selectSequence(new TestSequence());
+        autoRunner.readSendableSequence();
         autoRunner.start();
     }
 

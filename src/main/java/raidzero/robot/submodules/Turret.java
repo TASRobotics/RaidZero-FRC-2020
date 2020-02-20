@@ -91,6 +91,7 @@ public class Turret extends Submodule {
      * @param angle the angle to rotate to
      */
     public void rotateToAngle(double angle) {
+        controlState = ControlState.POSITION;
         outputPosition = angle * TurretConstants.DEGREES_TO_TICKS;
     }
 
@@ -100,6 +101,7 @@ public class Turret extends Submodule {
      * @param percentOutput the percent output in [-1, 1]
      */
     public void rotateManual(double percentOutput) {
+        controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = percentOutput;
     }
 }
