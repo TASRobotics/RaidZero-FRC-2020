@@ -27,13 +27,13 @@ public class Constants {
      * Drivetrain Constants
      */
     public static final class DriveConstants {
-        public static final int LEFT_LEADER_ID = 1;
-        public static final int LEFT_FOLLOWER_ID = 3;
-        public static final int RIGHT_LEADER_ID = 0;
-        public static final int RIGHT_FOLLOWER_ID = 2;
+        public static final int LEFT_LEADER_ID = 0;
+        public static final int LEFT_FOLLOWER_ID = 2;
+        public static final int RIGHT_LEADER_ID = 1;
+        public static final int RIGHT_FOLLOWER_ID = 3;
 
-        public static final int GEARSHIFT_FORWARD_ID = 0;
-        public static final int GEARSHIFT_REVERSE_ID = 1;
+        public static final int GEARSHIFT_FORWARD_ID = 1;
+        public static final int GEARSHIFT_REVERSE_ID = 0;
 
         public static final int PIGEON_ID = 0;
 
@@ -152,7 +152,7 @@ public class Constants {
         public static final int INTAKE_REVERSE_ID = 3;
 
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
-        public static final InvertType INVERSION = InvertType.InvertMotorOutput;
+        public static final InvertType INVERSION = InvertType.None;
 
         public static final double CONTROL_SCALING_FACTOR = 0.625;
     }
@@ -199,7 +199,7 @@ public class Constants {
     public static final class LimelightConstants {
         public static final String NAME = "limelight";
 
-        public static final double MOUNTING_ANGLE = 45.0; // in degrees
+        public static final double MOUNTING_ANGLE = 25.0; // in degrees
         public static final double MOUNTING_HEIGHT = 0.5; // in meters
 
         public static final double AIM_KP = 0.02;
@@ -212,7 +212,7 @@ public class Constants {
      * Field Constants
      */
     public static final class FieldConstants {
-        public static final double GOAL_HEIGHT = 0.0; // in meters
+        public static final double GOAL_HEIGHT = 2.3; // in meters
     }
 
     // Distance (m/s) to Speed (percent) Lookup Table

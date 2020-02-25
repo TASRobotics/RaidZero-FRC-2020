@@ -13,6 +13,6 @@ public class LimelightUtils {
      */
     public static double estimateDistance(double angle) {
         return (FieldConstants.GOAL_HEIGHT - LimelightConstants.MOUNTING_HEIGHT) /
-            Math.tan(Math.toRadians(LimelightConstants.MOUNTING_ANGLE + angle));
+            Math.tan(Math.toRadians(LimelightConstants.MOUNTING_ANGLE + Math.abs(angle)));
     }
 }

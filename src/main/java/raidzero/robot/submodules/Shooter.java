@@ -28,7 +28,7 @@ public class Shooter extends Submodule {
 
     @Override
     public void onInit() {
-        shooterMotor = new LazyTalonFX(TurretConstants.MOTOR_ID);
+        shooterMotor = new LazyTalonFX(ShooterConstants.MOTOR_ID);
         shooterMotor.configFactoryDefault();
         shooterMotor.setNeutralMode(ShooterConstants.NEUTRAL_MODE);
         shooterMotor.setInverted(ShooterConstants.INVERSION);

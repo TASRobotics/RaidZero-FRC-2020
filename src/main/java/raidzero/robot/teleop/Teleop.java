@@ -3,10 +3,12 @@ package raidzero.robot.teleop;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.Constants.IntakeConstants;
 import raidzero.robot.Constants.TurretConstants;
 import raidzero.robot.auto.actions.DebugLimelightDistance;
 import raidzero.robot.auto.actions.TurnToGoal;
+import raidzero.robot.submodules.AdjustableHood;
 import raidzero.robot.submodules.Climb;
 import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.Intake;
@@ -37,6 +39,7 @@ public class Teleop {
     private Turret turret = Turret.getInstance();
     private Climb climb = Climb.getInstance();
     private WheelOfFortune wheelOfFortune = WheelOfFortune.getInstance();
+    private AdjustableHood hood = AdjustableHood.getInstance();
     private InactiveCompressor compressor = InactiveCompressor.getInstance();
 
     private XboxController p1 = new XboxController(0);
@@ -98,20 +101,20 @@ public class Teleop {
         /**
          * Drivetrain
          */
-        /*drive.tank(
+        drive.tank(
             JoystickUtils.monomialScale(
                 JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
-                DriveConstants.joystickExponent, 
-                DriveConstants.joystickCoefficient), 
+                DriveConstants.JOYSTICK_EXPONENT, 
+                DriveConstants.JOYSTICK_COEFFICIENT), 
             JoystickUtils.monomialScale(
                 JoystickUtils.deadband(-p1.getY(Hand.kRight)),
-                DriveConstants.joystickExponent,
-                DriveConstants.joystickCoefficient)
-        );*/
-        drive.arcade(
+                DriveConstants.JOYSTICK_EXPONENT,
+                DriveConstants.JOYSTICK_COEFFICIENT)
+        );
+        /*drive.arcade(
             JoystickUtils.deadband(-p1.getY(Hand.kLeft)), 
             JoystickUtils.deadband(p1.getX(Hand.kRight))
-        );
+        );*/
         if (p1.getBumper(Hand.kRight)) {
             drive.setGearShift(GearShift.HIGH);
         } else if (p1.getBumperReleased(Hand.kRight)) {
@@ -145,6 +148,8 @@ public class Teleop {
             hopper.moveBelt(1.0);
         } else if (p1Pov >= 225 && p1Pov <= 135) {
             hopper.moveBelt(-1.0);
+        } else {
+            hopper.stop();
         }
 
         /**
@@ -164,10 +169,10 @@ public class Teleop {
         } else if (p1.getAButtonPressed()) {
             wheelOfFortune.engage(false);
         }
-        if (p2.getBumper(Hand.kRight)) {
-            wheelOfFortune.spin(
-                JoystickUtils.deadband(p2.getY(Hand.kRight))
-            );
+        if (p1.getXButton()) {
+            wheelOfFortune.spin(1.0);
+        } else if (p1.getBButton()) { 
+            wheelOfFortune.spin(-1.0);
         } else {
             wheelOfFortune.stop();
         }
@@ -189,6 +194,18 @@ public class Teleop {
             climb.climb(-1.0);
         } else {
             climb.climb(0.0);
+        }
+
+        /**
+         * Hood
+         */
+        int p2Pov = p2.getPOV();
+        if (p2Pov == 0) {
+            hood.adjust(1.0);
+        } else if (p2Pov == 180) {
+            hood.adjust(-1.0);
+        } else {
+            hood.stop();
         }
 
         debugDistance.update();

@@ -46,9 +46,9 @@ public class Turret extends Submodule {
         TalonSRXConfiguration config = new TalonSRXConfiguration();
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
         config.reverseLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
-        config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+        config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
         config.forwardLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
-        config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+        config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
 
         config.slot0.kF = TurretConstants.K_F;
         config.slot0.kP = TurretConstants.K_P;
