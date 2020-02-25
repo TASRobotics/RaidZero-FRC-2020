@@ -19,6 +19,10 @@ public class InactiveCompressor extends Compressor {
         super();
     }
 
+    public boolean getState() {
+        return state;
+    }
+
     public void changeState() {
         state = !state;
         if (state) {

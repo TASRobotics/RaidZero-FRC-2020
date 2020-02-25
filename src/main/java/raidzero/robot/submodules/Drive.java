@@ -351,7 +351,12 @@ public class Drive extends Submodule {
      * @param left left percent output in [-1, 1]
      * @param right right percent output in [-1, 1]
      */
-    public void tank(double left, double right) {
+    public void tank(double left, double right, boolean reverse) {
+        if(reverse) {
+            outputLeftDrive = -left;
+            outputRightDrive = -right;
+            return;
+        }
         outputLeftDrive = left;
         outputRightDrive = right;
     }

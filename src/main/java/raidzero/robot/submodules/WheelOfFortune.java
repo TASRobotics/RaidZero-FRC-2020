@@ -23,6 +23,7 @@ public class WheelOfFortune extends Submodule {
 
     private double outputOpenLoop = 0.0;
     private double outputPosition = 0.0;
+    private boolean engaged = false;
 
     private ControlState controlState = ControlState.OPEN_LOOP;
 
@@ -86,8 +87,9 @@ public class WheelOfFortune extends Submodule {
         outputPosition = position;
     }
 
-    public void engage(boolean value) {
-        if (value) {
+    public void engage() {
+        engaged = !engaged;
+        if (engaged) {
             solenoid.set(Value.kForward);
         } else {
             solenoid.set(Value.kReverse);
