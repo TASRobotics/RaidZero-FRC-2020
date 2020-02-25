@@ -76,6 +76,7 @@ public class Turret extends Submodule {
 
     @Override
     public void stop() {
+        controlState = ControlState.POSITION;
         outputOpenLoop = 0.0;
         turretMotor.set(ControlMode.PercentOutput, 0);
     }

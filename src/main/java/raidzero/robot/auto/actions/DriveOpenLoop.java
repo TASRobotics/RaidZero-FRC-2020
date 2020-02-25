@@ -41,7 +41,7 @@ public class DriveOpenLoop implements Action {
         startTime = Timer.getFPGATimestamp();
 
         drive.setOpenLoop();
-        drive.tank(leftOutput, rightOutput);
+        drive.tank(leftOutput, rightOutput, false);
     }
 
     @Override
