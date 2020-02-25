@@ -1,6 +1,5 @@
 package raidzero.robot.auto;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidzero.robot.auto.sequences.*;
@@ -16,7 +15,8 @@ public class AutoRunner {
 
     private AutoSequence[] availableSequences = {
         new TestSequence(),
-        new EightCellTrenchSequence()
+        new EightCellTrenchSequence(),
+        new TenCellTrenchSequence()
     };
 
     public AutoRunner() {

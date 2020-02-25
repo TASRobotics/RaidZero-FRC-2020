@@ -8,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import raidzero.robot.Constants;
 import raidzero.robot.Constants.ShooterConstants;
-import raidzero.robot.Constants.TurretConstants;
 
 public class Shooter extends Submodule {
 

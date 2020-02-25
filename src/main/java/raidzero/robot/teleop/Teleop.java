@@ -1,20 +1,16 @@
 package raidzero.robot.teleop;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.Constants.IntakeConstants;
-import raidzero.robot.Constants.TurretConstants;
 import raidzero.robot.auto.actions.DebugLimelightDistance;
-import raidzero.robot.auto.actions.TurnToGoal;
 import raidzero.robot.submodules.AdjustableHood;
 import raidzero.robot.submodules.Climb;
 import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.Intake;
 import raidzero.robot.submodules.Shooter;
-import raidzero.robot.submodules.SubmoduleManager;
 import raidzero.robot.submodules.Superstructure;
 import raidzero.robot.submodules.Hopper;
 import raidzero.robot.submodules.Turret;
