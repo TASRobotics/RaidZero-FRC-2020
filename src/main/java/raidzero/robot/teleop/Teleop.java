@@ -3,10 +3,10 @@ package raidzero.robot.teleop;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.Constants.IntakeConstants;
 import raidzero.robot.Constants.TurretConstants;
-import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.auto.actions.DebugLimelightDistance;
 import raidzero.robot.auto.actions.TurnToGoal;
 import raidzero.robot.submodules.AdjustableHood;
@@ -15,12 +15,12 @@ import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.Intake;
 import raidzero.robot.submodules.Shooter;
 import raidzero.robot.submodules.SubmoduleManager;
+import raidzero.robot.submodules.Superstructure;
 import raidzero.robot.submodules.Hopper;
 import raidzero.robot.submodules.Turret;
 import raidzero.robot.submodules.WheelOfFortune;
 import raidzero.robot.submodules.Drive.GearShift;
 import raidzero.robot.utils.JoystickUtils;
-import raidzero.robot.utils.ShooterUtils;
 import raidzero.robot.wrappers.InactiveCompressor;
 
 public class Teleop {
@@ -43,6 +43,7 @@ public class Teleop {
     private WheelOfFortune wheelOfFortune = WheelOfFortune.getInstance();
     private AdjustableHood hood = AdjustableHood.getInstance();
     private InactiveCompressor compressor = InactiveCompressor.getInstance();
+    private Superstructure superstructure = Superstructure.getInstance();
 
     private XboxController p1 = new XboxController(0);
     private XboxController p2 = new XboxController(1);
@@ -65,40 +66,27 @@ public class Teleop {
      * Continuously loops in teleop.
      */
     public void onLoop() {
-        //both
-
         /**
          * Climb
          */
-        //unlock
-        if(p1.getStartButton() && p2.getStartButton()) {
+        // Climb safety
+        if (p1.getStartButton() && p2.getStartButton()) {
             climb.unlock();
         }
 
-        //p1
         p1Loop();
-
-        //p2
         p2Loop();
     
         debugDistance.update();
     }
 
     private void p1Loop() {
-
         //
         // REGARDLESS OF HYPERSHIFT
         //
+        // Reversing analog to digital
+        reverse = JoystickUtils.deadband(p1.getTriggerAxis(Hand.kRight)) != 0;
 
-        /**
-        * Drivetrain
-        */
-        //reversing analog to digital
-        if(JoystickUtils.deadband(p1.getTriggerAxis(Hand.kRight)) != 0) {
-            reverse = true;
-        } else {
-            reverse = false;
-        }
         /**
          * Drivetrain
          */
@@ -120,11 +108,11 @@ public class Teleop {
         );
         */
 
-        //braking
-        if(p1.getAButtonPressed()) {
-            drive.brake(true);
+        // Braking
+        if (p1.getAButtonPressed()) {
+            drive.setBrakeMode(true);
         } else if(p1.getAButtonReleased()) {
-            drive.brake(false);
+            drive.setBrakeMode(false);
         }
 
         /**
@@ -139,12 +127,10 @@ public class Teleop {
             hopper.moveBelt(0);
         }
 
-     
         //
         // WITHOUT HYPERSHIFT
         //
-
-        if(!p1.getBumper(Hand.kRight)) {
+        if (!p1.getBumper(Hand.kRight)) {
 
             /**
              * Drivetrain
@@ -159,36 +145,30 @@ public class Teleop {
             /**
              * Intake
              */
-            //run intake in
+            // Run intake in
             intake.intakeBalls(
                 JoystickUtils.deadband(
                     IntakeConstants.CONTROL_SCALING_FACTOR * 
                         (p1.getTriggerAxis(Hand.kLeft)))
             );
-
-
             return;
         }
 
         //
         // WITH HYPERSHIFT
         //
-
         /**
          * Intake
          */
-        // run intake out
+        // Run intake out
         intake.intakeBalls(
-        JoystickUtils.deadband(
-            IntakeConstants.CONTROL_SCALING_FACTOR * 
-                (-p1.getTriggerAxis(Hand.kLeft)))
-        );
-        // extend and retract
+            JoystickUtils.deadband(
+                IntakeConstants.CONTROL_SCALING_FACTOR * 
+                    (-p1.getTriggerAxis(Hand.kLeft))));
+        // Extend and retract
         if (p1.getBumperPressed(Hand.kLeft)) {
             intake.invertStraw();
         }
-
-
     }
 
     private void p2Loop() {
@@ -203,13 +183,12 @@ public class Teleop {
         /**
          * Climb
          */
-        // Climb Code
         climb.climb(p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft));
 
         /**
          * Hopper
          */
-        if(p1.getPOV() == -1){
+        if (p1.getPOV() == -1) {
             hopper.moveBelt(JoystickUtils.deadband(-p2.getY(Hand.kLeft)));
         }
 
@@ -225,7 +204,7 @@ public class Teleop {
         /**
          * Override
          */
-        if(p2.getBumper(Hand.kLeft)) {
+        if (p2.getBumper(Hand.kLeft)) {
             /**
              * WOF Override
              */
@@ -249,15 +228,15 @@ public class Teleop {
         /**
          * Shooter
          */
-        //aim + start rotation
-        if(p2.getAButton()) {
-            ShooterUtils.aim();
-        } else if(p2.getAButtonReleased()) {
-            ShooterUtils.stop();
+        // Aim + start rotation
+        if (p2.getAButtonPressed()) {
+            superstructure.setAimingAndShooting(true);
+        } else if (p2.getAButtonReleased()) {
+            superstructure.setAimingAndShooting(false);
         }
 
         /**
-         * Hood
+         * Adjustable hood
          */
         int p2Pov = p2.getPOV();
         if (p2Pov == 0) {

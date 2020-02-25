@@ -373,11 +373,12 @@ public class Drive extends Submodule {
     }
 
     /**
-     * brakes
-     * @param brake to brake or not
+     * Sets the brake mode to brake or coast.
+     * 
+     * @param brake whether to brake or not
      */
-    public void brake(boolean brake) {
-        if(brake) {
+    public void setBrakeMode(boolean brake) {
+        if (brake) {
             rightLeader.setNeutralMode(NeutralMode.Brake);
             leftLeader.setNeutralMode(NeutralMode.Brake);
         } else {

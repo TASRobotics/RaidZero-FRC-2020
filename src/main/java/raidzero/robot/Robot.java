@@ -14,6 +14,7 @@ import raidzero.robot.submodules.Turret;
 import raidzero.robot.submodules.WheelOfFortune;
 import raidzero.robot.submodules.Hopper;
 import raidzero.robot.submodules.SubmoduleManager;
+import raidzero.robot.submodules.Superstructure;
 import raidzero.robot.submodules.Intake;
 
 /**
@@ -34,6 +35,7 @@ public class Robot extends TimedRobot {
     private static final Turret moduleTurret = Turret.getInstance();
     private static final WheelOfFortune moduleWheelOfFortune = WheelOfFortune.getInstance();
     private static final Climb moduleClimb = Climb.getInstance();
+    private static final Superstructure moduleSuperstructure = Superstructure.getInstance();
 
     private AutoRunner autoRunner;
 
@@ -52,7 +54,8 @@ public class Robot extends TimedRobot {
             moduleTurret,
             moduleWheelOfFortune,
             moduleClimb,
-            moduleLimelight
+            moduleLimelight,
+            moduleSuperstructure
         );
         submoduleManager.onInit();
 

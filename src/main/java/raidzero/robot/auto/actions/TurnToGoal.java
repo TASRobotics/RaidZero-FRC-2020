@@ -34,6 +34,7 @@ public class TurnToGoal implements Action {
 
     @Override
     public void start() {
+        pidController.reset();
         pidController.setSetpoint(0.0);
 
         limelight.setLedMode(LedMode.On);
