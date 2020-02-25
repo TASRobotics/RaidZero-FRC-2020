@@ -3,10 +3,6 @@ import cv2
 
 class cameraSet:
 
-    camArray = []
-    frameArray = []
-    loss_factor = 16
-
     def capFrame(self,id):
         ret, frame = self.camArray[id].read()
         frame = cv2.resize(frame, (256, 144))
@@ -28,15 +24,13 @@ class cameraSet:
             self.cam.release()
 
     def startCap(self):
-        global camArray
-        global frameArray
-
+        self.camArray = []
         for i in range(4):
             cap = self.decCam(int(i))
             if cap is None or not cap.isOpened():
                 print('camera ', str(i), ' does not exist')
             else:
-                print('declared')
+                print('declared camera', str(i))
                 self.camArray.append(cap)
         print('Cameras added:',len(self.camArray))
         self.frameArray = [None] * len(self.camArray)

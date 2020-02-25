@@ -8,8 +8,8 @@ import pickle
 import zlib
 import camera
 
-HOST = '192.168.66.16'
-#HOST = '127.0.0.1'
+#HOST = '192.168.66.16'
+HOST = '127.0.0.1'
 BASE_PORT = 5802
 socks = [None] * 4
 #cap = cv2.VideoCapture(0)
@@ -20,7 +20,6 @@ def openSocket():
     global socks
     for i in range(4):
         socks[i] = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        socks[i].settimeout(60)
 
 def sendData(id, out):
     global socks
@@ -34,9 +33,8 @@ def sendData(id, out):
     #out = [None] * 12
     #for i in range(12):
     #    out[i] = bytes(str(i), 'utf8') + frame[i].tostring()
-
     for i in range(12):
-        socks[id].sendto( out[i],(HOST, BASE_PORT + id) )
+        socks[id].sendto( out[i],(HOST, BASE_PORT + id))
 
 if __name__ == '__main__':
     openSocket()

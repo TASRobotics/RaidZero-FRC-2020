@@ -8,6 +8,3 @@ opencv
 
 socket (for udp)
 > pip install sockets
-
-Cython
-> pip install Cython

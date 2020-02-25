@@ -5,8 +5,8 @@ import cv2
 
 DATA_SIZE = 640 * 144 * 3
 
-UDP_IP="192.168.66.16"
-#UDP_IP="127.0.0.1"
+#UDP_IP="192.168.66.16"
+UDP_IP="127.0.0.1"
 UDP_PORT = 5802
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((UDP_IP, UDP_PORT))
@@ -32,7 +32,7 @@ while True:
         boo = 0
         for array in dat:
             try:
-                array[0]
+                array[0] 
                 boo += 1
             except IndexError:
                 break

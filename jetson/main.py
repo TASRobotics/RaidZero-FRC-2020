@@ -9,48 +9,58 @@ import cv2
 import sys
 import os
 import time
-import multiprocessing as mp
 import numpy as np
+import threading as thred
 
 import camera
 import socketManager
 
-def frameManager(camsFrameSet, frames):
+camFrames = [None] * 12
+camsFrameSet = []
+tt = 0
+    
+def frameManager(camsFrameSet, frames, cams):
     while True:
         for cam in range(len(camsFrameSet)):
+            global tt
             if camsFrameSet[cam] == False:
-                camsFrameSet[cam] = True
                 cams.capFrame(cam)
                 frame = cams.getFrame(cam)
-                
                 out = [None] * 12
                 for i in range(12):
                     out[i] = bytes(str(i), 'utf8') + frame[i].tostring()
                 frames[cam] = out
+                camsFrameSet[cam] = True
             #cv2.imwrite('frame'+str(cam), cams.getFrame(cam))
+            
 
 def commManager(camsFrameSet, frames):
+    global tt
     #comms start
     socketManager.openSocket()
     while True:
         for cam in range(len(camsFrameSet)):
-            socketManager.sendData(cam, frames[cam])
-            camsFrameSet[cam] = False
-
-
+            if camsFrameSet[cam]:
+                socketManager.sendData(cam, frames[cam])
+                camsFrameSet[cam] = False
+                #tt = time.time() - tt
+                #tt = tt * 1000
+                #print("\n\nprocess time")
+                #print(tt)
+                #
+                #tt = time.time()
+ 
 def main():
     #cams start
+    global camFrames
+    global camsFrameSet
     cams = camera.cameraSet()
     cams.startCap()
-    print("camss ")
-    print(cams.getLen())
-    states = [False] * cams.getLen()
-    camsFrameSet = mp.Array('b', states)
-    
-    camFrames = mp.Array('i', np.array([[None] * 12] * 4))
+    camsFrameSet = [False] * cams.getLen()
 
-    cams = mp.Process(target=frameManager, args=(camsFrameSet, camFrames, )).start()
-    comms = mp.Process(target=commManager, args=(camsFrameSet, camFrames, )).start()
+    cams = thred.Thread(target=frameManager, args=(camsFrameSet, camFrames, cams, )).start()
+    comms = thred.Thread(target=commManager, args=(camsFrameSet, camFrames, )).start()
+    #nn = thred.Thread(target=commManager, args=(camsFrameSet, camFrames, )).start()
 
 if __name__ == '__main__':
     main()
