@@ -98,14 +98,14 @@ public class Teleop {
         }
 
         drive.tank(
-           JoystickUtils.monomialScale(
-               JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
-               DriveConstants.JOYSTICK_EXPONENT, 
-               DriveConstants.JOYSTICK_COEFFICIENT), 
-           JoystickUtils.monomialScale(
-               JoystickUtils.deadband(-p1.getY(Hand.kRight)),
-               DriveConstants.JOYSTICK_EXPONENT,
-               DriveConstants.JOYSTICK_COEFFICIENT),
+            JoystickUtils.monomialScale(
+                JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
+                DriveConstants.JOYSTICK_EXPONENT, 
+                DriveConstants.JOYSTICK_COEFFICIENT), 
+            JoystickUtils.monomialScale(
+                JoystickUtils.deadband(-p1.getY(Hand.kRight)),
+                DriveConstants.JOYSTICK_EXPONENT,
+                DriveConstants.JOYSTICK_COEFFICIENT),
             reverse
         );
         /*
@@ -217,6 +217,9 @@ public class Teleop {
         //B button does rotation ctrl
         //X button does colour
         
+        /**
+         * Override
+         */
         if(p2.getBumper(Hand.kLeft)) {
             /**
              * Turret Override

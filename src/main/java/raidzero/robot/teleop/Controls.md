@@ -20,8 +20,7 @@ triggers | Climb up/down when enabled
 back | compressor on/off
 Left joystick | Hopper
 A button| Aim + spin up shooter
-B button | WOF rotation (auto)
-X button | WOF colour (auto)
+B button | WOF rotation or colour (auto)
 Y button | toggle WOF
 Left bumper | OVERRIDE when held
 right joystick | WOF override
