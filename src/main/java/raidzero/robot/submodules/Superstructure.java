@@ -64,6 +64,7 @@ public class Superstructure extends Submodule {
         if (status) {
             // Don't aim if the robot is aiming and shooting already
             if (isAimingAndShooting) {
+                isAiming = false;
                 return;
             }
             aimAction.start();
