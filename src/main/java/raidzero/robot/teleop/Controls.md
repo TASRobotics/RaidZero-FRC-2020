@@ -1,49 +1,29 @@
 # Overview
 ## P1
-keybind | action
+keybind | action | HYPERSHIFT action
 -- | --
-back | Estop
-start | exits estop if enabled
 start | Enables climb when held down at the same time as p2
-joysticks | Drive (tank)
-RBumper | Shifts to high gear while held down
-LBumper | brings intake up or down
-right trigger | Intake in
-left trigger  | intake out
+joysticks | Drive (tank) | drive (tank)
+RBumper | HYPERSHIFT
+LBumper | Shifts drivetrain gear HIGH when held
+right trigger | reverse drivetrain | reverse drivetrain
+left trigger  | intake in | Intake out
 DPad up | Hopper forward
-DPad down| Hopper 
-B button | Compressor On/Off
+DPad down| Hopper back
+
 
 ## P2
 keybind | action
 -- | --
 start | Enables climb when held down at the same time as p1
-Left joystick | Shooter speed
-A button| Maintain Previous shooter speed while held
-Right joystick up | Hopper Forward
-Right Joystick down | Hopper reverse
-Trigger right | Turret clockwise
-trigger left | turret counterclockwise
-Left bumper| Use left joystick to aim
-
-## Keyboard (future update)
-keybind | action
--- | --
-spacebar, enter | doesn't disable
-insert | disable
-delete | emergency stop
-( | estop
-) | estart
-wasd | drive
-shift | high gear while held
-c | slow speed
-e | intake in
-r | intake out
-right shift | hopper reverse
-spacebar | hopper forward
-; |turret left
-' | turret right
-, | turret  left slow
-. | turret right slow
-[ ] \ | shooter speeds
-enter | shooter off / shooter to last known speed
+triggers | Climb up/down when enabled
+back | compressor on/off
+Left joystick | Hopper
+A button| Aim + spin up shooter
+B button | WOF rotation (auto)
+X button | WOF colour (auto)
+Y button | toggle WOF
+Left bumper | OVERRIDE when held
+right joystick | WOF override
+Dpad | turret override control
+right trigger | shooter wheel override control

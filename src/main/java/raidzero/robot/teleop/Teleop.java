@@ -77,47 +77,6 @@ public class Teleop {
 
         //p2
         p2Loop();
-
-    
-
-        /**
-         * Shooter
-         */
-        shooter.shoot(JoystickUtils.deadband(p2.getY(Hand.kLeft)), p2.getAButton());
-
-        /**
-         * Intake
-         */
-        
-        
-
-        
-
-        /**
-         * Turret
-         */
-        turret.rotateManual(
-            TurretConstants.CONTROL_SCALING_FACTOR * 
-                (p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft))
-        );
-        //turnToGoal.update();
-
-        /**
-         * Wheel of Fortune
-         */
-        if (p1.getYButtonPressed()) {
-            wheelOfFortune.engage(true);
-        } else if (p1.getAButtonPressed()) {
-            wheelOfFortune.engage(false);
-        }
-        if (p2.getBumper(Hand.kRight)) {
-            wheelOfFortune.spin(
-                JoystickUtils.deadband(p2.getY(Hand.kRight))
-            );
-        } else {
-            wheelOfFortune.stop();
-        }
-
     
         debugDistance.update();
     }
@@ -245,7 +204,16 @@ public class Teleop {
         /**
          * WOF
          */
-        //Right joystick override just rotates WOF
+        if (p2.getYButtonPressed()) {
+            wheelOfFortune.engage();
+        }
+        if (p2.getBumper(Hand.kLeft)) {
+            wheelOfFortune.spin(
+                JoystickUtils.deadband(p2.getY(Hand.kRight))
+            );
+        } else {
+            wheelOfFortune.stop();
+        }
         //B button does rotation ctrl
         //X button does colour
         
@@ -254,7 +222,7 @@ public class Teleop {
              * Turret Override
              */
             //PID turret to degree using the Dpad
-            
+
             /**
              * Shooter Override
              */
