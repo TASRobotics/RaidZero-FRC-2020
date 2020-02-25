@@ -90,13 +90,14 @@ public class Teleop {
         /**
         * Drivetrain
         */
-        //reversing analogue to digital
+        //reversing analog to digital
         if(JoystickUtils.deadband(p1.getTriggerAxis(Hand.kRight)) != 0) {
             reverse = true;
         } else {
             reverse = false;
         }
 
+        //drive
         drive.tank(
             JoystickUtils.monomialScale(
                 JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
@@ -114,6 +115,13 @@ public class Teleop {
             JoystickUtils.deadband(p1.getX(Hand.kRight))
         );
         */
+
+        //braking
+        if(p1.getAButtonPressed()) {
+            drive.brake(true);
+        } else if(p1.getAButtonReleased()) {
+            drive.brake(false);
+        }
 
         /**
          * Hopper
@@ -207,13 +215,6 @@ public class Teleop {
         if (p2.getYButtonPressed()) {
             wheelOfFortune.engage();
         }
-        if (p2.getBumper(Hand.kLeft)) {
-            wheelOfFortune.spin(
-                JoystickUtils.deadband(p2.getY(Hand.kRight))
-            );
-        } else {
-            wheelOfFortune.stop();
-        }
         //B button does rotation ctrl
         //X button does colour
         
@@ -221,6 +222,13 @@ public class Teleop {
          * Override
          */
         if(p2.getBumper(Hand.kLeft)) {
+            /**
+             * WOF Override
+             */
+            wheelOfFortune.spin(
+                JoystickUtils.deadband(p2.getY(Hand.kRight))
+            );
+
             /**
              * Turret Override
              */

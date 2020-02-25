@@ -373,6 +373,20 @@ public class Drive extends Submodule {
     }
 
     /**
+     * brakes
+     * @param brake to brake or not
+     */
+    public void brake(boolean brake) {
+        if(brake) {
+            rightLeader.setNeutralMode(NeutralMode.Brake);
+            leftLeader.setNeutralMode(NeutralMode.Brake);
+        } else {
+            rightLeader.setNeutralMode(NeutralMode.Coast);
+            leftLeader.setNeutralMode(NeutralMode.Coast);
+        }
+    }
+
+    /**
      * Shifts the gears depending on the mode.
      * 
      * @param mode the gear shift
