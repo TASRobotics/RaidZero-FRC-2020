@@ -22,6 +22,24 @@ import raidzero.robot.wrappers.InactiveCompressor;
 
 public class Teleop {
 
+    private enum DriveMode {
+        TANK(0), ARCADE(1);
+
+        private static final DriveMode[] modes = {TANK, ARCADE};
+        public final int index;
+
+        private DriveMode(int index) {
+            this.index = index;
+        }
+
+        private DriveMode next() {
+            if (index == modes.length - 1) {
+                return modes[0];
+            }
+            return modes[index + 1];
+        }
+    }
+
     private static Teleop instance = null;
     public static Teleop getInstance() {
         if (instance == null) {
@@ -31,23 +49,25 @@ public class Teleop {
     }
     private Teleop() {}
 
-    private Drive drive = Drive.getInstance();
-    private Shooter shooter = Shooter.getInstance();
-    private Intake intake = Intake.getInstance();
-    private Hopper hopper = Hopper.getInstance();
-    private Turret turret = Turret.getInstance();
-    private Climb climb = Climb.getInstance();
-    private WheelOfFortune wheelOfFortune = WheelOfFortune.getInstance();
-    private AdjustableHood hood = AdjustableHood.getInstance();
-    private InactiveCompressor compressor = InactiveCompressor.getInstance();
-    private Superstructure superstructure = Superstructure.getInstance();
+    private static Drive drive = Drive.getInstance();
+    private static Shooter shooter = Shooter.getInstance();
+    private static Intake intake = Intake.getInstance();
+    private static Hopper hopper = Hopper.getInstance();
+    private static Turret turret = Turret.getInstance();
+    private static Climb climb = Climb.getInstance();
+    private static WheelOfFortune wheelOfFortune = WheelOfFortune.getInstance();
+    private static AdjustableHood hood = AdjustableHood.getInstance();
+    private static InactiveCompressor compressor = InactiveCompressor.getInstance();
+    private static Superstructure superstructure = Superstructure.getInstance();
 
     private XboxController p1 = new XboxController(0);
     private XboxController p2 = new XboxController(1);
 
     private DebugLimelightDistance debugDistance = new DebugLimelightDistance();
 
-    private static boolean reverse = false;
+    private DriveMode driveMode = DriveMode.TANK;
+
+    private boolean reverse = false;
 
     /**
      * Runs at the start of teleop.
@@ -87,22 +107,31 @@ public class Teleop {
         /**
          * Drivetrain
          */
-        drive.tank(
-            JoystickUtils.monomialScale(
-                JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
-                DriveConstants.JOYSTICK_EXPONENT, 
-                DriveConstants.JOYSTICK_COEFFICIENT), 
-            JoystickUtils.monomialScale(
-                JoystickUtils.deadband(-p1.getY(Hand.kRight)),
-                DriveConstants.JOYSTICK_EXPONENT,
-                DriveConstants.JOYSTICK_COEFFICIENT),
-            reverse
-        );
-        /*
-        drive.arcade(
-            JoystickUtils.deadband(-p1.getY(Hand.kLeft)), 
-            JoystickUtils.deadband(p1.getX(Hand.kRight))
-        );*/
+        // Cycle through drive modes
+        if (p1.getBackButtonPressed()) {
+            driveMode = driveMode.next();
+        }
+        switch (driveMode) {
+            case TANK:
+                drive.tank(
+                    JoystickUtils.monomialScale(
+                        JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
+                        DriveConstants.JOYSTICK_EXPONENT, 
+                        DriveConstants.JOYSTICK_COEFFICIENT), 
+                    JoystickUtils.monomialScale(
+                        JoystickUtils.deadband(-p1.getY(Hand.kRight)),
+                        DriveConstants.JOYSTICK_EXPONENT,
+                        DriveConstants.JOYSTICK_COEFFICIENT),
+                    reverse
+                );
+                break;
+            case ARCADE:
+                drive.arcade(
+                    JoystickUtils.deadband(-p1.getY(Hand.kLeft)), 
+                    JoystickUtils.deadband(p1.getX(Hand.kRight))
+                );
+                break;
+        }
 
         // Braking
         if (p1.getAButtonPressed()) {
@@ -161,6 +190,7 @@ public class Teleop {
             JoystickUtils.deadband(
                 IntakeConstants.CONTROL_SCALING_FACTOR * 
                     (-p1.getTriggerAxis(Hand.kLeft))));
+
         // Extend and retract
         if (p1.getBumperPressed(Hand.kLeft)) {
             intake.invertStraw();
@@ -205,11 +235,9 @@ public class Teleop {
         /**
          * Turret
          */
-        //drive using right joystick
+        // Turn turret using right joystick
         turret.rotateManual(TurretConstants.CONTROL_SCALING_FACTOR * 
             JoystickUtils.deadband(p2.getX(Hand.kRight)));
-        
-        int p2Pov = p2.getPOV();
 
         /**
          * Override
@@ -225,8 +253,8 @@ public class Teleop {
             /**
              * Shooter Override
              */
-            //If left bumper held shooter override
-            shooter.shoot(-p2.getTriggerAxis(Hand.kRight), false);
+            // If left bumper held shooter override
+            shooter.shoot(p2.getTriggerAxis(Hand.kRight), false);
             return;
         }
 
@@ -243,10 +271,11 @@ public class Teleop {
         /**
          * Adjustable hood
          */
+        int p2Pov = p2.getPOV();
         if (p2Pov == 0) {
-            hood.adjust(1.0);
+            hood.adjust(0.5);
         } else if (p2Pov == 180) {
-            hood.adjust(-1.0);
+            hood.adjust(-0.5);
         } else {
             hood.stop();
         }
