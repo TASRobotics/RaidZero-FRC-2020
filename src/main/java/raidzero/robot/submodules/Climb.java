@@ -27,7 +27,7 @@ public class Climb extends Submodule {
     
     @Override
     public void onInit() {
-        servo = new Servo(0);
+        servo = new Servo(9);
         climbMotor = new LazyTalonSRX(ClimbConstants.MOTOR_ID);
         climbMotor.configFactoryDefault();
         climbMotor.setNeutralMode(ClimbConstants.NEUTRAL_MODE);
