@@ -100,7 +100,8 @@ public class Teleop {
         /*
         drive.arcade(
             JoystickUtils.deadband(-p1.getY(Hand.kLeft)), 
-            JoystickUtils.deadband(p1.getX(Hand.kRight))
+            JoystickUtils.deadband(p1.getX(Hand.kRight)),
+            reverse
         );
         */
 

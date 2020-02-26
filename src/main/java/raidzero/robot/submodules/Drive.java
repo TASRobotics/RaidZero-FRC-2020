@@ -368,7 +368,10 @@ public class Drive extends Submodule {
      * @param leftJoystick value of the left joystick in [-1, 1]
      * @param rightJoystick value of the right joystick in [-1, 1]
      */
-    public void arcade(double leftJoystick, double rightJoystick) {
+    public void arcade(double leftJoystick, double rightJoystick, boolean reverse) {
+        if(reverse) {
+            leftJoystick = -leftJoystick;
+        }
         outputLeftDrive = leftJoystick + rightJoystick;
         outputRightDrive = leftJoystick - rightJoystick;
     }
