@@ -201,6 +201,12 @@ public class Teleop {
         }
         //B button does rotation ctrl
         //X button does colour
+
+        /**
+         * Turret
+         */
+        //drive using right joystick
+        turret.rotateManual(p2.getX(Hand.kRight));
         
         /**
          * Override
