@@ -1,13 +1,10 @@
 package raidzero.robot.submodules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-
 import raidzero.robot.wrappers.LazyTalonSRX;
 import raidzero.robot.wrappers.InactiveDoubleSolenoid;
-import raidzero.robot.Constants;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import raidzero.robot.Constants.IntakeConstants;
 
 /**
  * Sucks BOBA balls and definitely not other balls
@@ -34,13 +31,13 @@ public class Intake extends Submodule {
 
     @Override
     public void onInit() {
-        intakeMotor = new LazyTalonSRX(Constants.intakeMotorId);
+        intakeMotor = new LazyTalonSRX(IntakeConstants.MOTOR_ID);
         intakeMotor.configFactoryDefault();
-        intakeMotor.setNeutralMode(NeutralMode.Brake);
-        intakeMotor.setInverted(true);
+        intakeMotor.setNeutralMode(IntakeConstants.NEUTRAL_MODE);
+        intakeMotor.setInverted(IntakeConstants.INVERSION);
 
-        solenoid = new InactiveDoubleSolenoid(Constants.intakeOutId, Constants.intakeInId);
-        solenoid.setActive(true);
+        solenoid = new InactiveDoubleSolenoid(IntakeConstants.INTAKE_FORWARD_ID, 
+            IntakeConstants.INTAKE_REVERSE_ID);
     }
 
     @Override
@@ -50,9 +47,6 @@ public class Intake extends Submodule {
 
     @Override
     public void stop() {
-        position = Value.kOff;
-        solenoid.set(Value.kOff);
-
         outputOpenLoop = 0.0;
         intakeMotor.set(ControlMode.PercentOutput, 0);
     }

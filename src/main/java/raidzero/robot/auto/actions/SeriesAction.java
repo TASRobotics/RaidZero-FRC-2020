@@ -31,7 +31,6 @@ public class SeriesAction implements Action {
             if (remainingActions.isEmpty()) {
                 return;
             }
-
             currentAction = remainingActions.remove(0);
             currentAction.start();
         }
@@ -46,5 +45,8 @@ public class SeriesAction implements Action {
 
     @Override
     public void done() {
+        if (currentAction != null) {
+            currentAction.done();
+        }
     }
 }

@@ -3,7 +3,7 @@ package raidzero.robot.submodules;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import raidzero.robot.Constants;
+import raidzero.robot.Constants.LimelightConstants;
 
 // Reference: http://docs.limelightvision.io/en/latest/networktables_api.html
 public class Limelight extends Submodule {
@@ -11,7 +11,7 @@ public class Limelight extends Submodule {
 	private static Limelight instance = null;
 	public static Limelight getInstance() {
         if (instance == null) {
-            instance = new Limelight(Constants.LIMELIGHT_NAME_SHOOTER);
+            instance = new Limelight(LimelightConstants.NAME);
         }
         return instance;
     }
@@ -45,6 +45,11 @@ public class Limelight extends Submodule {
 
 	private Limelight(String tableName) {
 		this.tableName = tableName;
+	}
+
+	@Override
+	public void onStart(double timestamp) {
+		setLedMode(LedMode.Off);
 	}
 
 	/**

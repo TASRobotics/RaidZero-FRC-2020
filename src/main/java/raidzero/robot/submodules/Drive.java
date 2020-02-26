@@ -74,22 +74,22 @@ public class Drive extends Submodule {
     @Override
     public void onInit() {
         // Motors
-        leftLeader = new LazyTalonFX(Constants.driveLeftLeaderId);
-        configureMotor(leftLeader, Constants.driveLeftInvert);
+        leftLeader = new LazyTalonFX(DriveConstants.LEFT_LEADER_ID);
+        configureMotor(leftLeader, DriveConstants.LEFT_INVERSION);
         
-        leftFollower = new LazyTalonFX(Constants.driveLeftFollowerId);
-        configureMotor(leftFollower, Constants.driveLeftInvert);
+        leftFollower = new LazyTalonFX(DriveConstants.LEFT_FOLLOWER_ID);
+        configureMotor(leftFollower, DriveConstants.LEFT_INVERSION);
         leftFollower.follow(leftLeader);
 
-        rightLeader = new LazyTalonFX(Constants.driveRightLeaderId);
-        configureMotor(rightLeader, Constants.driveRightInvert);
+        rightLeader = new LazyTalonFX(DriveConstants.RIGHT_LEADER_ID);
+        configureMotor(rightLeader, DriveConstants.RIGHT_INVERSION);
         
-        rightFollower = new LazyTalonFX(Constants.driveRightFollowerId);
-        configureMotor(rightFollower, Constants.driveRightInvert);
+        rightFollower = new LazyTalonFX(DriveConstants.RIGHT_FOLLOWER_ID);
+        configureMotor(rightFollower, DriveConstants.RIGHT_INVERSION);
         rightFollower.follow(rightLeader);
 
         // Pigeon IMU
-        pigeon = new Pigeon(Constants.pigeonId);
+        pigeon = new Pigeon(DriveConstants.PIGEON_ID);
         pigeon.configFactoryDefault();
 
         // Must be called after the pigeon is initialized
@@ -101,8 +101,8 @@ public class Drive extends Submodule {
             Rotation2d.fromDegrees(pigeon.getHeading()));
 
         // Gear shift
-        gearShiftSolenoid = new InactiveDoubleSolenoid(Constants.driveGearshiftForwardId, 
-            Constants.driveGearshiftReverseId);
+        gearShiftSolenoid = new InactiveDoubleSolenoid(DriveConstants.GEARSHIFT_FORWARD_ID, 
+            DriveConstants.GEARSHIFT_REVERSE_ID);
 
         // Control state
         setOpenLoop();
@@ -224,7 +224,7 @@ public class Drive extends Submodule {
     }
 
     /**
-     * Zeros all encoders & the pigeon.
+     * Zeros all encoders & the pigeon to 0.
      */
     @Override
     public void zero() {
@@ -255,8 +255,14 @@ public class Drive extends Submodule {
      * 
      * @param left left percent output in [-1, 1]
      * @param right right percent output in [-1, 1]
+     * @param reverse whether to reverse the inputs or not
      */
-    public void tank(double left, double right) {
+    public void tank(double left, double right, boolean reverse) {
+        if (reverse) {
+            outputLeftDrive = -left;
+            outputRightDrive = -right;
+            return;
+        }
         outputLeftDrive = left;
         outputRightDrive = right;
     }
@@ -313,6 +319,21 @@ public class Drive extends Submodule {
     public void arcade(double leftJoystick, double rightJoystick) {
         outputLeftDrive = leftJoystick + rightJoystick;
         outputRightDrive = leftJoystick - rightJoystick;
+    }
+
+    /**
+     * Sets the brake mode to brake or coast.
+     * 
+     * @param brake whether to brake or not
+     */
+    public void setBrakeMode(boolean brake) {
+        if (brake) {
+            rightLeader.setNeutralMode(NeutralMode.Brake);
+            leftLeader.setNeutralMode(NeutralMode.Brake);
+        } else {
+            rightLeader.setNeutralMode(NeutralMode.Coast);
+            leftLeader.setNeutralMode(NeutralMode.Coast);
+        }
     }
 
     /**

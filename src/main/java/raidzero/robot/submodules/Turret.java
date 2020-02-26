@@ -4,12 +4,10 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 
 import raidzero.robot.wrappers.LazyTalonSRX;
 
-import raidzero.robot.Constants;
 import raidzero.robot.Constants.TurretConstants;
 
 public class Turret extends Submodule {
@@ -40,23 +38,23 @@ public class Turret extends Submodule {
 
     @Override
     public void onInit() {
-        turretMotor = new LazyTalonSRX(Constants.turretMotorId);
+        turretMotor = new LazyTalonSRX(TurretConstants.MOTOR_ID);
         turretMotor.configFactoryDefault();
-        turretMotor.setNeutralMode(NeutralMode.Brake);
-        turretMotor.setInverted(true);
+        turretMotor.setNeutralMode(TurretConstants.NEUTRAL_MODE);
+        turretMotor.setInverted(TurretConstants.INVERSION);
 
         TalonSRXConfiguration config = new TalonSRXConfiguration();
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
         config.reverseLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
-        config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+        config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
         config.forwardLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
-        config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+        config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
 
-        config.slot0.kF = TurretConstants.kF;
-        config.slot0.kP = TurretConstants.kP;
-        config.slot0.kI = TurretConstants.kI;
-        config.slot0.kD = TurretConstants.kD;
-        config.slot0.integralZone = TurretConstants.kIntegralZone;
+        config.slot0.kF = TurretConstants.K_F;
+        config.slot0.kP = TurretConstants.K_P;
+        config.slot0.kI = TurretConstants.K_I;
+        config.slot0.kD = TurretConstants.K_D;
+        config.slot0.integralZone = TurretConstants.K_INTEGRAL_ZONE;
 
         turretMotor.configAllSettings(config);
     }
@@ -78,6 +76,7 @@ public class Turret extends Submodule {
 
     @Override
     public void stop() {
+        controlState = ControlState.POSITION;
         outputOpenLoop = 0.0;
         turretMotor.set(ControlMode.PercentOutput, 0);
     }
@@ -93,15 +92,19 @@ public class Turret extends Submodule {
      * @param angle the angle to rotate to
      */
     public void rotateToAngle(double angle) {
-        outputPosition = angle * TurretConstants.degreesToTicks;
+        controlState = ControlState.POSITION;
+        outputPosition = angle * TurretConstants.DEGREES_TO_TICKS;
     }
 
     /**
      * Rotates the turret using open-loop control.
      * 
+     * Note: Positive (+) is clockwise
+     * 
      * @param percentOutput the percent output in [-1, 1]
      */
     public void rotateManual(double percentOutput) {
+        controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = percentOutput;
     }
 }
