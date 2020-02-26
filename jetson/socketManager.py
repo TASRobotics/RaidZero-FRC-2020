@@ -14,8 +14,8 @@ BASE_PORT = 5802
 socks = [None] * 4
 #cap = cv2.VideoCapture(0)
 
-PACKETS = 12
-SIZE = int((640 * 360 * 3) / PACKETS)
+PACKETS = 8
+SIZE = int((480 * 270 * 3) / PACKETS)
 
 def openSocket():
     global socks
@@ -24,6 +24,7 @@ def openSocket():
 
 def sendData(id, out):
     global socks
+    print(BASE_PORT+id)
     socks[id].sendto( out,(HOST, BASE_PORT + id))
 
 if __name__ == '__main__':

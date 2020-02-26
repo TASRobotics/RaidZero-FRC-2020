@@ -5,7 +5,7 @@ class cameraSet:
 
     def capFrame(self,id):
         ret, frame = self.camArray[id].read()
-        frame = cv2.resize(frame, (640, 360))
+        frame = cv2.resize(frame, (480, 270))
         self.frameArray[id] = frame
 
     def getFrame(self, id):
@@ -24,7 +24,7 @@ class cameraSet:
     def startCap(self):
         self.camArray = []
         for i in range(4):
-            cap = self.decCam(int(i))
+            cap = self.decCam(i)
             if cap is None or not cap.isOpened():
                 print('camera ', str(i), ' does not exist')
             else:
