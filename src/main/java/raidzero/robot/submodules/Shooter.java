@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidzero.robot.Constants;
 import raidzero.robot.Constants.ShooterConstants;
 
@@ -41,6 +42,13 @@ public class Shooter extends Submodule {
         config.slot0.integralZone = ShooterConstants.K_INTEGRAL_ZONE;
 
         shooterMotor.configAllSettings(config);
+    }
+
+    @Override
+    public void update(double timestamp) {
+        SmartDashboard.putNumber("Shooter Vel", shooterMotor.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("Shooter Target", outputSpeed);
+        SmartDashboard.putBoolean("Shooter Up2Speed", isUpToSpeed());
     }
 
     @Override
