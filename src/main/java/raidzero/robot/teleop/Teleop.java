@@ -206,7 +206,8 @@ public class Teleop {
          * Turret
          */
         //drive using right joystick
-        turret.rotateManual(p2.getX(Hand.kRight));
+        turret.rotateManual(TurretConstants.CONTROL_SCALING_FACTOR * 
+            JoystickUtils.deadband(p2.getX(Hand.kRight)));
         
         int p2Pov = p2.getPOV();
 
@@ -219,20 +220,7 @@ public class Teleop {
              */
             wheelOfFortune.spin(
                 JoystickUtils.deadband(p2.getY(Hand.kRight))
-            );
-
-            /**
-             * Turret Override
-             */
-            //PID turret to degree using the Dpad
-            if (p2Pov == 90) {
-                turret.rotateManual(TurretConstants.CONTROL_SCALING_FACTOR);
-            } else if (p2Pov == 270) {
-                turret.rotateManual(-TurretConstants.CONTROL_SCALING_FACTOR);
-            } else {
-                turret.stop();
-            }
-            
+            );            
 
             /**
              * Shooter Override
