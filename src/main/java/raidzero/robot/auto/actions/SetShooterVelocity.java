@@ -7,6 +7,8 @@ import raidzero.robot.submodules.Shooter;
 
 /**
  * Action for directly setting the shooter's velocity setpoint.
+ * 
+ * Note: Don't forget to stop the shooter!!!
  */
 public class SetShooterVelocity implements Action {
 
