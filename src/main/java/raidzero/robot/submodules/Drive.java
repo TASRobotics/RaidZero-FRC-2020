@@ -322,12 +322,8 @@ public class Drive extends Submodule {
         rightLeader.set(ControlMode.Disabled, 0.0);
     }
 
-    public void setYaw(double angle) {
-        pigeon.setYaw(angle);
-    }
-
     /**
-     * Zeros all encoders & the pigeon.
+     * Zeros all encoders & the pigeon to 0.
      */
     @Override
     public void zero() {
@@ -428,7 +424,8 @@ public class Drive extends Submodule {
             // Stops & resets everything
             stop();
             zero();
-            setYaw(path.getPoints()[0].angle.getAsDouble());
+            // The path may start at a different angle at times
+            pigeon.setYaw(path.getFirstPoint().angle.orElse(0.0));
             mpFollower.reset();
 
             mpFollower.setGearShift(currentGearShift);

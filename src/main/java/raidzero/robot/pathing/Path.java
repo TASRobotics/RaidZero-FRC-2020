@@ -61,6 +61,24 @@ public class Path {
     }
 
     /**
+     * Returns the first waypoint of the path.
+     * 
+     * @return first point
+     */
+    public Point getFirstPoint() {
+        return points[0];
+    }
+
+    /**
+     * Returns the last waypoint of the path.
+     * 
+     * @return last point
+     */
+    public Point getLastPoint() {
+        return points[points.length - 1];
+    }
+
+    /**
      * Returns the path points for the motion profile.
      * 
      * @return array of path points
