@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.Constants.IntakeConstants;
+import raidzero.robot.Constants.TurretConstants;
 import raidzero.robot.auto.actions.DebugLimelightDistance;
 import raidzero.robot.submodules.AdjustableHood;
 import raidzero.robot.submodules.Climb;
@@ -101,8 +102,7 @@ public class Teleop {
         drive.arcade(
             JoystickUtils.deadband(-p1.getY(Hand.kLeft)), 
             JoystickUtils.deadband(p1.getX(Hand.kRight))
-        );
-        */
+        );*/
 
         // Braking
         if (p1.getAButtonPressed()) {
@@ -197,6 +197,8 @@ public class Teleop {
         //B button does rotation ctrl
         //X button does colour
         
+        int p2Pov = p2.getPOV();
+
         /**
          * Override
          */
@@ -212,6 +214,14 @@ public class Teleop {
              * Turret Override
              */
             //PID turret to degree using the Dpad
+            if (p2Pov == 90) {
+                turret.rotateManual(TurretConstants.CONTROL_SCALING_FACTOR);
+            } else if (p2Pov == 270) {
+                turret.rotateManual(-TurretConstants.CONTROL_SCALING_FACTOR);
+            } else {
+                turret.stop();
+            }
+            
 
             /**
              * Shooter Override
@@ -226,15 +236,14 @@ public class Teleop {
          */
         // Aim + start rotation
         if (p2.getAButtonPressed()) {
-            superstructure.setAimingAndShooting(true);
+            superstructure.setAiming(true);
         } else if (p2.getAButtonReleased()) {
-            superstructure.setAimingAndShooting(false);
+            superstructure.setAiming(false);
         }
 
         /**
          * Adjustable hood
          */
-        int p2Pov = p2.getPOV();
         if (p2Pov == 0) {
             hood.adjust(1.0);
         } else if (p2Pov == 180) {

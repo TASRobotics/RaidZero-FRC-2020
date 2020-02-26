@@ -99,6 +99,8 @@ public class Turret extends Submodule {
     /**
      * Rotates the turret using open-loop control.
      * 
+     * Note: Positive (+) is clockwise
+     * 
      * @param percentOutput the percent output in [-1, 1]
      */
     public void rotateManual(double percentOutput) {

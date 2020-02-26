@@ -52,15 +52,15 @@ public class Constants {
         public static final double PIGEON_SCALE = 3600.0 / 8192.0;
 
         public static final double PRIMARY_F = 0.8 * 1023.0 / 20348;
-        public static final double PRIMARY_P = 0.4; // 1023 / (30 * 2000)
-        public static final double PRIMARY_I = 0.00001;
-        public static final double PRIMARY_D = 1.8;
+        public static final double PRIMARY_P = 0.03; // 1023 / (30 * 2000)
+        public static final double PRIMARY_I = 0;
+        public static final double PRIMARY_D = 0;
         public static final int PRIMARY_INT_ZONE = 100;
 
         public static final double AUX_F = 0;
-        public static final double AUX_P = 4;
+        public static final double AUX_P = 8;
         public static final double AUX_I = 0;
-        public static final double AUX_D = 0.4;//4.0;
+        public static final double AUX_D = 0.6;//4.0;
         public static final int AUX_INT_ZONE = 20;
         public static final boolean AUX_POLARITY = false;
 
@@ -73,8 +73,8 @@ public class Constants {
         public static final int MIN_POINTS_IN_TALON = 10;
         public static final int TRANSMIT_PERIOD_MS = 3;
 
-        public static final double DEFAULT_CRUISE_VELOCITY = 9;
-        public static final double DEFAULT_TARGET_ACCELERATION = 8;
+        public static final double DEFAULT_CRUISE_VELOCITY = 6;
+        public static final double DEFAULT_TARGET_ACCELERATION = 6;
 
         // Joystick to Output mapping
         public static final double JOYSTICK_EXPONENT = 1;

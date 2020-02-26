@@ -49,16 +49,16 @@ public class TurnToGoal implements Action {
             turret.stop();
             return;
 		}
-        headingError = limelight.getTx();
+        headingError = -limelight.getTx();
 
 		// Steering adjust P controller with offset
         // double steeringAdjust = LimelightConstants.AIM_KP * headingError;
-        // System.out.println("Heading error: " + steeringAdjust);
+        System.out.println("Heading error: " + headingError);
 
-		turret.rotateManual(
-            MathUtil.clamp(pidController.calculate(headingError),
-                -TurretConstants.MAX_INPUT_PERCENTAGE, TurretConstants.MAX_INPUT_PERCENTAGE)
-        );
+        double out = MathUtil.clamp(pidController.calculate(headingError),
+            -TurretConstants.MAX_INPUT_PERCENTAGE, TurretConstants.MAX_INPUT_PERCENTAGE);
+        turret.rotateManual(out);
+        System.out.println("Output: " + out);
     }
 
     @Override
