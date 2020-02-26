@@ -2,6 +2,7 @@ package raidzero.robot.submodules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.Servo;
 import raidzero.robot.Constants.ClimbConstants;
 import raidzero.robot.wrappers.LazyTalonSRX;
@@ -11,10 +12,11 @@ public class Climb extends Submodule {
     private static Climb instance = null;
     
     private LazyTalonSRX climbMotor;
-    private Servo servo;
+    private PWM servo;
 
     private boolean unlocked = false;
     private double outputOpenLoop = 0.0;
+    private int serve = -1;
     
     public static Climb getInstance() {
         if (instance == null) {
@@ -27,7 +29,7 @@ public class Climb extends Submodule {
     
     @Override
     public void onInit() {
-        servo = new Servo(9);
+        servo = new PWM(9);
         climbMotor = new LazyTalonSRX(ClimbConstants.MOTOR_ID);
         climbMotor.configFactoryDefault();
         climbMotor.setNeutralMode(ClimbConstants.NEUTRAL_MODE);
@@ -37,8 +39,10 @@ public class Climb extends Submodule {
     @Override
     public void run() {
         if (!unlocked) {
+            serve = 1;
             outputOpenLoop = 0.0;
         }
+        servo.setPosition(serve);
         climbMotor.set(ControlMode.PercentOutput, outputOpenLoop);
     }
 
@@ -53,8 +57,14 @@ public class Climb extends Submodule {
      */
     public void unlock() {
         unlocked = true;
-        servo.setAngle(180);
-//        servo.setAngle(0);
+    }
+
+    public void openServo() {
+        serve = -1;
+    }
+
+    public void closeServo() {
+        serve = 1;  
     }
 
     /**

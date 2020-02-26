@@ -116,9 +116,9 @@ public class Teleop {
          */
         int p1Pov = p1.getPOV();
         if (p1Pov >= 315 || p1Pov <= 45) {
-            hopper.moveBelt(1.0);
-        } else if (p1Pov >= 225 && p1Pov <= 135) {
             hopper.moveBelt(-1.0);
+        } else if (p1Pov <= 225 && p1Pov >= 135) {
+            hopper.moveBelt(1.0);
         } else {
             hopper.moveBelt(0);
         }
@@ -180,12 +180,17 @@ public class Teleop {
          * Climb
          */
         climb.climb(p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft));
+        if(p2.getStartButton()) {
+            climb.openServo();
+        } else {
+            climb.closeServo();
+        }
 
         /**
          * Hopper
          */
         if (p1.getPOV() == -1) {
-            hopper.moveBelt(JoystickUtils.deadband(-p2.getY(Hand.kLeft)));
+            hopper.moveBelt(JoystickUtils.deadband(p2.getY(Hand.kLeft)));
         }
 
         /**
@@ -217,7 +222,7 @@ public class Teleop {
              * Shooter Override
              */
             //If left bumper held shooter override
-            shooter.shoot(p2.getTriggerAxis(Hand.kRight), false);
+            shooter.shoot(-p2.getTriggerAxis(Hand.kRight), false);
             return;
         }
 
