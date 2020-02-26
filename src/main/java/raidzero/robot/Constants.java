@@ -88,7 +88,7 @@ public class Constants {
         public static final int MOTOR_ID = 8;
 
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Coast;
-        public static final InvertType INVERSION = InvertType.InvertMotorOutput;
+        public static final InvertType INVERSION = InvertType.None;
 
         public static final double MAX_SPEED = 18300; // in ticks per 100ms
         public static final double ERROR_TOLERANCE = 500; // TODO: Make sure this is good
@@ -154,7 +154,7 @@ public class Constants {
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
         public static final InvertType INVERSION = InvertType.None;
 
-        public static final double CONTROL_SCALING_FACTOR = 0.625;
+        public static final double CONTROL_SCALING_FACTOR = 0.8;
     }
 
     /**
@@ -230,7 +230,7 @@ public class Constants {
     /**
      * Joystick Constants
      */
-    public static final double JOYSTICK_DEADBAND = 0.05;
+    public static final double JOYSTICK_DEADBAND = 0.08;
 
     public static final int TIMEOUT_MS = 10;
 }
