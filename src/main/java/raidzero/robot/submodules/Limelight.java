@@ -47,6 +47,11 @@ public class Limelight extends Submodule {
 		this.tableName = tableName;
 	}
 
+	@Override
+	public void onStart(double timestamp) {
+		setLedMode(LedMode.Off);
+	}
+
 	/**
 	 * Gets whether a target is detected by the Limelight.
 	 * 
