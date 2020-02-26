@@ -14,7 +14,8 @@ BASE_PORT = 5802
 socks = [None] * 4
 #cap = cv2.VideoCapture(0)
 
-
+PACKETS = 12
+SIZE = int((640 * 360 * 3) / PACKETS)
 
 def openSocket():
     global socks
@@ -23,18 +24,7 @@ def openSocket():
 
 def sendData(id, out):
     global socks
-    #ret, fm = cap.read() #camera.getFrame(id)
-    #cv2.imshow('fr', fm)
-    #cv2.waitKey(1)
-    
-    #frame = cv2.resize(fm, (256, 144))
-    #frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR555)
-    #frame = np.reshape(frame, (12, -1))
-    #out = [None] * 12
-    #for i in range(12):
-    #    out[i] = bytes(str(i), 'utf8') + frame[i].tostring()
-    for i in range(12):
-        socks[id].sendto( out[i],(HOST, BASE_PORT + id))
+    socks[id].sendto( out,(HOST, BASE_PORT + id))
 
 if __name__ == '__main__':
     openSocket()

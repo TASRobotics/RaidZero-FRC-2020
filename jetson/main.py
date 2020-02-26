@@ -15,52 +15,55 @@ import threading as thred
 import camera
 import socketManager
 
-camFrames = [None] * 12
-camsFrameSet = []
+PACKETS = 12
+SIZE = int((640 * 360 * 3) / PACKETS)
+camFrames = [[None] * PACKETS] * 4
+camsFrameReady = []
 tt = 0
-    
-def frameManager(camsFrameSet, frames, cams):
+
+def frameManager(camsFrameReady, frames, cams):
     while True:
-        for cam in range(len(camsFrameSet)):
+        for cam in range(len(camsFrameReady)):
             global tt
-            if camsFrameSet[cam] == False:
+            if camsFrameReady[cam] == False:
                 cams.capFrame(cam)
-                frame = cams.getFrame(cam)
-                out = [None] * 12
-                for i in range(12):
-                    out[i] = bytes(str(i), 'utf8') + frame[i].tostring()
-                frames[cam] = out
-                camsFrameSet[cam] = True
+                frame = cams.getFrame(cam).tobytes()
+                for pack in range(PACKETS):
+                    frames[cam][pack] = bytes(chr(pack), "utf8") + frame[pack*SIZE:(pack+1)*SIZE]
+                camsFrameReady[cam] = True
             #cv2.imwrite('frame'+str(cam), cams.getFrame(cam))
             
 
-def commManager(camsFrameSet, frames):
+def commManager(camsFrameReady, frames):
     global tt
     #comms start
-    socketManager.openSocket()
     while True:
-        for cam in range(len(camsFrameSet)):
-            if camsFrameSet[cam]:
-                socketManager.sendData(cam, frames[cam])
-                camsFrameSet[cam] = False
-                #tt = time.time() - tt
-                #tt = tt * 1000
-                #print("\n\nprocess time")
-                #print(tt)
-                #
-                #tt = time.time()
- 
+        for cam in range(len(camsFrameReady)):
+            if camsFrameReady[cam]: 
+                for packet in range(PACKETS):
+                    #print(packet)
+                    #print(len(out))
+                    socketManager.sendData(cam, frames[cam][packet])
+                    #time.sleep(1)
+                    #tt = time.time() - tt
+                    #tt = tt * 1000
+                    #print("\n\nprocess time")
+                    #print(tt)
+                    #tt = time.time()
+                    camsFrameReady[cam] = False
+
 def main():
     #cams start
     global camFrames
-    global camsFrameSet
+    global camsFrameReady
     cams = camera.cameraSet()
     cams.startCap()
-    camsFrameSet = [False] * cams.getLen()
+    camsFrameReady = [False] * cams.getLen()
+    socketManager.openSocket()
 
-    cams = thred.Thread(target=frameManager, args=(camsFrameSet, camFrames, cams, )).start()
-    comms = thred.Thread(target=commManager, args=(camsFrameSet, camFrames, )).start()
-    #nn = thred.Thread(target=commManager, args=(camsFrameSet, camFrames, )).start()
+    cams = thred.Thread(target=frameManager, args=(camsFrameReady, camFrames, cams, )).start()
+    comms = thred.Thread(target=commManager, args=(camsFrameReady, camFrames, )).start()
+    #nn = thred.Thread(target=commManager, args=(camsFrameReady, camFrames, )).start()
 
 if __name__ == '__main__':
     main()

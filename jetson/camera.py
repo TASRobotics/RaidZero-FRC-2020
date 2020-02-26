@@ -5,9 +5,7 @@ class cameraSet:
 
     def capFrame(self,id):
         ret, frame = self.camArray[id].read()
-        frame = cv2.resize(frame, (256, 144))
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR555)
-        frame = np.reshape(frame, (12, -1))
+        frame = cv2.resize(frame, (640, 360))
         self.frameArray[id] = frame
 
     def getFrame(self, id):
