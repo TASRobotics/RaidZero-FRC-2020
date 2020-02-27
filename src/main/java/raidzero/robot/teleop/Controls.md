@@ -22,11 +22,13 @@ triggers | Climb up/down when enabled
 back | compressor on/off
 Left joystick | Hopper
 A button| Aim + spin up shooter
-B button | WOF rotation or colour (auto)
+X button | hood forwards (manual)
+B button | hood backwards (manual)
 Y button | toggle WOF
 Left bumper | OVERRIDE when held
 right joystick | turret | WOF OVERRIDE
-Dpad | | turret OVERRIDE
-Dpad up | hood up
-Dpad down | hood down
+Dpad up | fully retract hood
+Dpad right | hood to high shot
+Dpad down | hood to medium shot
+Dpad left | hood to low shot
 right trigger | | shooter wheel OVERRIDE

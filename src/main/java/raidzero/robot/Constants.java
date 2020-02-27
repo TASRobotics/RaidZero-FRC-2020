@@ -117,12 +117,27 @@ public class Constants {
 
         public static final double GEAR_RATIO = 45.0;
 
-        public static final int FULLY_EXTENDED_TICKS = 5940;
+        public static final int FULLY_EXTENDED_TICKS = 6270;
+
+        // The names refer to the angle of ball release
+        public static enum HoodAngle {
+            // +-500 for extra tolerance, limit switches should do its thing
+            RETRACTED(-500),
+            HIGH(FULLY_EXTENDED_TICKS / 3), 
+            MEDIUM(2 * FULLY_EXTENDED_TICKS / 3), 
+            LOW(FULLY_EXTENDED_TICKS + 500);
+
+            public final int ticks;
+
+            private HoodAngle(int ticks) {
+                this.ticks = ticks;
+            }
+        }
 
         public static final double K_F = 0;
-        public static final double K_P = 0.1;
+        public static final double K_P = 0.6;
         public static final double K_I = 0;
-        public static final double K_D = 0;
+        public static final double K_D = 0.001;
         public static final int K_INTEGRAL_ZONE = 0;
     }
 
