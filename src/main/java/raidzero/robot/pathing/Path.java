@@ -33,10 +33,10 @@ public class Path {
      * 
      * Note: The motion profile is generated in the constructor.
      * 
-     * @param points waypoints in the path
-     * @param reversed whether to follow the path reversed
-     * @param cruiseVel the target cruise velocity of the robot in in/100ms
-     * @param targetAccel the target acceleration (and deceleration) of the robot in in/100ms/s
+     * @param points      waypoints in the path
+     * @param reversed    whether to follow the path reversed
+     * @param cruiseVel   the target cruise velocity in in/100ms
+     * @param targetAccel the target acceleration in in/100ms/s
      */
     public Path(Point[] points, boolean reversed, double cruiseVel, double targetAccel) {
         this.points = points;
