@@ -83,7 +83,7 @@ public class Shooter extends Submodule {
         if (freeze) {
             return;
         }
-        outputSpeed = percentSpeed * ShooterConstants.MAX_SPEED;
+        outputSpeed = percentSpeed * ShooterConstants.FAKE_MAX_SPEED;
     }
 
     /**

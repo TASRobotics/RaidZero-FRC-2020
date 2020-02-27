@@ -93,12 +93,13 @@ public class Constants {
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Coast;
         public static final InvertType INVERSION = InvertType.None;
 
-        public static final double MAX_SPEED = 18300; // in ticks per 100ms
+        public static final double MAX_SPEED = 20000; // in ticks per 100ms
+        public static final double FAKE_MAX_SPEED = 17000; // in ticks per 100ms
         public static final double ERROR_TOLERANCE = 500; // TODO: Make sure this is good
         public static final double APPROACH_SETPOINT_TIMEOUT = 4; // in seconds
 
         public static final double K_F = MAX_SPEED / 1023.0;
-        public static final double K_P = 0;
+        public static final double K_P = 0.6;
         public static final double K_I = 0; // Shouldn't be touched
         public static final double K_D = 0; // Shouldn't be touched
         public static final int K_INTEGRAL_ZONE = 0; // Shouldn't be touched
@@ -116,8 +117,10 @@ public class Constants {
 
         public static final double GEAR_RATIO = 45.0;
 
+        public static final int FULLY_EXTENDED_TICKS = 5940;
+
         public static final double K_F = 0;
-        public static final double K_P = 0;
+        public static final double K_P = 0.1;
         public static final double K_I = 0;
         public static final double K_D = 0;
         public static final int K_INTEGRAL_ZONE = 0;
@@ -136,7 +139,7 @@ public class Constants {
 
         public static final double DEGREES_TO_TICKS = 1000; //random # for now
 
-        public static final double MAX_INPUT_PERCENTAGE = 0.3;
+        public static final double MAX_INPUT_PERCENTAGE = 0.4;
 
         public static final double K_F = 0;
         public static final double K_P = 0;
@@ -207,7 +210,7 @@ public class Constants {
 
         public static final double AIM_KP = 0.02;
         public static final double AIM_KI = 0.0;
-        public static final double AIM_KD = 0.0;
+        public static final double AIM_KD = 0.001;
         public static final double ANGLE_ADJUST_THRESHOLD = 0.5;
     }
 

@@ -2,7 +2,8 @@ package raidzero.robot.teleop;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import raidzero.robot.Constants.AdjustableHoodConstants;
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.Constants.IntakeConstants;
 import raidzero.robot.Constants.TurretConstants;
@@ -109,6 +110,7 @@ public class Teleop {
         if (p1.getBackButtonPressed()) {
             driveMode = driveMode.next();
         }
+        SmartDashboard.putString("Drive Modes", driveMode.toString());
         switch (driveMode) {
             case TANK:
                 drive.tank(
@@ -280,11 +282,13 @@ public class Teleop {
          */
         int p2Pov = p2.getPOV();
         if (p2Pov == 0) {
-            hood.adjust(0.5);
+            hood.moveToPosition(0);
+        } else if (p2Pov == 90) {
+            hood.moveToPosition(AdjustableHoodConstants.FULLY_EXTENDED_TICKS / 3);
         } else if (p2Pov == 180) {
-            hood.adjust(-0.5);
-        } else {
-            hood.stop();
+            hood.moveToPosition(2 * AdjustableHoodConstants.FULLY_EXTENDED_TICKS / 3);
+        } else if (p2Pov == 270) {
+            hood.moveToPosition(AdjustableHoodConstants.FULLY_EXTENDED_TICKS);
         }
     }
 }
