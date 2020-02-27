@@ -31,7 +31,7 @@ def read(cam):
     while True:
         rec[cam], addr = sock[cam].recvfrom(SIZE+1)
         data[cam][rec[cam][0]] = rec[cam]
-        #print(rec[cam][0])
+        print(rec[cam][0])
         #tt = time.time() - tt
         #tt = tt * 1000
         #print("\n\nprocess time")
@@ -44,8 +44,8 @@ def display(cam):
     global CAMS
     frame = [b""] * CAMS
     while True:
-        #for cam in range(CAMS):
-        if True:
+        for cam in range(CAMS):
+        #if True:
             frame[cam] = b""
             for packet in range(PACKETS):
                 frame[cam] += data[cam][packet][1:]

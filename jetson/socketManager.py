@@ -19,13 +19,12 @@ SIZE = int((480 * 270 * 3) / PACKETS)
 
 def openSocket():
     global socks
-    for i in range(4):
-        socks[i] = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    socks = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 def sendData(id, out):
     global socks
     print(BASE_PORT+id)
-    socks[id].sendto( out,(HOST, BASE_PORT + id))
+    socks.sendto( out,(HOST, BASE_PORT + id))
 
 if __name__ == '__main__':
     openSocket()

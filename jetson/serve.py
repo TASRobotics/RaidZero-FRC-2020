@@ -18,8 +18,7 @@ s=b""
 
 while True:
     data, addr = sock.recvfrom(SIZE)
-    s+= data
-    print(data[0:20])
+    s+= data[1:]
     if len(s) == (SIZE*SPLIT):
         print("hello")
         frame = numpy.fromstring (s, dtype=numpy.uint8)
