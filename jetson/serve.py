@@ -23,7 +23,7 @@ while True:
         frame = numpy.fromstring (s, dtype=numpy.uint8)
         frame = frame.reshape(270,480,3)
         cv2.imshow("frame",frame)
-        #cv2.waitKey(1)
+        cv2.waitKey(1)
         s=b""
     if cv2.waitKey(1) & 0xFF == ord('q'):
         cap.release()

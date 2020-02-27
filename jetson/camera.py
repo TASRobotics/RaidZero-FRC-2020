@@ -2,6 +2,8 @@ import numpy as np
 import cv2
 
 class cameraSet:
+    frameArray = [None] * 4
+    camArray = [None] * 4
 
     def capFrame(self,id):
         ret, frame = self.camArray[id].read()

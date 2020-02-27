@@ -26,28 +26,30 @@ def frameManager(cams):
     global camFrames
     while True:
         for cam in range(len(camsFrameReady)):
-            if camsFrameReady[cam] == False:
-                cams.capFrame(cam)
-                frame = cams.getFrame(cam).tobytes()
-                for pack in range(PACKETS):
-                    camFrames[cam][pack] = bytes(chr(pack), "utf8") + frame[pack*SIZE:(pack+1)*SIZE]
-                    #camFrames[cam][pack] = bytes(chr(cam), "utf8") + frame[pack*SIZE:(pack+1)*SIZE]
-                camsFrameReady[cam] = True
+            time.sleep(5)
+            print(cam)
+            cams.capFrame(cam)
+            frame = cams.getFrame(cam).tobytes()
+            for pack in range(PACKETS):
+                camFrames[cam][pack] = bytes(chr(pack), "utf8") + frame[pack*SIZE:(pack+1)*SIZE]
+                #camFrames[cam][pack] = bytes(chr(cam), "utf8") + frame[pack*SIZE:(pack+1)*SIZE]
+            camsFrameReady[cam] = True
             #cv2.imwrite('frame'+str(cam), cams.getFrame(cam))
             
 
-def commManager():
+def commManager(cam):
     global camsFrameReady
     global tt
     global camFrames
     global PACKETS
     #comms start
     while True:
-        for cam in range(len(camsFrameReady)):
+        #for cam in range(len(camsFrameReady)):
+        if True:
             if camsFrameReady[cam]: 
-                #frame = b""
+                frame = b""
                 for packet in range(PACKETS):
-                    #frame += camFrames[cam][packet][1:]
+                    frame += camFrames[cam][packet][1:]
                     #print(packet)
                     #print(len(out))
                     socketManager.sendData(cam, camFrames[cam][packet])
@@ -58,11 +60,10 @@ def commManager():
                     #print(tt)
                     #tt = time.time()
                 camsFrameReady[cam] = False
-                #bytes(frame)
-                #frame = np.fromstring (frame, dtype=np.uint8)
-                #frame = np.reshape(frame, (270, 480, 3))
-                #cv2.imshow(str(cam), frame)
-                #cv2.waitKey(1)
+                frame = np.fromstring (frame, dtype=np.uint8)
+                frame = np.reshape(frame, (270, 480, 3))
+                cv2.imshow(str(cam), frame)
+                cv2.waitKey(1)
 
 def main():
     #cams start
@@ -74,7 +75,7 @@ def main():
     socketManager.openSocket()
 
     cams = thred.Thread(target=frameManager, args=(cams, )).start()
-    comms = thred.Thread(target=commManager, args=()).start()
+    comms = thred.Thread(target=commManager, args=(0,)).start()
     #nn = thred.Thread(target=commManager, args=(camsFrameReady, camFrames, )).start()
 
 if __name__ == '__main__':
