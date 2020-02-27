@@ -32,6 +32,11 @@ public class Hopper extends Submodule {
     }
 
     @Override
+    public void onStart(double timestamp) {
+        outputOpenLoop = 0.0;
+    }
+
+    @Override
     public void run() {
         hopperMotor.set(ControlMode.PercentOutput, outputOpenLoop);
     }
@@ -43,7 +48,7 @@ public class Hopper extends Submodule {
     }
 
     /**
-     * Moves the conveyor belt using percent output.
+     * Moves the conveyor belt using open-loop control.
      * 
      * @param percentOutput the percent output in [-1, 1]
      */

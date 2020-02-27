@@ -41,6 +41,11 @@ public class Intake extends Submodule {
     }
 
     @Override
+    public void onStart(double timestamp) {
+        outputOpenLoop = 0.0;
+    }
+
+    @Override
     public void run() {
         intakeMotor.set(ControlMode.PercentOutput, outputOpenLoop);
     }
@@ -52,7 +57,7 @@ public class Intake extends Submodule {
     }
 
     /**
-     * Spins the intake using percent output.
+     * Spins the intake using open-loop control.
      * 
      * @param percentOutput the percent output in [-1, 1]
      */

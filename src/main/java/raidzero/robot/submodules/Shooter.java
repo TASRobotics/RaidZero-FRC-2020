@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidzero.robot.Constants;
 import raidzero.robot.Constants.ShooterConstants;
 
@@ -44,6 +45,18 @@ public class Shooter extends Submodule {
     }
 
     @Override
+    public void onStart(double timestamp) {
+        outputSpeed = 0.0;
+    }
+
+    @Override
+    public void update(double timestamp) {
+        SmartDashboard.putNumber("Shooter Vel", shooterMotor.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("Shooter Target", outputSpeed);
+        SmartDashboard.putBoolean("Shooter Up2Speed", isUpToSpeed());
+    }
+
+    @Override
     public void run() {
         shooterMotor.set(ControlMode.Velocity, outputSpeed);
     }
@@ -63,13 +76,14 @@ public class Shooter extends Submodule {
      * Fires up the shooter.
      * 
      * @param percentSpeed speed of the shooter in [-1.0, 1.0]
-     * @param freeze whether to disregard the speed and keep the previous speed
+     * @param freeze       whether to disregard the speed and keep the 
+     *                     previous speed
      */
     public void shoot(double percentSpeed, boolean freeze) {
         if (freeze) {
             return;
         }
-        outputSpeed = percentSpeed * ShooterConstants.MAX_SPEED;
+        outputSpeed = percentSpeed * ShooterConstants.FAKE_MAX_SPEED;
     }
 
     /**

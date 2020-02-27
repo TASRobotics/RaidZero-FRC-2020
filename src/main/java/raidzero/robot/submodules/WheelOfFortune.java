@@ -59,6 +59,13 @@ public class WheelOfFortune extends Submodule {
     }
 
     @Override
+    public void onStart(double timestamp) {
+        controlState = ControlState.OPEN_LOOP;
+        outputOpenLoop = 0.0;
+        outputPosition = 0.0;
+    }
+
+    @Override
     public void run() {
         switch (controlState) {
             case OPEN_LOOP:
@@ -77,16 +84,29 @@ public class WheelOfFortune extends Submodule {
         wofMotor.set(ControlMode.PercentOutput, 0);
     }
 
+    /**
+     * Spins the manipulator using open-loop control.
+     * 
+     * @param percentOutput the percent output in [-1, 1]
+     */
     public void spin(double percentOutput) {
         controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = percentOutput;
     }
 
+    /**
+     * Spins the manipulator to a position using closed-loop control.
+     * 
+     * @param position target position in encoder units
+     */
     public void spinToPosition(double position) {
         controlState = ControlState.POSITION;
         outputPosition = position;
     }
 
+    /**
+     * Toggles the manipulator between up & down.
+     */
     public void engage() {
         engaged = !engaged;
         if (engaged) {
@@ -95,6 +115,5 @@ public class WheelOfFortune extends Submodule {
             solenoid.set(Value.kReverse);
         }
     }
-
 
 }

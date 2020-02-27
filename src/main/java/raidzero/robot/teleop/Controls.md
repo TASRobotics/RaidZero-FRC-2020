@@ -3,14 +3,15 @@
 keybind | action | HYPERSHIFT action
 -- | -- | --
 start | Enables climb when held down at the same time as p2
-joysticks | Drive (tank) | drive (tank)
+back | Toggles between tank (default) & arcade
+joysticks | Drive | drive
 A | brake
 RBumper | HYPERSHIFT
 LBumper | Shifts drivetrain gear HIGH when held | Intake extend and retract toggle
 right trigger | reverse drivetrain | reverse drivetrain
 left trigger  | intake in | Intake out
 DPad up | Hopper forward
-DPad down| Hopper back
+DPad down | Hopper back
 
 
 ## P2

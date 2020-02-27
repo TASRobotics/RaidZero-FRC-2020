@@ -22,8 +22,11 @@ public class TurnToGoal implements Action {
     private double headingError;
 
     public TurnToGoal() {
-        pidController = new PIDController(LimelightConstants.AIM_KP, LimelightConstants.AIM_KI, 
-            LimelightConstants.AIM_KD);
+        pidController = new PIDController(
+            LimelightConstants.AIM_KP, 
+            LimelightConstants.AIM_KI, 
+            LimelightConstants.AIM_KD
+        );
         pidController.setTolerance(LimelightConstants.ANGLE_ADJUST_THRESHOLD);
     }
 
@@ -49,22 +52,20 @@ public class TurnToGoal implements Action {
             turret.stop();
             return;
 		}
-        headingError = limelight.getTx();
+        headingError = -limelight.getTx();
 
-		// Steering adjust P controller with offset
-        // double steeringAdjust = LimelightConstants.AIM_KP * headingError;
-        // System.out.println("Heading error: " + steeringAdjust);
-
-		turret.rotateManual(
-            MathUtil.clamp(pidController.calculate(headingError),
-                -TurretConstants.MAX_INPUT_PERCENTAGE, TurretConstants.MAX_INPUT_PERCENTAGE)
+        double output = MathUtil.clamp(
+            pidController.calculate(headingError),
+            -TurretConstants.MAX_INPUT_PERCENTAGE, 
+            TurretConstants.MAX_INPUT_PERCENTAGE
         );
+        turret.rotateManual(output);
     }
 
     @Override
     public void done() {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' finished!");
-        // limelight.setLedMode(LedMode.Off);
+        //limelight.setLedMode(LedMode.Off);
         turret.stop();
     }
 }

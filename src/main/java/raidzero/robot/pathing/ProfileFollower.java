@@ -58,9 +58,9 @@ public class ProfileFollower {
     /**
      * Starts the motion profile by generating & filling the points.
      *
-     * @param points the points to put in the path generator
+     * @param points    the points to put in the path generator
      * @param cruiseVel the cruise velocity desired in in/100ms
-     * @param tarAccel the target acceleration desired in in/100ms/s
+     * @param tarAccel  the target acceleration desired in in/100ms/s
      */
     public void start(Point[] points, double cruiseVel, double tarAccel) {
         start(PathGenerator.generatePath(points, cruiseVel, tarAccel));
@@ -69,9 +69,9 @@ public class ProfileFollower {
     /**
      * Starts the motion profile by filling the points.
      *
-     * @param points the points to put in the path generator
+     * @param points    the points to put in the path generator
      * @param cruiseVel the cruise velocity desired in in/100ms
-     * @param tarAccel the target acceleration desired in in/100ms/s
+     * @param tarAccel  the target acceleration desired in in/100ms/s
      */
     public void start(PathPoint[] pathPoints) {
         startFilling(pathPoints);

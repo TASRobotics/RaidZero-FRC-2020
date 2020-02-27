@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidzero.robot.wrappers.LazyTalonSRX;
 import raidzero.robot.Constants.AdjustableHoodConstants;
 
@@ -45,9 +46,9 @@ public class AdjustableHood extends Submodule {
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
 
         config.forwardLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
-        config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
+        config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen; //Open
         config.reverseLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
-        config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+        config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen; //Closed
 
         config.slot0.kF = AdjustableHoodConstants.K_F;
         config.slot0.kP = AdjustableHoodConstants.K_P;
@@ -59,13 +60,29 @@ public class AdjustableHood extends Submodule {
     }
 
     @Override
+    public void onStart(double timestamp) {
+        controlState = ControlState.OPEN_LOOP;
+
+        outputOpenLoop = 0.0;
+        outputPosition = 0.0;
+    }
+
+    @Override
+    public void update(double timestamp) {
+        if (hoodMotor.isRevLimitSwitchClosed() == 1) {
+            zero();
+        }
+        SmartDashboard.putNumber("Hood Pos", hoodMotor.getSelectedSensorPosition());
+    }
+
+    @Override
     public void run() {
         switch (controlState) {
             case OPEN_LOOP:
                 hoodMotor.set(ControlMode.PercentOutput, outputOpenLoop);
                 break;
             case POSITION:
-                hoodMotor.set(ControlMode.MotionMagic, outputPosition);
+                hoodMotor.set(ControlMode.Position, outputPosition);
                 break;
         }
     }
@@ -82,12 +99,23 @@ public class AdjustableHood extends Submodule {
         hoodMotor.setSelectedSensorPosition(0);
     }
 
+    /**
+     * Adjusts the hood using open-loop control.
+     * 
+     * @param percentOutput the percent output in [-1, 1]
+     */
     public void adjust(double percentOutput) {
         controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = percentOutput;
     }
 
-    // TODO: Only have discrete positions
+    /**
+     * Moves the hood to a position using closed-loop control.
+     * 
+     * TODO: Only have discrete positions
+     * 
+     * @param position position in encoder units
+     */
     public void moveToPosition(double position) {
         controlState = ControlState.POSITION;
         outputPosition = position;

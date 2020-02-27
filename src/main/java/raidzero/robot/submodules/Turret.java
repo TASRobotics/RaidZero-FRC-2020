@@ -60,6 +60,13 @@ public class Turret extends Submodule {
     }
 
     @Override
+    public void onStart(double timestamp) {
+        controlState = ControlState.OPEN_LOOP;
+        outputOpenLoop = 0.0;
+        outputPosition = 0.0;
+    }
+
+    @Override
     public void run() {
         switch (controlState) {
             case OPEN_LOOP:
@@ -87,7 +94,7 @@ public class Turret extends Submodule {
     }
 
     /**
-     * Rotates the turret to the specified angle using closed-loop PID.
+     * Rotates the turret to the specified angle using closed-loop control.
      * 
      * @param angle the angle to rotate to
      */
@@ -98,6 +105,8 @@ public class Turret extends Submodule {
 
     /**
      * Rotates the turret using open-loop control.
+     * 
+     * Note: Positive (+) is clockwise
      * 
      * @param percentOutput the percent output in [-1, 1]
      */
