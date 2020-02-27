@@ -23,9 +23,9 @@ import raidzero.robot.wrappers.InactiveCompressor;
 public class Teleop {
 
     private enum DriveMode {
-        TANK(0), ARCADE(1);
+        TANK(0), ARCADE(1), CURVATURE(2);
 
-        private static final DriveMode[] modes = {TANK, ARCADE};
+        private static final DriveMode[] modes = {TANK, ARCADE, CURVATURE};
         public final int index;
 
         private DriveMode(int index) {
@@ -67,8 +67,6 @@ public class Teleop {
 
     private DriveMode driveMode = DriveMode.TANK;
 
-    private boolean reverse = false;
-
     /**
      * Runs at the start of teleop.
      */
@@ -102,7 +100,7 @@ public class Teleop {
         // REGARDLESS OF HYPERSHIFT
         //
         // Reversing analog to digital
-        reverse = JoystickUtils.deadband(p1.getTriggerAxis(Hand.kRight)) != 0;
+        boolean reverse = JoystickUtils.deadband(p1.getTriggerAxis(Hand.kRight)) != 0;
 
         /**
          * Drivetrain
@@ -128,7 +126,16 @@ public class Teleop {
             case ARCADE:
                 drive.arcade(
                     JoystickUtils.deadband(-p1.getY(Hand.kLeft)), 
-                    JoystickUtils.deadband(p1.getX(Hand.kRight))
+                    JoystickUtils.deadband(p1.getX(Hand.kRight)),
+                    reverse
+                );
+                break;
+            case CURVATURE:
+                double xSpeed = JoystickUtils.deadband(-p1.getY(Hand.kLeft));
+                drive.curvatureDrive(
+                    xSpeed, 
+                    JoystickUtils.deadband(p1.getX(Hand.kRight)),
+                    Math.abs(xSpeed) < 0.1 // TODO: Change quick turn
                 );
                 break;
         }

@@ -1,4 +1,3 @@
-
 package raidzero.robot.submodules;
 
 import com.ctre.phoenix.motion.SetValueMotionProfile;
@@ -15,6 +14,7 @@ import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import raidzero.robot.Constants;
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.wrappers.*;
@@ -60,6 +60,8 @@ public class Drive extends Submodule {
     private ProfileFollower mpFollower;
 
     private GearShift currentGearShift;
+
+    private double quickStopAccumulator = 0.0;
 
     // Output
     private double outputLeftDrive = 0.0;
@@ -365,12 +367,86 @@ public class Drive extends Submodule {
     /**
      * Arcade drive mode for open-loop control.
      * 
-     * @param leftJoystick value of the left joystick in [-1, 1]
+     * @param leftJoystick  value of the left joystick in [-1, 1]
      * @param rightJoystick value of the right joystick in [-1, 1]
+     * @param reverse       whether to reverse the inputs or not
      */
-    public void arcade(double leftJoystick, double rightJoystick) {
+    public void arcade(double leftJoystick, double rightJoystick, 
+        boolean reverse) {
+        if (reverse) {
+            leftJoystick *= -1;
+            rightJoystick *= -1;
+        }
         outputLeftDrive = leftJoystick + rightJoystick;
         outputRightDrive = leftJoystick - rightJoystick;
+    }
+
+    /**
+     * Curvature drive mode for open-loop control.
+     * 
+     * @param xSpeed      The robot's speed along the X axis [-1.0, 1.0]. 
+     * @param zRotation   The robot's rotation rate around the Z axis 
+     *                    [-1.0, 1.0]. Clockwise is positive.
+     * @param isQuickTurn If set, overrides constant-curvature turning for
+     *                    turn-in-place maneuvers.
+     */
+    public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
+        xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0);
+        zRotation = MathUtil.clamp(zRotation, -1.0, 1.0);
+    
+        double angularPower;
+        boolean overPower;
+    
+        if (isQuickTurn) {
+            if (Math.abs(xSpeed) < DriveConstants.QUICK_STOP_THRESHOLD) {
+                quickStopAccumulator = (1 - DriveConstants.QUICK_STOP_ALPHA) 
+                    * quickStopAccumulator
+                    + DriveConstants.QUICK_STOP_ALPHA 
+                    * MathUtil.clamp(zRotation, -1.0, 1.0) * 2;
+            }
+            overPower = true;
+            angularPower = zRotation;
+        } else {
+            overPower = false;
+            angularPower = Math.abs(xSpeed) * zRotation - quickStopAccumulator;
+    
+            if (quickStopAccumulator > 1) {
+                quickStopAccumulator -= 1;
+            } else if (quickStopAccumulator < -1) {
+                quickStopAccumulator += 1;
+            } else {
+                quickStopAccumulator = 0.0;
+            }
+        }
+    
+        double leftMotorOutput = xSpeed + angularPower;
+        double rightMotorOutput = xSpeed - angularPower;
+    
+        // If rotation is overpowered, reduce both outputs to within acceptable range
+        if (overPower) {
+            if (leftMotorOutput > 1.0) {
+                rightMotorOutput -= leftMotorOutput - 1.0;
+                leftMotorOutput = 1.0;
+            } else if (rightMotorOutput > 1.0) {
+                leftMotorOutput -= rightMotorOutput - 1.0;
+                rightMotorOutput = 1.0;
+            } else if (leftMotorOutput < -1.0) {
+                rightMotorOutput -= leftMotorOutput + 1.0;
+                leftMotorOutput = -1.0;
+            } else if (rightMotorOutput < -1.0) {
+                leftMotorOutput -= rightMotorOutput + 1.0;
+                rightMotorOutput = -1.0;
+            }
+        }
+    
+        // Normalize the wheel speeds
+        double maxMagnitude = Math.max(Math.abs(leftMotorOutput), Math.abs(rightMotorOutput));
+        if (maxMagnitude > 1.0) {
+            leftMotorOutput /= maxMagnitude;
+            rightMotorOutput /= maxMagnitude;
+        }
+        outputLeftDrive = leftMotorOutput;
+        outputRightDrive = rightMotorOutput;
     }
 
     /**
