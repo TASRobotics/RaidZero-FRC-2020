@@ -3,7 +3,6 @@ package raidzero.robot.submodules;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.PWM;
-import edu.wpi.first.wpilibj.Servo;
 import raidzero.robot.Constants.ClimbConstants;
 import raidzero.robot.wrappers.LazyTalonSRX;
 
@@ -16,7 +15,7 @@ public class Climb extends Submodule {
 
     private boolean unlocked = false;
     private double outputOpenLoop = 0.0;
-    private int serve = -1;
+    private int outputServoPosition = -1;
     
     public static Climb getInstance() {
         if (instance == null) {
@@ -37,12 +36,22 @@ public class Climb extends Submodule {
     }
 
     @Override
-    public void run() {
+    public void onStart(double timestamp) {
+        outputServoPosition = 1;
+        outputOpenLoop = 0.0;
+    }
+
+    @Override
+    public void update(double timestamp) {
         if (!unlocked) {
-            serve = 1;
+            outputServoPosition = 1;
             outputOpenLoop = 0.0;
         }
-        servo.setPosition(serve);
+    }
+
+    @Override
+    public void run() {
+        servo.setPosition(outputServoPosition);
         climbMotor.set(ControlMode.PercentOutput, outputOpenLoop);
     }
 
@@ -59,16 +68,22 @@ public class Climb extends Submodule {
         unlocked = true;
     }
 
+    /**
+     * Opens the servo.
+     */
     public void openServo() {
-        serve = -1;
-    }
-
-    public void closeServo() {
-        serve = 1;  
+        outputServoPosition = -1;
     }
 
     /**
-     * Climbs using percent output.
+     * Closes the servo.
+     */
+    public void closeServo() {
+        outputServoPosition = 1;  
+    }
+
+    /**
+     * Climbs using open-loop control..
      * 
      * @param percentOutput percent output in [-1, 1]
      */

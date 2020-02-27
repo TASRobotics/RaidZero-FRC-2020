@@ -59,6 +59,14 @@ public class AdjustableHood extends Submodule {
     }
 
     @Override
+    public void onStart(double timestamp) {
+        controlState = ControlState.OPEN_LOOP;
+
+        outputOpenLoop = 0.0;
+        outputPosition = 0.0;
+    }
+
+    @Override
     public void run() {
         switch (controlState) {
             case OPEN_LOOP:
@@ -82,12 +90,23 @@ public class AdjustableHood extends Submodule {
         hoodMotor.setSelectedSensorPosition(0);
     }
 
+    /**
+     * Adjusts the hood using open-loop control.
+     * 
+     * @param percentOutput the percent output in [-1, 1]
+     */
     public void adjust(double percentOutput) {
         controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = percentOutput;
     }
 
-    // TODO: Only have discrete positions
+    /**
+     * Moves the hood to a position using closed-loop control.
+     * 
+     * TODO: Only have discrete positions
+     * 
+     * @param position position in encoder units
+     */
     public void moveToPosition(double position) {
         controlState = ControlState.POSITION;
         outputPosition = position;

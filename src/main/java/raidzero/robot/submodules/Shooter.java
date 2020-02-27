@@ -45,6 +45,11 @@ public class Shooter extends Submodule {
     }
 
     @Override
+    public void onStart(double timestamp) {
+        outputSpeed = 0.0;
+    }
+
+    @Override
     public void update(double timestamp) {
         SmartDashboard.putNumber("Shooter Vel", shooterMotor.getSelectedSensorVelocity());
         SmartDashboard.putNumber("Shooter Target", outputSpeed);
@@ -71,7 +76,8 @@ public class Shooter extends Submodule {
      * Fires up the shooter.
      * 
      * @param percentSpeed speed of the shooter in [-1.0, 1.0]
-     * @param freeze whether to disregard the speed and keep the previous speed
+     * @param freeze       whether to disregard the speed and keep the 
+     *                     previous speed
      */
     public void shoot(double percentSpeed, boolean freeze) {
         if (freeze) {
