@@ -45,9 +45,9 @@ def commManager():
     while True:
         for cam in range(len(camsFrameReady)):
             if camsFrameReady[cam]: 
-                frame = b""
+                #frame = b""
                 for packet in range(PACKETS):
-                    frame += camFrames[cam][packet][1:]
+                    #frame += camFrames[cam][packet][1:]
                     #print(packet)
                     #print(len(out))
                     socketManager.sendData(cam, camFrames[cam][packet])

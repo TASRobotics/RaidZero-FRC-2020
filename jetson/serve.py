@@ -11,18 +11,17 @@ UDP_PORT = 5802
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((UDP_IP, UDP_PORT))
 
-SPLIT = 16
-SIZE = int( ( 144 * 256 * 3 )/ SPLIT)
+SPLIT = 8
+SIZE = int((480 * 270 * 3) / SPLIT)
 
 s=b""
 
 while True:
-    data, addr = sock.recvfrom(SIZE)
+    data, addr = sock.recvfrom(SIZE+1)
     s+= data[1:]
     if len(s) == (SIZE*SPLIT):
-        print("hello")
         frame = numpy.fromstring (s, dtype=numpy.uint8)
-        frame = frame.reshape(144,256,3)
+        frame = frame.reshape(270,480,3)
         cv2.imshow("frame",frame)
         #cv2.waitKey(1)
         s=b""
