@@ -98,7 +98,7 @@ public class Constants {
         public static final double ERROR_TOLERANCE = 500; // TODO: Make sure this is good
         public static final double APPROACH_SETPOINT_TIMEOUT = 4; // in seconds
 
-        public static final double K_F = MAX_SPEED / 1023.0;
+        public static final double K_F = 1023.0 / MAX_SPEED;
         public static final double K_P = 0.6;
         public static final double K_I = 0; // Shouldn't be touched
         public static final double K_D = 0; // Shouldn't be touched
@@ -173,7 +173,7 @@ public class Constants {
         public static final int INTAKE_REVERSE_ID = 3;
 
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
-        public static final InvertType INVERSION = InvertType.None;
+        public static final InvertType INVERSION = InvertType.InvertMotorOutput;
 
         public static final double CONTROL_SCALING_FACTOR = 0.8;
     }
@@ -223,10 +223,10 @@ public class Constants {
         public static final double MOUNTING_ANGLE = 25.0; // in degrees
         public static final double MOUNTING_HEIGHT = 0.5; // in meters
 
-        public static final double AIM_KP = 0.02;
+        public static final double AIM_KP = 0.03;
         public static final double AIM_KI = 0.0;
-        public static final double AIM_KD = 0.001;
-        public static final double ANGLE_ADJUST_THRESHOLD = 0.5;
+        public static final double AIM_KD = 0.003;
+        public static final double ANGLE_ADJUST_THRESHOLD = 0.25;
     }
 
     /**
