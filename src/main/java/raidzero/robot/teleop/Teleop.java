@@ -264,13 +264,12 @@ public class Teleop {
              * Shooter Override
              */
             // If left bumper held shooter override
-            shooter.shoot(p2.getTriggerAxis(Hand.kRight), false);
+            shooter.shoot(JoystickUtils.deadband(
+                p2.getTriggerAxis(Hand.kRight)), false);
+            
             return;
         }
 
-        /**
-         * Shooter
-         */
         // Aim + start rotation
         if (p2.getAButtonPressed()) {
             superstructure.setAiming(true);

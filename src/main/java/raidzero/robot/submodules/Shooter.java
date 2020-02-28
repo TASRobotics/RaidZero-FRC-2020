@@ -15,7 +15,7 @@ public class Shooter extends Submodule {
     private static LazyTalonFX shooterMotor;
     private static Shooter instance = null;
 
-    private double outputSpeed = 0.0;
+    private double outputPercentSpeed = 0.0;
 
     public static Shooter getInstance() {
         if (instance == null) {
@@ -46,24 +46,29 @@ public class Shooter extends Submodule {
 
     @Override
     public void onStart(double timestamp) {
-        outputSpeed = 0.0;
+        outputPercentSpeed = 0.0;
     }
 
     @Override
     public void update(double timestamp) {
         SmartDashboard.putNumber("Shooter Vel", shooterMotor.getSelectedSensorVelocity());
-        SmartDashboard.putNumber("Shooter Target", outputSpeed);
+        SmartDashboard.putNumber("Shooter Target", outputPercentSpeed);
         SmartDashboard.putBoolean("Shooter Up2Speed", isUpToSpeed());
     }
 
     @Override
     public void run() {
-        shooterMotor.set(ControlMode.Velocity, outputSpeed);
+        if (Math.abs(outputPercentSpeed) < 0.1) {
+            stop();
+        } else {
+            shooterMotor.set(ControlMode.Velocity, 
+                outputPercentSpeed * ShooterConstants.FAKE_MAX_SPEED);
+        }        
     }
 
     @Override
     public void stop() {
-        outputSpeed = 0.0;
+        outputPercentSpeed = 0.0;
         shooterMotor.set(ControlMode.PercentOutput, 0);
     }
 
@@ -83,7 +88,7 @@ public class Shooter extends Submodule {
         if (freeze) {
             return;
         }
-        outputSpeed = percentSpeed * ShooterConstants.FAKE_MAX_SPEED;
+        outputPercentSpeed = percentSpeed;
     }
 
     /**
