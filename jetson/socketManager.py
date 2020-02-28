@@ -23,7 +23,6 @@ def openSocket():
 
 def sendData(id, out):
     global socks
-    print(BASE_PORT+id)
     socks.sendto( out,(HOST, BASE_PORT + id))
 
 if __name__ == '__main__':

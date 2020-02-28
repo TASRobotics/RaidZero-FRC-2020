@@ -26,14 +26,17 @@ def frameManager(cams):
     global camFrames
     while True:
         for cam in range(len(camsFrameReady)):
-            time.sleep(5)
-            print(cam)
             cams.capFrame(cam)
             frame = cams.getFrame(cam).tobytes()
             for pack in range(PACKETS):
                 camFrames[cam][pack] = bytes(chr(pack), "utf8") + frame[pack*SIZE:(pack+1)*SIZE]
                 #camFrames[cam][pack] = bytes(chr(cam), "utf8") + frame[pack*SIZE:(pack+1)*SIZE]
             camsFrameReady[cam] = True
+            print('switched read')
+            #frame = np.fromstring (frame, dtype=np.uint8)
+            #frame = np.reshape(frame, (270, 480, 3))
+            #cv2.imshow(str(cam), frame)
+            #cv2.waitKey(1)
             #cv2.imwrite('frame'+str(cam), cams.getFrame(cam))
             
 
@@ -49,6 +52,7 @@ def commManager(cam):
             if camsFrameReady[cam]: 
                 frame = b""
                 for packet in range(PACKETS):
+                    print(cam, " ", packet)
                     frame += camFrames[cam][packet][1:]
                     #print(packet)
                     #print(len(out))
@@ -76,6 +80,7 @@ def main():
 
     cams = thred.Thread(target=frameManager, args=(cams, )).start()
     comms = thred.Thread(target=commManager, args=(0,)).start()
+    comms = thred.Thread(target=commManager, args=(1,)).start()
     #nn = thred.Thread(target=commManager, args=(camsFrameReady, camFrames, )).start()
 
 if __name__ == '__main__':
