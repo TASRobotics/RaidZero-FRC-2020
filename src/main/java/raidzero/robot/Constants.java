@@ -45,6 +45,9 @@ public class Constants {
     
         public static final double WHEEL_DIAMETER_INCHES = 6.0;
 
+        // Time it takes to get to max speed
+        public static final double OPEN_LOOP_RAMP_TIME = 0.8;
+
         // Closed-loop constants
         public static final double DRIVE_NEUTRAL_DEADBAND = 0.01;
         public static final int PID_PRIMARY_SLOT = 0;

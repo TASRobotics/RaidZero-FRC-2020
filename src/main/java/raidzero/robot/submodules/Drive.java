@@ -94,8 +94,8 @@ public class Drive extends Submodule {
         /* 
          * Setup the profiling leader & follower
          * 
-         * Note: if this changes, the argument to configureMotorClosedLoop must reflect the
-         * inversion of the leader motor
+         * Note: if this changes, the argument to configureMotorClosedLoop 
+         * must reflect the inversion of the leader motor
          */
         profilingLeader = rightLeader; 
         profilingFollower = leftLeader;
@@ -121,12 +121,13 @@ public class Drive extends Submodule {
         motor.configFactoryDefault();
         motor.setNeutralMode(NeutralMode.Coast);
         motor.setInverted(inversion);
+        motor.configOpenloopRamp(DriveConstants.OPEN_LOOP_RAMP_TIME, Constants.TIMEOUT_MS);
     }
 
     /**
      * Configures the motor controllers for closed-loop control.
      * 
-     * @param leaderInversion whether the profiling leader is inverted or not
+     * @param leaderInversion whether the profiling leader is inverted
      */
     private void configureMotorClosedLoop(InvertType leaderInversion) {
         TalonFXConfiguration leaderConfig = new TalonFXConfiguration();
