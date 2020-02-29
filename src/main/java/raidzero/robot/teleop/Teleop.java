@@ -2,32 +2,82 @@ package raidzero.robot.teleop;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import raidzero.robot.Constants.DriveConstants;
+import raidzero.robot.Constants.IntakeConstants;
+import raidzero.robot.Constants.TurretConstants;
+import raidzero.robot.Constants.AdjustableHoodConstants.HoodAngle;
+import raidzero.robot.auto.actions.DebugLimelightDistance;
+import raidzero.robot.submodules.AdjustableHood;
+import raidzero.robot.submodules.Climb;
 import raidzero.robot.submodules.Drive;
+import raidzero.robot.submodules.Intake;
+import raidzero.robot.submodules.Shooter;
+import raidzero.robot.submodules.Superstructure;
+import raidzero.robot.submodules.Hopper;
+import raidzero.robot.submodules.Turret;
+import raidzero.robot.submodules.WheelOfFortune;
 import raidzero.robot.submodules.Drive.GearShift;
+import raidzero.robot.utils.JoystickUtils;
+import raidzero.robot.wrappers.InactiveCompressor;
 
 public class Teleop {
 
+    private enum DriveMode {
+        TANK(0), ARCADE(1), CURVATURE(2);
+
+        private static final DriveMode[] modes = {TANK, ARCADE, CURVATURE};
+        public final int index;
+
+        private DriveMode(int index) {
+            this.index = index;
+        }
+
+        private DriveMode next() {
+            if (index == modes.length - 1) {
+                return modes[0];
+            }
+            return modes[index + 1];
+        }
+    }
+
     private static Teleop instance = null;
-    private Teleop() {}
     public static Teleop getInstance() {
         if (instance == null) {
             instance = new Teleop();
         }
         return instance;
     }
+    private Teleop() {}
 
-    /**
-     * Local Variables
-     */
-    private Drive drive = Drive.getInstance();
-    private XboxController controller = new XboxController(0);
+    private static Drive drive = Drive.getInstance();
+    private static Shooter shooter = Shooter.getInstance();
+    private static Intake intake = Intake.getInstance();
+    private static Hopper hopper = Hopper.getInstance();
+    private static Turret turret = Turret.getInstance();
+    private static Climb climb = Climb.getInstance();
+    private static WheelOfFortune wheelOfFortune = WheelOfFortune.getInstance();
+    private static AdjustableHood hood = AdjustableHood.getInstance();
+    private static InactiveCompressor compressor = InactiveCompressor.getInstance();
+    private static Superstructure superstructure = Superstructure.getInstance();
 
+    private XboxController p1 = new XboxController(0);
+    private XboxController p2 = new XboxController(1);
+
+    private DebugLimelightDistance debugDistance = new DebugLimelightDistance();
+
+    private DriveMode driveMode = DriveMode.TANK;
 
     /**
      * Runs at the start of teleop.
      */
     public void onStart() {
+        drive.stop();
         drive.setGearShift(GearShift.LOW);
+
+        debugDistance.start();
+
+        SmartDashboard.putNumber("hood target", hood.getPosition());
     }
 
     /**
@@ -35,14 +85,245 @@ public class Teleop {
      */
     public void onLoop() {
         /**
+         * Climb
+         */
+        // Climb safety
+        if (p1.getStartButton() && p2.getStartButton()) {
+            climb.unlock();
+        }
+
+        p1Loop();
+        p2Loop();
+    
+        debugDistance.update();
+    }
+
+    private void p1Loop() {
+        //
+        // REGARDLESS OF HYPERSHIFT
+        //
+        // Reversing analog to digital
+        boolean reverse = JoystickUtils.deadband(p1.getTriggerAxis(Hand.kRight)) != 0;
+
+        /**
          * Drivetrain
          */
-        drive.tank(-controller.getY(Hand.kLeft), -controller.getY(Hand.kRight));
-        if (controller.getBumper(Hand.kRight)) {
-            drive.setGearShift(GearShift.HIGH);
-        } else if (controller.getBumperReleased(Hand.kRight)) {
-            drive.setGearShift(GearShift.LOW);
+        // Cycle through drive modes
+        if (p1.getBackButtonPressed()) {
+            driveMode = driveMode.next();
         }
-        //drive.arcade(-controller.getY(Hand.kLeft), controller.getX(Hand.kRight));
+        SmartDashboard.putString("Drive Modes", driveMode.toString());
+        switch (driveMode) {
+            case TANK:
+                drive.tank(
+                    JoystickUtils.monomialScale(
+                        JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
+                        DriveConstants.JOYSTICK_EXPONENT, 
+                        DriveConstants.JOYSTICK_COEFFICIENT), 
+                    JoystickUtils.monomialScale(
+                        JoystickUtils.deadband(-p1.getY(Hand.kRight)),
+                        DriveConstants.JOYSTICK_EXPONENT,
+                        DriveConstants.JOYSTICK_COEFFICIENT),
+                    reverse
+                );
+                break;
+            case ARCADE:
+                drive.arcade(
+                    JoystickUtils.deadband(-p1.getY(Hand.kLeft)), 
+                    JoystickUtils.deadband(p1.getX(Hand.kRight)),
+                    reverse
+                );
+                break;
+            case CURVATURE:
+                double xSpeed = JoystickUtils.deadband(-p1.getY(Hand.kLeft));
+                drive.curvatureDrive(
+                    xSpeed, 
+                    JoystickUtils.deadband(p1.getX(Hand.kRight)),
+                    Math.abs(xSpeed) < 0.1 // TODO: Change quick turn
+                );
+                break;
+        }
+
+        // Braking
+        if (p1.getAButtonPressed()) {
+            drive.setBrakeMode(true);
+        } else if(p1.getAButtonReleased()) {
+            drive.setBrakeMode(false);
+        }
+
+        /**
+         * Hopper
+         */
+        int p1Pov = p1.getPOV();
+        if (p1Pov >= 315 || p1Pov <= 45) {
+            hopper.moveBelt(-1.0);
+        } else if (p1Pov <= 225 && p1Pov >= 135) {
+            hopper.moveBelt(1.0);
+        } else {
+            hopper.moveBelt(0);
+        }
+
+        //
+        // WITHOUT HYPERSHIFT
+        //
+        if (!p1.getBumper(Hand.kRight)) {
+
+            /**
+             * Drivetrain
+             */
+            //shifting
+            if (p1.getBumper(Hand.kLeft)) {
+                drive.setGearShift(GearShift.HIGH);
+            } else if (p1.getBumperReleased(Hand.kLeft)) {
+                drive.setGearShift(GearShift.LOW);
+            }
+
+            /**
+             * Intake
+             */
+            // Run intake in
+            intake.intakeBalls(
+                JoystickUtils.deadband(
+                    IntakeConstants.CONTROL_SCALING_FACTOR * 
+                        (p1.getTriggerAxis(Hand.kLeft)))
+            );
+            return;
+        }
+
+        //
+        // WITH HYPERSHIFT
+        //
+        /**
+         * Intake
+         */
+        // Run intake out
+        intake.intakeBalls(
+            JoystickUtils.deadband(
+                IntakeConstants.CONTROL_SCALING_FACTOR * 
+                    (-p1.getTriggerAxis(Hand.kLeft))));
+
+        // Extend and retract
+        if (p1.getBumperPressed(Hand.kLeft)) {
+            intake.invertStraw();
+        }
+    }
+
+    private void p2Loop() {
+        /**
+         * Compressor
+         */
+        if (p2.getBackButtonPressed()) {
+            compressor.changeState();
+            System.out.println("Compressor on: " + compressor.getState());
+        }
+
+        /**
+         * Climb
+         */
+        climb.climb(p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft));
+        if(p2.getStartButton()) {
+            climb.openServo();
+        } else {
+            climb.closeServo();
+        }
+
+        /**
+         * Hopper
+         */
+        if (p1.getPOV() == -1) {
+            double matthew = JoystickUtils.deadband(p2.getY(Hand.kLeft));
+            if (matthew > 0) {
+                hopper.moveAtVelocity(0.75);
+            } else if (matthew < 0) {
+                hopper.moveAtVelocity(-0.75);
+            } else {
+                hopper.stop();
+            }
+        }
+
+        /**
+         * WOF
+         */
+        if (p2.getYButtonPressed()) {
+            wheelOfFortune.engage();
+        }
+        //B button does rotation ctrl
+        //X button does colour
+
+        /**
+         * Turret
+         */
+        // Aim
+        if (p2.getAButtonPressed()) {
+            superstructure.setAiming(true);
+        } else if (p2.getAButtonReleased()) {
+            superstructure.setAiming(false);
+        }
+        // Turn turret using right joystick
+        if(!p2.getStickButton(Hand.kRight)) {
+            turret.rotateManual(TurretConstants.CONTROL_SCALING_FACTOR * 
+                JoystickUtils.deadband(p2.getX(Hand.kRight)));
+        }
+
+        /**
+         * Shooter
+         */
+        if(p2.getBumperPressed(Hand.kRight)) {
+            shooter.shoot(1, false);
+        } else if (p2.getBumperReleased(Hand.kRight)) {
+            shooter.shoot(0, false);
+        }
+
+        /**
+         * Hood
+         */
+        if(p2.getStickButton(Hand.kRight)) {
+            superstructure.setAimingAndHood(true);
+        } else {
+            superstructure.setAimingAndHood(false);
+        }
+
+        /**
+         * Override
+         */
+        if (p2.getBumper(Hand.kLeft)) {
+            /**
+             * WOF Override
+             */
+            wheelOfFortune.spin(
+                JoystickUtils.deadband(p2.getY(Hand.kRight))
+            );            
+
+            /**
+             * Shooter Override
+             */
+            // If left bumper held shooter override
+            shooter.shoot(JoystickUtils.deadband(
+                p2.getTriggerAxis(Hand.kRight)), false);
+            
+            return;
+        }
+
+        /**
+         * Adjustable hood
+         */
+        int p2Pov = p2.getPOV();
+        if (p2Pov == 0) {
+            hood.moveToAngle(HoodAngle.RETRACTED);
+        } else if (p2Pov == 90) {
+            hood.moveToAngle(HoodAngle.HIGH);
+        } else if (p2Pov == 180) {
+            hood.moveToAngle(HoodAngle.MEDIUM);
+        } else if (p2Pov == 270) {
+            hood.moveToAngle(HoodAngle.LOW);
+        } else {
+            if (p2.getXButton()) {
+                hood.adjust(-0.3);
+            } else if (p2.getBButton()) {
+                hood.adjust(0.3);
+            } else {
+                hood.stop();
+            }
+        }        
     }
 }
