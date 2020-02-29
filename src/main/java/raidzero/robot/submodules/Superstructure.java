@@ -19,15 +19,15 @@ public class Superstructure extends Submodule {
     private boolean isAiming = false;
     private TurnToGoal aimAction;
 
-    private boolean isAimingAndShooting = false;
-    private ReusableSeriesAction aimAndShootAction;
+    private boolean isAimingAndHood = false;
+    private ReusableSeriesAction aimAndHoodAction;
 
     private Superstructure() {}
 
     @Override
     public void onStart(double timestamp) {
         aimAction = new TurnToGoal();
-        aimAndShootAction = new ReusableSeriesAction(
+        aimAndHoodAction = new ReusableSeriesAction(
             Arrays.asList(
                 new TurnToGoal(),
                 new VisionAssistedTargeting()
@@ -40,15 +40,15 @@ public class Superstructure extends Submodule {
         if (isAiming) {
             aimAction.update();
         }
-        if (isAimingAndShooting) {
-            aimAndShootAction.update();
+        if (isAimingAndHood) {
+            aimAndHoodAction.update();
         }
     }
 
     @Override
     public void stop() {
         setAiming(false);
-        setAimingAndShooting(false);
+        setAimingAndHood(false);
     }
 
     /**
@@ -63,7 +63,7 @@ public class Superstructure extends Submodule {
         isAiming = status;
         if (status) {
             // Don't aim if the robot is aiming and shooting already
-            if (isAimingAndShooting) {
+            if (isAimingAndHood) {
                 isAiming = false;
                 return;
             }
@@ -78,15 +78,15 @@ public class Superstructure extends Submodule {
      * 
      * @param status the status
      */
-    public void setAimingAndShooting(boolean status) {
-        if (status == isAimingAndShooting) {
+    public void setAimingAndHood(boolean status) {
+        if (status == isAimingAndHood) {
             return;
         }
-        isAimingAndShooting = status;
+        isAimingAndHood = status;
         if (status) {
-            aimAndShootAction.start();
+            aimAndHoodAction.start();
         } else {
-            aimAndShootAction.done();
+            aimAndHoodAction.done();
         }
     }
 }

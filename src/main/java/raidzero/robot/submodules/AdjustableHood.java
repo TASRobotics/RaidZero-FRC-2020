@@ -101,6 +101,10 @@ public class AdjustableHood extends Submodule {
         hoodMotor.setSelectedSensorPosition(0);
     }
 
+    public int getPosition() {
+        return hoodMotor.getSelectedSensorPosition();
+    }
+
     /**
      * Adjusts the hood using open-loop control.
      * 

@@ -77,6 +77,8 @@ public class Teleop {
         drive.setGearShift(GearShift.LOW);
 
         debugDistance.start();
+
+        SmartDashboard.putNumber("hood target", hood.getPosition());
     }
 
     /**
@@ -230,7 +232,14 @@ public class Teleop {
          * Hopper
          */
         if (p1.getPOV() == -1) {
-            hopper.moveBelt(JoystickUtils.deadband(p2.getY(Hand.kLeft)));
+            double matthew = JoystickUtils.deadband(p2.getY(Hand.kLeft));
+            if (matthew > 0) {
+                hopper.moveAtVelocity(0.75);
+            } else if (matthew < 0) {
+                hopper.moveAtVelocity(-0.75);
+            } else {
+                hopper.stop();
+            }
         }
 
         /**
@@ -245,9 +254,35 @@ public class Teleop {
         /**
          * Turret
          */
+        // Aim
+        if (p2.getAButtonPressed()) {
+            superstructure.setAiming(true);
+        } else if (p2.getAButtonReleased()) {
+            superstructure.setAiming(false);
+        }
         // Turn turret using right joystick
-        turret.rotateManual(TurretConstants.CONTROL_SCALING_FACTOR * 
-            JoystickUtils.deadband(p2.getX(Hand.kRight)));
+        if(!p2.getStickButton(Hand.kRight)) {
+            turret.rotateManual(TurretConstants.CONTROL_SCALING_FACTOR * 
+                JoystickUtils.deadband(p2.getX(Hand.kRight)));
+        }
+
+        /**
+         * Shooter
+         */
+        if(p2.getBumperPressed(Hand.kRight)) {
+            shooter.shoot(1, false);
+        } else if (p2.getBumperReleased(Hand.kRight)) {
+            shooter.shoot(0, false);
+        }
+
+        /**
+         * Hood
+         */
+        if(p2.getStickButton(Hand.kRight)) {
+            superstructure.setAimingAndHood(true);
+        } else {
+            superstructure.setAimingAndHood(false);
+        }
 
         /**
          * Override
@@ -270,13 +305,6 @@ public class Teleop {
             return;
         }
 
-        // Aim + start rotation
-        if (p2.getAButtonPressed()) {
-            superstructure.setAiming(true);
-        } else if (p2.getAButtonReleased()) {
-            superstructure.setAiming(false);
-        }
-
         /**
          * Adjustable hood
          */
@@ -291,9 +319,9 @@ public class Teleop {
             hood.moveToAngle(HoodAngle.LOW);
         } else {
             if (p2.getXButton()) {
-                hood.adjust(-0.5);
+                hood.adjust(-0.3);
             } else if (p2.getBButton()) {
-                hood.adjust(0.5);
+                hood.adjust(0.3);
             } else {
                 hood.stop();
             }

@@ -37,7 +37,7 @@ public class DebugLimelightDistance implements Action {
     @Override
     public void update() {
         double distance = LimelightUtils.estimateDistance(filter.calculate(limelight.getTy()));
-        InterpolatingDouble targetSpeed = Constants.DISTANCE_TO_SPEED.getInterpolated(
+        InterpolatingDouble targetSpeed = Constants.DISTANCE_TO_HOOD_TICKS.getInterpolated(
             new InterpolatingDouble(distance));
         SmartDashboard.putNumber("Distance (m)", distance);
         SmartDashboard.putNumber("Target Shooter Speed (%)", targetSpeed.value * 100);

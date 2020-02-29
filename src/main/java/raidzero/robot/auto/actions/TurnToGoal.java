@@ -1,6 +1,7 @@
 package raidzero.robot.auto.actions;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
 import raidzero.robot.Constants.LimelightConstants;
@@ -28,6 +29,8 @@ public class TurnToGoal implements Action {
             LimelightConstants.AIM_KD
         );
         pidController.setTolerance(LimelightConstants.ANGLE_ADJUST_THRESHOLD);
+        SmartDashboard.putData("TURN LL", pidController);
+        //pidController.setIntegratorRange(0.0, 1.0);
     }
 
     @Override

@@ -21,10 +21,11 @@ start | Enables climb when held down at the same time as p1
 triggers | Climb up/down when enabled
 back | compressor on/off
 Left joystick | Hopper
-A button| Aim + spin up shooter
+A button| Aim
 X button | hood forwards (manual)
 B button | hood backwards (manual)
 Y button | toggle WOF
+Right bumper | spin up shooter
 Left bumper | OVERRIDE when held
 right joystick | turret | WOF OVERRIDE
 Dpad up | fully retract hood
