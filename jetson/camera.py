@@ -2,8 +2,6 @@ import numpy as np
 import cv2
 
 class cameraSet:
-    frameArray = [None] * 4
-    camArray = [None] * 4
 
     def capFrame(self,id):
         ret, frame = self.camArray[id].read()
@@ -23,7 +21,7 @@ class cameraSet:
         for cam in self.camArray:
             self.cam.release()
 
-    def startCap(self):
+    def __init__(self):
         self.camArray = []
         for i in range(4):
             cap = self.decCam(i)
@@ -34,6 +32,7 @@ class cameraSet:
                 self.camArray.append(cap)
         print('Cameras added:',len(self.camArray))
         self.frameArray = [None] * len(self.camArray)
+        
 
 if __name__ == '__main__':
     cams = cameraSet()

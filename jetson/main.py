@@ -17,7 +17,7 @@ import socketManager
 
 PACKETS = 8
 SIZE = int((480 * 270 * 3) / PACKETS)
-camFrames = [[None] * PACKETS] * 4
+camFrames = []
 camsFrameReady = []
 tt = 0
 
@@ -31,6 +31,7 @@ def frameManager(cams):
             for pack in range(PACKETS):
                 camFrames[cam][pack] = bytes(chr(pack), "utf8") + frame[pack*SIZE:(pack+1)*SIZE]
                 #camFrames[cam][pack] = bytes(chr(cam), "utf8") + frame[pack*SIZE:(pack+1)*SIZE]
+                time.sleep(0.01)
             camsFrameReady[cam] = True
             print('switched read')
             #frame = np.fromstring (frame, dtype=np.uint8)
@@ -68,15 +69,16 @@ def commManager(cam):
                 frame = np.reshape(frame, (270, 480, 3))
                 cv2.imshow(str(cam), frame)
                 cv2.waitKey(1)
+                time.sleep(0.2)
 
 def main():
     #cams start
     global camFrames
     global camsFrameReady
     cams = camera.cameraSet()
-    cams.startCap()
     camsFrameReady = [False] * cams.getLen()
     socketManager.openSocket()
+    camFrames = np.zeros((4, 12), dtype = (bytes))
 
     cams = thred.Thread(target=frameManager, args=(cams, )).start()
     comms = thred.Thread(target=commManager, args=(0,)).start()
