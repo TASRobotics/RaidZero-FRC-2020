@@ -98,7 +98,7 @@ public class Constants {
 
         public static final double MAX_SPEED = 20000; // in ticks per 100ms
         public static final double FAKE_MAX_SPEED = 17000; // in ticks per 100ms
-        public static final double ERROR_TOLERANCE = 250; // TODO: Make sure this is good
+        public static final double ERROR_TOLERANCE = 250;
         public static final double APPROACH_SETPOINT_TIMEOUT = 4; // in seconds
 
         public static final double K_F = 1023.0 / MAX_SPEED;
@@ -109,14 +109,14 @@ public class Constants {
     }
 
     /**
-     * Adjustable Hood Constants
+     * Hood Constants
      */
-    public static final class AdjustableHoodConstants {
+    public static final class HoodConstants {
         public static final int MOTOR_ID = 11;
 
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
         public static final InvertType INVERSION = InvertType.None;
-        public static final boolean SENSOR_PHASE = true;
+        public static final boolean INVERT_SENSOR_PHASE = true;
 
         public static final double GEAR_RATIO = 45.0;
 
@@ -177,11 +177,11 @@ public class Constants {
     public static final class IntakeConstants {
         public static final int MOTOR_ID = 4;
 
-        public static final int INTAKE_FORWARD_ID = 2;
-        public static final int INTAKE_REVERSE_ID = 3;
-
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
         public static final InvertType INVERSION = InvertType.InvertMotorOutput;
+
+        public static final int INTAKE_FORWARD_ID = 2;
+        public static final int INTAKE_REVERSE_ID = 3;
 
         public static final double CONTROL_SCALING_FACTOR = 1.0;
     }
@@ -192,15 +192,16 @@ public class Constants {
     public static final class HopperConstants {
         public static final int MOTOR_ID = 5;
 
+        public static final InvertType INVERSION = InvertType.InvertMotorOutput;
+        public static final boolean FLIP_SENSOR_PHASE = true;
+
         public static final int MAX_SPEED = 19000;
 
         public static final double K_F = 1023.0 / MAX_SPEED;
         public static final double K_P = 0;
         public static final double K_I = 0;
         public static final double K_D = 0;
-        public static final int K_INTEGRAL_ZONE = 0;
-
-        public static final boolean SENSOR_PHASE = true;
+        public static final int K_INTEGRAL_ZONE = 0;        
     }
 
     /**
@@ -209,11 +210,11 @@ public class Constants {
     public static final class WheelOfFortuneConstants {
         public static final int MOTOR_ID = 7;
 
-        public static final int WOF_FORWARD_ID = 4;
-        public static final int WOF_REVERSE_ID = 5;
-
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
         public static final InvertType INVERSION = InvertType.None;
+
+        public static final int WOF_FORWARD_ID = 4;
+        public static final int WOF_REVERSE_ID = 5;
 
         public static final double K_F = 0;
         public static final double K_P = 0;

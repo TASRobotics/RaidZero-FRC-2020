@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.Constants.IntakeConstants;
 import raidzero.robot.Constants.TurretConstants;
-import raidzero.robot.Constants.AdjustableHoodConstants.HoodAngle;
+import raidzero.robot.Constants.HoodConstants.HoodAngle;
 import raidzero.robot.auto.actions.DebugLimelightDistance;
 import raidzero.robot.submodules.AdjustableHood;
 import raidzero.robot.submodules.Climb;
@@ -80,8 +80,6 @@ public class Teleop {
         drive.setGearShift(GearShift.LOW);
 
         debugDistance.start();
-
-        SmartDashboard.putNumber("hood target", hood.getPosition());
     }
 
     /**
@@ -220,10 +218,10 @@ public class Teleop {
          * Hopper
          */
         if (p1.getPOV() == -1) {
-            double matthew = JoystickUtils.deadband(p2.getY(Hand.kLeft));
-            if (matthew > 0) {
+            double p2LeftJoystick = JoystickUtils.deadband(p2.getY(Hand.kLeft));
+            if (p2LeftJoystick > 0) {
                 hopper.moveAtVelocity(0.75);
-            } else if (matthew < 0) {
+            } else if (p2LeftJoystick < 0) {
                 hopper.moveAtVelocity(-0.75);
             } else {
                 hopper.stop();

@@ -39,8 +39,8 @@ public class Hopper extends Submodule {
         hopperMotor = new LazyTalonFX(HopperConstants.MOTOR_ID);
         hopperMotor.configFactoryDefault();
         hopperMotor.setNeutralMode(NeutralMode.Brake);
-        hopperMotor.setInverted(true);
-        hopperMotor.setSensorPhase(HopperConstants.SENSOR_PHASE);
+        hopperMotor.setInverted(HopperConstants.INVERSION);
+        hopperMotor.setSensorPhase(HopperConstants.FLIP_SENSOR_PHASE);
 
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;

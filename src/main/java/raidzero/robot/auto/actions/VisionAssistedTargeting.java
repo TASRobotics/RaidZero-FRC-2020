@@ -8,7 +8,7 @@ import raidzero.robot.submodules.Limelight;
 import raidzero.robot.submodules.Limelight.CameraMode;
 import raidzero.robot.submodules.Limelight.LedMode;
 import raidzero.robot.utils.LimelightUtils;
-import raidzero.robot.Constants.AdjustableHoodConstants;
+import raidzero.robot.Constants.HoodConstants;
 
 /**
  * Action for using vision to estimate distance and choose an appropiate velocity setpoint.
@@ -80,9 +80,9 @@ public class VisionAssistedTargeting implements Action {
      * @return hood position (encoder tick)
      */
     private int distanceToHoodTick(double distance) {
-        int tick = (int) (AdjustableHoodConstants.ATAN_COEFFICIENT * 
-            (Math.atan(AdjustableHoodConstants.DISTANCE_COEFFICIENT * distance)) + 
-            AdjustableHoodConstants.ANGLE_CONSTANT);
+        int tick = (int) (HoodConstants.ATAN_COEFFICIENT * 
+            (Math.atan(HoodConstants.DISTANCE_COEFFICIENT * distance)) + 
+            HoodConstants.ANGLE_CONSTANT);
         return tick;
     }
 }
