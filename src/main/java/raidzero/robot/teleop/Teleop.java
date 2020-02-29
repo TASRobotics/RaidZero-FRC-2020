@@ -7,6 +7,7 @@ import raidzero.robot.Constants.AdjustableHoodConstants;
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.Constants.IntakeConstants;
 import raidzero.robot.Constants.TurretConstants;
+import raidzero.robot.Constants.AdjustableHoodConstants.HoodAngle;
 import raidzero.robot.auto.actions.DebugLimelightDistance;
 import raidzero.robot.submodules.AdjustableHood;
 import raidzero.robot.submodules.Climb;
@@ -263,13 +264,12 @@ public class Teleop {
              * Shooter Override
              */
             // If left bumper held shooter override
-            shooter.shoot(p2.getTriggerAxis(Hand.kRight), false);
+            shooter.shoot(JoystickUtils.deadband(
+                p2.getTriggerAxis(Hand.kRight)), false);
+            
             return;
         }
 
-        /**
-         * Shooter
-         */
         // Aim + start rotation
         if (p2.getAButtonPressed()) {
             superstructure.setAiming(true);
@@ -282,13 +282,21 @@ public class Teleop {
          */
         int p2Pov = p2.getPOV();
         if (p2Pov == 0) {
-            hood.moveToPosition(0);
+            hood.moveToAngle(HoodAngle.RETRACTED);
         } else if (p2Pov == 90) {
-            hood.moveToPosition(AdjustableHoodConstants.FULLY_EXTENDED_TICKS / 3);
+            hood.moveToAngle(HoodAngle.HIGH);
         } else if (p2Pov == 180) {
-            hood.moveToPosition(2 * AdjustableHoodConstants.FULLY_EXTENDED_TICKS / 3);
+            hood.moveToAngle(HoodAngle.MEDIUM);
         } else if (p2Pov == 270) {
-            hood.moveToPosition(AdjustableHoodConstants.FULLY_EXTENDED_TICKS);
-        }
+            hood.moveToAngle(HoodAngle.LOW);
+        } else {
+            if (p2.getXButton()) {
+                hood.adjust(-0.5);
+            } else if (p2.getBButton()) {
+                hood.adjust(0.5);
+            } else {
+                hood.stop();
+            }
+        }        
     }
 }

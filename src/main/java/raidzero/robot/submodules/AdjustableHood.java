@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidzero.robot.wrappers.LazyTalonSRX;
 import raidzero.robot.Constants.AdjustableHoodConstants;
+import raidzero.robot.Constants.AdjustableHoodConstants.HoodAngle;
 
 public class AdjustableHood extends Submodule {
 
@@ -89,6 +90,7 @@ public class AdjustableHood extends Submodule {
 
     @Override
     public void stop() {
+        controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = 0.0;
         outputPosition = 0.0;
         hoodMotor.set(ControlMode.PercentOutput, 0);
@@ -112,12 +114,19 @@ public class AdjustableHood extends Submodule {
     /**
      * Moves the hood to a position using closed-loop control.
      * 
-     * TODO: Only have discrete positions
-     * 
      * @param position position in encoder units
      */
-    public void moveToPosition(double position) {
+    public void moveToTick(double position) {
         controlState = ControlState.POSITION;
         outputPosition = position;
+    }
+
+    /**
+     * Moves to hood to a specific hood angle.
+     * 
+     * @param angle hood angle to move to
+     */
+    public void moveToAngle(HoodAngle angle) {
+        moveToTick(angle.ticks);
     }
 }

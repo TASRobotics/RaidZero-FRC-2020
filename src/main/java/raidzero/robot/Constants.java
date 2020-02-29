@@ -45,6 +45,9 @@ public class Constants {
     
         public static final double WHEEL_DIAMETER_INCHES = 6.0;
 
+        // Time it takes to get to max speed
+        public static final double OPEN_LOOP_RAMP_TIME = 0.8;
+
         // Closed-loop constants
         public static final double DRIVE_NEUTRAL_DEADBAND = 0.01;
         public static final int PID_PRIMARY_SLOT = 0;
@@ -98,7 +101,7 @@ public class Constants {
         public static final double ERROR_TOLERANCE = 500; // TODO: Make sure this is good
         public static final double APPROACH_SETPOINT_TIMEOUT = 4; // in seconds
 
-        public static final double K_F = MAX_SPEED / 1023.0;
+        public static final double K_F = 1023.0 / MAX_SPEED;
         public static final double K_P = 0.6;
         public static final double K_I = 0; // Shouldn't be touched
         public static final double K_D = 0; // Shouldn't be touched
@@ -117,12 +120,27 @@ public class Constants {
 
         public static final double GEAR_RATIO = 45.0;
 
-        public static final int FULLY_EXTENDED_TICKS = 5940;
+        public static final int FULLY_EXTENDED_TICKS = 6270;
+
+        // The names refer to the angle of ball release
+        public static enum HoodAngle {
+            // +-500 for extra tolerance, limit switches should do its thing
+            RETRACTED(-500),
+            HIGH(FULLY_EXTENDED_TICKS / 3), 
+            MEDIUM(2 * FULLY_EXTENDED_TICKS / 3), 
+            LOW(FULLY_EXTENDED_TICKS + 500);
+
+            public final int ticks;
+
+            private HoodAngle(int ticks) {
+                this.ticks = ticks;
+            }
+        }
 
         public static final double K_F = 0;
-        public static final double K_P = 0.1;
+        public static final double K_P = 0.6;
         public static final double K_I = 0;
-        public static final double K_D = 0;
+        public static final double K_D = 0.001;
         public static final int K_INTEGRAL_ZONE = 0;
     }
 
@@ -158,7 +176,7 @@ public class Constants {
         public static final int INTAKE_REVERSE_ID = 3;
 
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
-        public static final InvertType INVERSION = InvertType.None;
+        public static final InvertType INVERSION = InvertType.InvertMotorOutput;
 
         public static final double CONTROL_SCALING_FACTOR = 0.8;
     }
@@ -208,10 +226,10 @@ public class Constants {
         public static final double MOUNTING_ANGLE = 25.0; // in degrees
         public static final double MOUNTING_HEIGHT = 0.5; // in meters
 
-        public static final double AIM_KP = 0.02;
+        public static final double AIM_KP = 0.03;
         public static final double AIM_KI = 0.0;
-        public static final double AIM_KD = 0.001;
-        public static final double ANGLE_ADJUST_THRESHOLD = 0.5;
+        public static final double AIM_KD = 0.003;
+        public static final double ANGLE_ADJUST_THRESHOLD = 0.25;
     }
 
     /**
