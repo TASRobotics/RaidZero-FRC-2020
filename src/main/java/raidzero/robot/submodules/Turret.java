@@ -21,12 +21,6 @@ public class Turret extends Submodule {
 
     private static Turret instance = null;
 
-    private LazyTalonSRX turretMotor;
-    
-    private double outputOpenLoop = 0.0;
-    private double outputPosition = 0.0;
-    private ControlState controlState = ControlState.OPEN_LOOP;
-
     public static Turret getInstance() {
         if (instance == null) {
             instance = new Turret();
@@ -35,6 +29,12 @@ public class Turret extends Submodule {
     }
 
     private Turret() {}
+
+    private LazyTalonSRX turretMotor;
+    
+    private double outputOpenLoop = 0.0;
+    private double outputPosition = 0.0;
+    private ControlState controlState = ControlState.OPEN_LOOP;
 
     @Override
     public void onInit() {

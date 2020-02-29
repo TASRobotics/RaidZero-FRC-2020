@@ -24,14 +24,6 @@ import raidzero.robot.utils.EncoderUtils;
 
 public class Drive extends Submodule {
 
-    private static Drive instance = null;
-    public static Drive getInstance() {
-        if (instance == null) {
-            instance = new Drive();
-        }
-        return instance;
-    }
-
     public static enum GearShift {
         HIGH, LOW
     }
@@ -39,6 +31,17 @@ public class Drive extends Submodule {
     public static enum ControlState {
         OPEN_LOOP, PATH_FOLLOWING
     }
+
+    private static Drive instance = null;
+
+    public static Drive getInstance() {
+        if (instance == null) {
+            instance = new Drive();
+        }
+        return instance;
+    }
+
+    private Drive() {}
 
 	private LazyTalonFX leftLeader;
     private LazyTalonFX leftFollower;
@@ -67,8 +70,6 @@ public class Drive extends Submodule {
     private double outputLeftDrive = 0.0;
     private double outputRightDrive = 0.0;
     private int outputClosedLoop = 0;
-
-    private Drive() {}
 
     @Override
     public void onInit() {

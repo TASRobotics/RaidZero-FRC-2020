@@ -19,13 +19,6 @@ public class AdjustableHood extends Submodule {
 
     private static AdjustableHood instance = null;
 
-    private LazyTalonSRX hoodMotor;
-
-    private double outputOpenLoop = 0.0;
-    private double outputPosition = 0.0;
-
-    private ControlState controlState = ControlState.OPEN_LOOP;
-
     public static AdjustableHood getInstance() {
         if (instance == null) {
             instance = new AdjustableHood();
@@ -34,6 +27,13 @@ public class AdjustableHood extends Submodule {
     }
 
     private AdjustableHood() {}
+
+    private LazyTalonSRX hoodMotor;
+
+    private double outputOpenLoop = 0.0;
+    private double outputPosition = 0.0;
+
+    private ControlState controlState = ControlState.OPEN_LOOP;
 
     @Override
     public void onInit() {

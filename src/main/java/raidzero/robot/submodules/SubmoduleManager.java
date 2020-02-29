@@ -9,12 +9,14 @@ import java.util.List;
 public class SubmoduleManager {
     
     private static SubmoduleManager instance = null;
+
     public static SubmoduleManager getInstance() {
         if (instance == null) {
             instance = new SubmoduleManager();
         }
         return instance;
     }
+
     private SubmoduleManager() {}
 
     private List<Submodule> submodules;

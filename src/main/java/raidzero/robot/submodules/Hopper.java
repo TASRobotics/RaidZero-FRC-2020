@@ -17,13 +17,6 @@ public class Hopper extends Submodule {
 
     private static Hopper instance = null;
 
-    private LazyTalonFX hopperMotor;
-
-    private ControlState controlState = ControlState.OPEN_LOOP;
-    
-    private double outputOpenLoop = 0.0;
-    private double outputPercentVelocity = 0.0;
-
     public static Hopper getInstance() {
         if (instance == null) {
             instance = new Hopper();
@@ -32,6 +25,13 @@ public class Hopper extends Submodule {
     }
 
     private Hopper() {}
+
+    private LazyTalonFX hopperMotor;
+
+    private ControlState controlState = ControlState.OPEN_LOOP;
+    
+    private double outputOpenLoop = 0.0;
+    private double outputPercentVelocity = 0.0;
 
     @Override
     public void onInit() {

@@ -12,10 +12,7 @@ import raidzero.robot.Constants.ShooterConstants;
 
 public class Shooter extends Submodule {
 
-    private static LazyTalonFX shooterMotor;
     private static Shooter instance = null;
-
-    private double outputPercentSpeed = 0.0;
 
     public static Shooter getInstance() {
         if (instance == null) {
@@ -25,6 +22,10 @@ public class Shooter extends Submodule {
     }
 
     private Shooter() {}
+
+    private LazyTalonFX shooterMotor;
+    
+    private double outputPercentSpeed = 0.0;
 
     @Override
     public void onInit() {

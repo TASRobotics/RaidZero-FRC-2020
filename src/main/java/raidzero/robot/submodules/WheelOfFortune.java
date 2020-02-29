@@ -18,15 +18,6 @@ public class WheelOfFortune extends Submodule {
 
     private static WheelOfFortune instance = null;
 
-    private LazyTalonSRX wofMotor;
-    private InactiveDoubleSolenoid solenoid;
-
-    private double outputOpenLoop = 0.0;
-    private double outputPosition = 0.0;
-    private boolean engaged = false;
-
-    private ControlState controlState = ControlState.OPEN_LOOP;
-
     public static WheelOfFortune getInstance() {
         if (instance == null) {
             instance = new WheelOfFortune();
@@ -35,6 +26,15 @@ public class WheelOfFortune extends Submodule {
     }
 
     private WheelOfFortune() {}
+
+    private LazyTalonSRX wofMotor;
+    private InactiveDoubleSolenoid solenoid;
+
+    private double outputOpenLoop = 0.0;
+    private double outputPosition = 0.0;
+    private boolean engaged = false;
+
+    private ControlState controlState = ControlState.OPEN_LOOP;
 
     @Override
     public void onInit() {

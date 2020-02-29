@@ -7,17 +7,6 @@ import raidzero.robot.Constants.LimelightConstants;
 
 // Reference: http://docs.limelightvision.io/en/latest/networktables_api.html
 public class Limelight extends Submodule {
-
-	private static Limelight instance = null;
-	public static Limelight getInstance() {
-        if (instance == null) {
-            instance = new Limelight(LimelightConstants.NAME);
-        }
-        return instance;
-    }
-	
-	private NetworkTable table = null;
-
 	/**
 	 * LED modes for Limelight.
 	 */
@@ -41,6 +30,16 @@ public class Limelight extends Submodule {
 		PIP_Secondary // Primary stream is placed in the lower-right corner of the secondary stream
 	}
 
+	private static Limelight instance = null;
+
+	public static Limelight getInstance() {
+        if (instance == null) {
+            instance = new Limelight(LimelightConstants.NAME);
+        }
+        return instance;
+    }
+
+	private NetworkTable table = null;
 	private String tableName;
 
 	private Limelight(String tableName) {

@@ -13,13 +13,6 @@ public class Intake extends Submodule {
 
     private static Intake instance = null;
 
-    private LazyTalonSRX intakeMotor;
-    private InactiveDoubleSolenoid solenoid;
-    
-    private double outputOpenLoop = 0.0;
-
-    private Value position = Value.kOff;
-
     public static Intake getInstance() {
         if (instance == null) {
             instance = new Intake();
@@ -28,6 +21,13 @@ public class Intake extends Submodule {
     }
 
     private Intake() {}
+
+    private LazyTalonSRX intakeMotor;
+    private InactiveDoubleSolenoid solenoid;
+    
+    private double outputOpenLoop = 0.0;
+
+    private Value position = Value.kOff;
 
     @Override
     public void onInit() {

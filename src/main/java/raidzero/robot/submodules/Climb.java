@@ -9,14 +9,7 @@ import raidzero.robot.wrappers.LazyTalonSRX;
 public class Climb extends Submodule {
 
     private static Climb instance = null;
-    
-    private LazyTalonSRX climbMotor;
-    private PWM servo;
 
-    private boolean unlocked = false;
-    private double outputOpenLoop = 0.0;
-    private int outputServoPosition = -1;
-    
     public static Climb getInstance() {
         if (instance == null) {
             instance = new Climb();
@@ -25,6 +18,13 @@ public class Climb extends Submodule {
     }
 
     private Climb() {}
+    
+    private LazyTalonSRX climbMotor;
+    private PWM servo;
+
+    private boolean unlocked = false;
+    private double outputOpenLoop = 0.0;
+    private int outputServoPosition = -1;
     
     @Override
     public void onInit() {
