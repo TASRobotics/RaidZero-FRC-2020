@@ -30,7 +30,7 @@ public class SetShooterVelocity implements Action {
     @Override
     public boolean isFinished() {
         return (shooter.isUpToSpeed() ||
-            Timer.getFPGATimestamp() - startTime > ShooterConstants.APPROACH_SETPOINT_TIMEOUT);
+                Timer.getFPGATimestamp() - startTime > ShooterConstants.APPROACH_SETPOINT_TIMEOUT);
     }
 
     @Override

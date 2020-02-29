@@ -20,11 +20,12 @@ public class Intake extends Submodule {
         return instance;
     }
 
-    private Intake() {}
+    private Intake() {
+    }
 
     private LazyTalonSRX intakeMotor;
     private InactiveDoubleSolenoid solenoid;
-    
+
     private double outputOpenLoop = 0.0;
 
     private Value position = Value.kOff;
@@ -36,8 +37,8 @@ public class Intake extends Submodule {
         intakeMotor.setNeutralMode(IntakeConstants.NEUTRAL_MODE);
         intakeMotor.setInverted(IntakeConstants.INVERSION);
 
-        solenoid = new InactiveDoubleSolenoid(IntakeConstants.INTAKE_FORWARD_ID, 
-            IntakeConstants.INTAKE_REVERSE_ID);
+        solenoid = new InactiveDoubleSolenoid(IntakeConstants.INTAKE_FORWARD_ID,
+                IntakeConstants.INTAKE_REVERSE_ID);
     }
 
     @Override

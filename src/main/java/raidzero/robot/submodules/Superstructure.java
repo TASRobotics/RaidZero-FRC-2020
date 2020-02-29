@@ -17,7 +17,8 @@ public class Superstructure extends Submodule {
         return instance;
     }
 
-    private Superstructure() {}
+    private Superstructure() {
+    }
 
     private boolean isAiming = false;
     private TurnToGoal aimAction;
@@ -28,12 +29,10 @@ public class Superstructure extends Submodule {
     @Override
     public void onStart(double timestamp) {
         aimAction = new TurnToGoal();
-        aimAndHoodAction = new ReusableSeriesAction(
-            Arrays.asList(
-                new TurnToGoal(),
-                new VisionAssistedTargeting()
-            )
-        );
+        aimAndHoodAction = new ReusableSeriesAction(Arrays.asList(
+            new TurnToGoal(), 
+            new VisionAssistedTargeting()
+        ));
     }
 
     @Override

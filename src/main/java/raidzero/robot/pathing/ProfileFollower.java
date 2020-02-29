@@ -111,8 +111,9 @@ public class ProfileFollower {
 
 
     /**
-     * Returns the output of the current set value. Should be passed to 
-     * the set method of the ultimate leader Talon.
+     * Returns the output of the current set value. Should be passed to the set
+     * method of the ultimate leader Talon.
+     * 
      * @see SetValueMotionProfile
      * 
      * @return int
@@ -141,8 +142,8 @@ public class ProfileFollower {
     }
 
     /**
-     * Changes the gear while running this path. Must be called
-     * before {@link #start(PathPoint[])}.
+     * Changes the gear while running this path. Must be called before
+     * {@link #start(PathPoint[])}.
      *
      * @param gearShift gear of the drive
      */

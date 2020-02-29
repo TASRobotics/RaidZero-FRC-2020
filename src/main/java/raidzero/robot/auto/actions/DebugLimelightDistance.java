@@ -18,7 +18,8 @@ public class DebugLimelightDistance implements Action {
 
     private MedianFilter filter = new MedianFilter(5);
 
-    public DebugLimelightDistance() {}
+    public DebugLimelightDistance() {
+    }
 
     @Override
     public boolean isFinished() {
@@ -37,10 +38,7 @@ public class DebugLimelightDistance implements Action {
     @Override
     public void update() {
         double distance = LimelightUtils.estimateDistance(filter.calculate(limelight.getTy()));
-        InterpolatingDouble targetSpeed = Constants.DISTANCE_TO_HOOD_TICKS.getInterpolated(
-            new InterpolatingDouble(distance));
         SmartDashboard.putNumber("Distance (m)", distance);
-        SmartDashboard.putNumber("Target Shooter Speed (%)", targetSpeed.value * 100);
     }
 
     @Override

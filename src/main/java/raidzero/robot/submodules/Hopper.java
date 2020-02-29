@@ -24,12 +24,13 @@ public class Hopper extends Submodule {
         return instance;
     }
 
-    private Hopper() {}
+    private Hopper() {
+    }
 
     private LazyTalonFX hopperMotor;
 
     private ControlState controlState = ControlState.OPEN_LOOP;
-    
+
     private double outputOpenLoop = 0.0;
     private double outputPercentVelocity = 0.0;
 
@@ -67,13 +68,14 @@ public class Hopper extends Submodule {
                 hopperMotor.set(ControlMode.PercentOutput, outputOpenLoop);
                 break;
             case VELOCITY:
-                hopperMotor.set(ControlMode.Velocity, outputPercentVelocity * HopperConstants.MAX_SPEED);
+                hopperMotor.set(ControlMode.Velocity,
+                        outputPercentVelocity * HopperConstants.MAX_SPEED);
                 break;
         }
     }
 
     @Override
-    public void stop() {                
+    public void stop() {
         controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = 0.0;
         outputPercentVelocity = 0.0;

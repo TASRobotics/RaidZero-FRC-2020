@@ -25,7 +25,8 @@ public class WheelOfFortune extends Submodule {
         return instance;
     }
 
-    private WheelOfFortune() {}
+    private WheelOfFortune() {
+    }
 
     private LazyTalonSRX wofMotor;
     private InactiveDoubleSolenoid solenoid;
@@ -53,8 +54,8 @@ public class WheelOfFortune extends Submodule {
 
         wofMotor.configAllSettings(config);
 
-        solenoid = new InactiveDoubleSolenoid(WheelOfFortuneConstants.WOF_FORWARD_ID, 
-            WheelOfFortuneConstants.WOF_REVERSE_ID);
+        solenoid = new InactiveDoubleSolenoid(WheelOfFortuneConstants.WOF_FORWARD_ID,
+                WheelOfFortuneConstants.WOF_REVERSE_ID);
         solenoid.set(Value.kOff);
     }
 

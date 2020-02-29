@@ -28,10 +28,11 @@ public class Turret extends Submodule {
         return instance;
     }
 
-    private Turret() {}
+    private Turret() {
+    }
 
     private LazyTalonSRX turretMotor;
-    
+
     private double outputOpenLoop = 0.0;
     private double outputPosition = 0.0;
     private ControlState controlState = ControlState.OPEN_LOOP;

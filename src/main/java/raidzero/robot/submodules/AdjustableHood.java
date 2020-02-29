@@ -26,7 +26,8 @@ public class AdjustableHood extends Submodule {
         return instance;
     }
 
-    private AdjustableHood() {}
+    private AdjustableHood() {
+    }
 
     private LazyTalonSRX hoodMotor;
 
@@ -47,9 +48,9 @@ public class AdjustableHood extends Submodule {
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
 
         config.forwardLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
-        config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen; //Open
+        config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
         config.reverseLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
-        config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen; //Closed
+        config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
 
         config.slot0.kF = AdjustableHoodConstants.K_F;
         config.slot0.kP = AdjustableHoodConstants.K_P;

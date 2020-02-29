@@ -20,12 +20,12 @@ public class Path {
      * 
      * Note: The motion profile is generated in the constructor.
      * 
-     * @param points waypoints in the path
+     * @param points   waypoints in the path
      * @param reversed whether to follow the path reversed
      */
     public Path(Point[] points, boolean reversed) {
-        this(points, reversed, DriveConstants.DEFAULT_CRUISE_VELOCITY, 
-            DriveConstants.DEFAULT_TARGET_ACCELERATION);
+        this(points, reversed, DriveConstants.DEFAULT_CRUISE_VELOCITY,
+                DriveConstants.DEFAULT_TARGET_ACCELERATION);
     }
 
     /**
@@ -45,10 +45,9 @@ public class Path {
         this.targetAccel = targetAccel;
 
         double startTime = Timer.getFPGATimestamp();
-        pathPoints = PathGenerator.generatePath(points, cruiseVel, 
-            targetAccel);
-        System.out.println(
-            "PathGenerator: It took " + (Timer.getFPGATimestamp() - startTime) + "s to generate a path!");
+        pathPoints = PathGenerator.generatePath(points, cruiseVel, targetAccel);
+        System.out.println("PathGenerator: It took " + (Timer.getFPGATimestamp() - startTime)
+                + "s to generate a path!");
     }
 
     /**
@@ -95,7 +94,7 @@ public class Path {
     public boolean isReversed() {
         return reversed;
     }
-    
+
     /**
      * Returns the target cruise velocity of the robot.
      * 

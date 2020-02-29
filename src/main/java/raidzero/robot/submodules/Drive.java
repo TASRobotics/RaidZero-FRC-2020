@@ -41,9 +41,10 @@ public class Drive extends Submodule {
         return instance;
     }
 
-    private Drive() {}
+    private Drive() {
+    }
 
-	private LazyTalonFX leftLeader;
+    private LazyTalonFX leftLeader;
     private LazyTalonFX leftFollower;
     private LazyTalonFX rightLeader; // Also the "ultimate master" for profiling
     private LazyTalonFX rightFollower;
@@ -76,14 +77,14 @@ public class Drive extends Submodule {
         // Motors
         leftLeader = new LazyTalonFX(DriveConstants.LEFT_LEADER_ID);
         configureMotor(leftLeader, DriveConstants.LEFT_INVERSION);
-        
+
         leftFollower = new LazyTalonFX(DriveConstants.LEFT_FOLLOWER_ID);
         configureMotor(leftFollower, DriveConstants.LEFT_INVERSION);
         leftFollower.follow(leftLeader);
 
         rightLeader = new LazyTalonFX(DriveConstants.RIGHT_LEADER_ID);
         configureMotor(rightLeader, DriveConstants.RIGHT_INVERSION);
-        
+
         rightFollower = new LazyTalonFX(DriveConstants.RIGHT_FOLLOWER_ID);
         configureMotor(rightFollower, DriveConstants.RIGHT_INVERSION);
         rightFollower.follow(rightLeader);
@@ -92,21 +93,21 @@ public class Drive extends Submodule {
         pigeon = new PigeonIMU(DriveConstants.PIGEON_ID);
         pigeon.configFactoryDefault();
 
-        /* 
+        /*
          * Setup the profiling leader & follower
          * 
-         * Note: if this changes, the argument to configureMotorClosedLoop 
-         * must reflect the inversion of the leader motor
+         * Note: if this changes, the argument to configureMotorClosedLoop must
+         * reflect the inversion of the leader motor
          */
-        profilingLeader = rightLeader; 
+        profilingLeader = rightLeader;
         profilingFollower = leftLeader;
 
         // Must be called after the pigeon is initialized
         configureMotorClosedLoop(DriveConstants.RIGHT_INVERSION);
 
         // Gear shift
-        gearShiftSolenoid = new InactiveDoubleSolenoid(DriveConstants.GEARSHIFT_FORWARD_ID, 
-            DriveConstants.GEARSHIFT_REVERSE_ID);
+        gearShiftSolenoid = new InactiveDoubleSolenoid(DriveConstants.GEARSHIFT_FORWARD_ID,
+                DriveConstants.GEARSHIFT_REVERSE_ID);
 
         // Control state
         controlState = ControlState.OPEN_LOOP;
@@ -115,7 +116,7 @@ public class Drive extends Submodule {
     /**
      * Configures a motor controller.
      * 
-     * @param motor the motor controller to configure
+     * @param motor     the motor controller to configure
      * @param inversion whether to invert the motor output
      */
     private void configureMotor(LazyTalonFX motor, InvertType inversion) {
@@ -168,89 +169,60 @@ public class Drive extends Submodule {
         leaderConfig.neutralDeadband = DriveConstants.DRIVE_NEUTRAL_DEADBAND;
         followerConfig.neutralDeadband = DriveConstants.DRIVE_NEUTRAL_DEADBAND;
 
-        //leaderConfig.openloopRamp = 1.0;
-        //followerConfig.openloopRamp = 1.0;
+        // leaderConfig.openloopRamp = 1.0;
+        // followerConfig.openloopRamp = 1.0;
 
         // Apply all settings
         profilingLeader.configAllSettings(leaderConfig);
         profilingFollower.configAllSettings(followerConfig);
 
         // Set status frame periods to ensure we don't have stale data
-        profilingLeader.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.TIMEOUT_MS);
-        profilingLeader.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.TIMEOUT_MS);
-        profilingLeader.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.TIMEOUT_MS);
-        profilingLeader.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.TIMEOUT_MS);
-        profilingFollower.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.TIMEOUT_MS);
-        pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 5, Constants.TIMEOUT_MS);
+        profilingLeader.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20,
+                Constants.TIMEOUT_MS);
+        profilingLeader.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20,
+                Constants.TIMEOUT_MS);
+        profilingLeader.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20,
+                Constants.TIMEOUT_MS);
+        profilingLeader.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20,
+                Constants.TIMEOUT_MS);
+        profilingFollower.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5,
+                Constants.TIMEOUT_MS);
+        pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 5,
+                Constants.TIMEOUT_MS);
 
         profilingLeader.changeMotionControlFramePeriod(DriveConstants.TRANSMIT_PERIOD_MS);
         profilingLeader.configMotionProfileTrajectoryPeriod(DriveConstants.BASE_TRAJ_PERIOD_MS,
-                                                            Constants.TIMEOUT_MS);
+                Constants.TIMEOUT_MS);
 
         mpFollower = new ProfileFollower(profilingLeader);
     }
 
-    /** 
-	 * Determines if SensorSum or SensorDiff should be used 
-	 * for combining left/right sensors into Robot Distance.  
-	 * 
-	 * Assumes Aux Position is set as Remote Sensor 0.  
-	 * 
-	 * configAllSettings must still be called on the master config
-	 * after this function modifies the config values. 
-	 * 
-	 * @param masterInvertType Invert of the Master Talon
-	 * @param masterConfig Configuration object to fill
-	 */
-    private void setRobotDistanceConfigs(InvertType masterInvertType, TalonFXConfiguration masterConfig) {
-		/**
-		 * Determine if we need a Sum or Difference.
-		 * 
-		 * The auxiliary Talon FX will always be positive
-		 * in the forward direction because it's a selected sensor
-		 * over the CAN bus.
-		 * 
-		 * The master's native integrated sensor may not always be positive when forward because
-		 * sensor phase is only applied to *Selected Sensors*, not native
-		 * sensor sources.  And we need the native to be combined with the 
-		 * aux (other side's) distance into a single robot distance.
-		 */
-
-		/* THIS FUNCTION should not need to be modified. 
-		   This setup will work regardless of whether the master
-		   is on the Right or Left side since it only deals with
-		   distance magnitude.  */
-
-		/* Check if we're inverted */
-		if (masterInvertType == InvertType.InvertMotorOutput) {
-			/* 
-				If master is inverted, that means the integrated sensor
-				will be negative in the forward direction.
-				If master is inverted, the final sum/diff result will also be inverted.
-				This is how Talon FX corrects the sensor phase when inverting 
-				the motor direction.  This inversion applies to the *Selected Sensor*,
-				not the native value.
-				Will a sensor sum or difference give us a positive total magnitude?
-				Remember the Master is one side of your drivetrain distance and 
-				Auxiliary is the other side's distance.
-					Phase | Term 0   |   Term 1  | Result
-				Sum:  -1 *((-)Master + (+)Aux   )| NOT OK, will cancel each other out
-				Diff: -1 *((-)Master - (+)Aux   )| OK - This is what we want, magnitude will be correct and positive.
-				Diff: -1 *((+)Aux    - (-)Master)| NOT OK, magnitude will be correct but negative
-			*/
-			masterConfig.diff0Term = FeedbackDevice.IntegratedSensor; // Local Integrated Sensor
-			masterConfig.diff1Term = FeedbackDevice.RemoteSensor0;    // Aux Selected Sensor
-			masterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorDifference; // Diff0 - Diff1
-		} else {
-			// Master is not inverted, both sides are positive so we can sum them.
-			masterConfig.sum0Term = FeedbackDevice.RemoteSensor0;    // Aux Selected Sensor
-			masterConfig.sum1Term = FeedbackDevice.IntegratedSensor; // Local IntegratedSensor
-			masterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorSum; // Sum0 + Sum1
-		}
-
-		/* Since the Distance is the sum of the two sides, divide by 2 so the total isn't double
-		   the real-world value */
-		masterConfig.primaryPID.selectedFeedbackCoefficient = 0.5;
+    /**
+     * Determines if SensorSum or SensorDiff should be used for combining
+     * left/right sensors into Robot Distance.
+     * 
+     * Assumes Aux Position is set as Remote Sensor 0.
+     * 
+     * configAllSettings must still be called on the master config after this
+     * function modifies the config values.
+     * 
+     * Source: https://shorturl.at/oqvCN (CTRE GitHub)
+     * 
+     * @param masterInvertType Invert of the Master Talon
+     * @param masterConfig     Configuration object to fill
+     */
+    private void setRobotDistanceConfigs(InvertType masterInvertType,
+            TalonFXConfiguration masterConfig) {
+        if (masterInvertType == InvertType.InvertMotorOutput) {
+            masterConfig.diff0Term = FeedbackDevice.IntegratedSensor; // Local Integrated Sensor
+            masterConfig.diff1Term = FeedbackDevice.RemoteSensor0; // Aux Selected Sensor
+            masterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorDifference;
+        } else {
+            masterConfig.sum0Term = FeedbackDevice.RemoteSensor0; // Aux Selected Sensor
+            masterConfig.sum1Term = FeedbackDevice.IntegratedSensor; // Local IntegratedSensor
+            masterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorSum;
+        }
+        masterConfig.primaryPID.selectedFeedbackCoefficient = 0.5;
     }
 
     /**
@@ -280,18 +252,12 @@ public class Drive extends Submodule {
             mpFollower.update();
             outputClosedLoop = mpFollower.getOutput();
         }
-        SmartDashboard.putNumber("left inches", 
-            EncoderUtils.ticksToInches(
-                leftLeader.getSensorCollection().getIntegratedSensorPosition(), 
-                currentGearShift
-            )
-        );
-        SmartDashboard.putNumber("right inches", 
-            EncoderUtils.ticksToInches(
-                -rightLeader.getSensorCollection().getIntegratedSensorPosition(), 
-                currentGearShift
-            )
-        );
+        SmartDashboard.putNumber("left inches", EncoderUtils.ticksToInches(
+                leftLeader.getSensorCollection().getIntegratedSensorPosition(), currentGearShift));
+        SmartDashboard.putNumber("right inches",
+                EncoderUtils.ticksToInches(
+                        -rightLeader.getSensorCollection().getIntegratedSensorPosition(),
+                        currentGearShift));
     }
 
     /**
@@ -332,8 +298,8 @@ public class Drive extends Submodule {
     @Override
     public void zero() {
         /**
-         * setSelectedSensorPosition would set the sensor sum for the PID,
-         * which is not what we want to do.
+         * setSelectedSensorPosition would set the sensor sum for the PID, which is
+         * not what we want to do.
          */
         leftLeader.getSensorCollection().setIntegratedSensorPosition(0.0, Constants.TIMEOUT_MS);
         rightLeader.getSensorCollection().setIntegratedSensorPosition(0.0, Constants.TIMEOUT_MS);
@@ -352,8 +318,8 @@ public class Drive extends Submodule {
     /**
      * Tank drive mode for open-loop control.
      * 
-     * @param left left percent output in [-1, 1]
-     * @param right right percent output in [-1, 1]
+     * @param left    left percent output in [-1, 1]
+     * @param right   right percent output in [-1, 1]
      * @param reverse whether to reverse the inputs or not
      */
     public void tank(double left, double right, boolean reverse) {
@@ -373,8 +339,7 @@ public class Drive extends Submodule {
      * @param rightJoystick value of the right joystick in [-1, 1]
      * @param reverse       whether to reverse the inputs or not
      */
-    public void arcade(double leftJoystick, double rightJoystick, 
-        boolean reverse) {
+    public void arcade(double leftJoystick, double rightJoystick, boolean reverse) {
         if (reverse) {
             leftJoystick *= -1;
             rightJoystick *= -1;
@@ -386,32 +351,31 @@ public class Drive extends Submodule {
     /**
      * Curvature drive mode for open-loop control.
      * 
-     * @param xSpeed      The robot's speed along the X axis [-1.0, 1.0]. 
-     * @param zRotation   The robot's rotation rate around the Z axis 
-     *                    [-1.0, 1.0]. Clockwise is positive.
+     * @param xSpeed      The robot's speed along the X axis [-1.0, 1.0].
+     * @param zRotation   The robot's rotation rate around the Z axis [-1.0,
+     *                    1.0]. Clockwise is positive.
      * @param isQuickTurn If set, overrides constant-curvature turning for
      *                    turn-in-place maneuvers.
      */
     public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
         xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0);
         zRotation = MathUtil.clamp(zRotation, -1.0, 1.0);
-    
+
         double angularPower;
         boolean overPower;
-    
+
         if (isQuickTurn) {
             if (Math.abs(xSpeed) < DriveConstants.QUICK_STOP_THRESHOLD) {
-                quickStopAccumulator = (1 - DriveConstants.QUICK_STOP_ALPHA) 
-                    * quickStopAccumulator
-                    + DriveConstants.QUICK_STOP_ALPHA 
-                    * MathUtil.clamp(zRotation, -1.0, 1.0) * 2;
+                quickStopAccumulator = (1 - DriveConstants.QUICK_STOP_ALPHA) * quickStopAccumulator
+                        + DriveConstants.QUICK_STOP_ALPHA * MathUtil.clamp(zRotation, -1.0, 1.0)
+                                * 2;
             }
             overPower = true;
             angularPower = zRotation;
         } else {
             overPower = false;
             angularPower = Math.abs(xSpeed) * zRotation - quickStopAccumulator;
-    
+
             if (quickStopAccumulator > 1) {
                 quickStopAccumulator -= 1;
             } else if (quickStopAccumulator < -1) {
@@ -420,11 +384,11 @@ public class Drive extends Submodule {
                 quickStopAccumulator = 0.0;
             }
         }
-    
+
         double leftMotorOutput = xSpeed + angularPower;
         double rightMotorOutput = xSpeed - angularPower;
-    
-        // If rotation is overpowered, reduce both outputs to within acceptable range
+
+        // Reduce both outputs to acceptable range if rotation is overpowered
         if (overPower) {
             if (leftMotorOutput > 1.0) {
                 rightMotorOutput -= leftMotorOutput - 1.0;
@@ -440,7 +404,7 @@ public class Drive extends Submodule {
                 rightMotorOutput = -1.0;
             }
         }
-    
+
         // Normalize the wheel speeds
         double maxMagnitude = Math.max(Math.abs(leftMotorOutput), Math.abs(rightMotorOutput));
         if (maxMagnitude > 1.0) {
@@ -512,7 +476,7 @@ public class Drive extends Submodule {
             controlState = ControlState.PATH_FOLLOWING;
         }
     }
-    
+
     /**
      * Returns whether the drive has finished following a path.
      * 

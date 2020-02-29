@@ -17,15 +17,16 @@ public class Climb extends Submodule {
         return instance;
     }
 
-    private Climb() {}
-    
+    private Climb() {
+    }
+
     private LazyTalonSRX climbMotor;
     private PWM servo;
 
     private boolean unlocked = false;
     private double outputOpenLoop = 0.0;
     private int outputServoPosition = -1;
-    
+
     @Override
     public void onInit() {
         servo = new PWM(9);
@@ -79,7 +80,7 @@ public class Climb extends Submodule {
      * Closes the servo.
      */
     public void closeServo() {
-        outputServoPosition = 1;  
+        outputServoPosition = 1;
     }
 
     /**
