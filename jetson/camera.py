@@ -22,7 +22,7 @@ class cameraSet:
             cam.release()
 
     def __init__(self):
-        self.camArray = []
+        cameraSet.camArray = []
         for i in range(4):
             cap = self.decCam(i)
             if cap is None or not cap.isOpened():

@@ -18,7 +18,6 @@ rec = [None] * CAMS
 
 def read(cam):
     global data
-    global frame
     global UDP_IP
     global UDP_PORT
     global tt
@@ -31,7 +30,6 @@ def read(cam):
     while True:
         rec[cam], addr = sock[cam].recvfrom(SIZE+1)
         data[cam][rec[cam][0]] = rec[cam]
-        print(rec[cam][0])
         #tt = time.time() - tt
         #tt = tt * 1000
         #print("\n\nprocess time")
@@ -39,7 +37,7 @@ def read(cam):
         #tt = time.time()
 
 
-def display(cam):
+def display():
     global data
     global CAMS
     frame = [b""] * CAMS
@@ -64,7 +62,7 @@ if __name__ == "__main__":
     #reading1 = threading.Thread(target=read, args=(1,)).start()
     #reading2 = threading.Thread(target=read, args=(2,)).start()
     #reading3 = threading.Thread(target=read, args=(3,)).start()
-    disp = threading.Thread(target=display, args=(0,)).start()
+    disp = threading.Thread(target=display, args=()).start()
 
 #      data, addr = sock.recvfrom(CAMS6080)
 #      s+= data
