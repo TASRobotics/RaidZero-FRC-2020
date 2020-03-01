@@ -49,6 +49,7 @@ public class Shooter extends Submodule {
     @Override
     public void onStart(double timestamp) {
         outputPercentSpeed = 0.0;
+        zero();
     }
 
     @Override

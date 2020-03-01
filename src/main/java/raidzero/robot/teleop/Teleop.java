@@ -248,8 +248,7 @@ public class Teleop {
         }
         // Turn turret using right joystick
         if (!p2.getStickButton(Hand.kRight)) {
-            turret.rotateManual(TurretConstants.CONTROL_SCALING_FACTOR
-                    * JoystickUtils.deadband(p2.getX(Hand.kRight)));
+            turret.rotateManual(JoystickUtils.deadband(p2.getX(Hand.kRight)));
         }
 
         /**

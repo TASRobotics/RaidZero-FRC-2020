@@ -123,7 +123,6 @@ public class Drive extends Submodule {
         motor.configFactoryDefault();
         motor.setNeutralMode(NeutralMode.Coast);
         motor.setInverted(inversion);
-        motor.configOpenloopRamp(DriveConstants.OPEN_LOOP_RAMP_TIME, Constants.TIMEOUT_MS);
     }
 
     /**

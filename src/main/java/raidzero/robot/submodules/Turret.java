@@ -43,6 +43,7 @@ public class Turret extends Submodule {
         turretMotor.configFactoryDefault();
         turretMotor.setNeutralMode(TurretConstants.NEUTRAL_MODE);
         turretMotor.setInverted(TurretConstants.INVERSION);
+        turretMotor.setSensorPhase(TurretConstants.INVERT_PHASE);
 
         TalonSRXConfiguration config = new TalonSRXConfiguration();
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
@@ -50,6 +51,8 @@ public class Turret extends Submodule {
         config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
         config.forwardLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
         config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
+        config.peakOutputForward = 0.3;
+        config.peakOutputReverse = -0.3;
 
         config.slot0.kF = TurretConstants.K_F;
         config.slot0.kP = TurretConstants.K_P;
@@ -65,6 +68,14 @@ public class Turret extends Submodule {
         controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = 0.0;
         outputPosition = 0.0;
+        zero();
+    }
+
+    @Override
+    public void update(double timestamp) {
+        if (turretMotor.getSensorCollection().isFwdLimitSwitchClosed()) {
+            zero();
+        }
     }
 
     @Override
@@ -74,18 +85,16 @@ public class Turret extends Submodule {
                 turretMotor.set(ControlMode.PercentOutput, outputOpenLoop);
                 break;
             case POSITION:
-                turretMotor.set(ControlMode.MotionMagic, outputPosition);
+                turretMotor.set(ControlMode.Position, outputPosition);
                 break;
-        }
-        if (turretMotor.getSensorCollection().isRevLimitSwitchClosed()) {
-            zero();
         }
     }
 
     @Override
     public void stop() {
-        controlState = ControlState.POSITION;
+        controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = 0.0;
+        outputPosition = 0.0;
         turretMotor.set(ControlMode.PercentOutput, 0);
     }
 
@@ -101,7 +110,7 @@ public class Turret extends Submodule {
      */
     public void rotateToAngle(double angle) {
         controlState = ControlState.POSITION;
-        outputPosition = angle * TurretConstants.DEGREES_TO_TICKS;
+        outputPosition = -angle * TurretConstants.TICKS_PER_DEGREE;
     }
 
     /**

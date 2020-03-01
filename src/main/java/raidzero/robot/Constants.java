@@ -45,9 +45,6 @@ public class Constants {
     
         public static final double WHEEL_DIAMETER_INCHES = 6.0;
 
-        // Time it takes to get to max speed
-        public static final double OPEN_LOOP_RAMP_TIME = 0.0;
-
         // Closed-loop constants
         public static final double DRIVE_NEUTRAL_DEADBAND = 0.01;
         public static final int PID_PRIMARY_SLOT = 0;
@@ -76,8 +73,8 @@ public class Constants {
         public static final int MIN_POINTS_IN_TALON = 10;
         public static final int TRANSMIT_PERIOD_MS = 3;
 
-        public static final double DEFAULT_CRUISE_VELOCITY = 6;
-        public static final double DEFAULT_TARGET_ACCELERATION = 6;
+        public static final double DEFAULT_CRUISE_VELOCITY = 7;
+        public static final double DEFAULT_TARGET_ACCELERATION = 7;
 
         // Joystick to Output mapping
         public static final double JOYSTICK_EXPONENT = 1;
@@ -157,17 +154,16 @@ public class Constants {
 
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
         public static final InvertType INVERSION = InvertType.InvertMotorOutput;
+        public static final boolean INVERT_PHASE = false;
 
-        public static final double CONTROL_SCALING_FACTOR = 0.25;
+        public static final double TICKS_PER_DEGREE = 10732 / 90;
 
-        public static final double DEGREES_TO_TICKS = 1000; //random # for now
+        public static final double MAX_INPUT_PERCENTAGE = 0.3;
 
-        public static final double MAX_INPUT_PERCENTAGE = 0.4;
-
-        public static final double K_F = 0;
-        public static final double K_P = 0;
-        public static final double K_I = 0;
-        public static final double K_D = 0;
+        public static final double K_F = 0.0;
+        public static final double K_P = 0.07;
+        public static final double K_I = 0.0;
+        public static final double K_D = 0.001;
         public static final int K_INTEGRAL_ZONE = 0;
     }
 

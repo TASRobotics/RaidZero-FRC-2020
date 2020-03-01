@@ -13,16 +13,16 @@ import raidzero.robot.submodules.Turret;
 public class EightCellTrenchSequence extends AutoSequence {
 
     private static final Point[] TRENCH_FORWARD_WAYPOINTS = {
-        new Point(120, -80, 90),
+        new Point(120, -24, 0),
         new Point(222, -24, 0),
         new Point(300, -24, 0),
-        new Point(390, -24, 0)
+        new Point(360, -24, 0)
     };
     private static final Path TRENCH_FORWARD_PATH = new Path(TRENCH_FORWARD_WAYPOINTS, false);
 
     private static final Point[] TRENCH_BACKWARD_WAYPOINTS = {
-        new Point(390, -24, 0),
-        new Point(480, -24, 0)
+        new Point(420, -24, 180),
+        new Point(200, -24, 180)
     };
     private static final Path TRENCH_BACKWARD_PATH = new Path(TRENCH_BACKWARD_WAYPOINTS, true);
 
@@ -38,24 +38,21 @@ public class EightCellTrenchSequence extends AutoSequence {
     public void sequence() {
         addAction(new SeriesAction(
             Arrays.asList(
-                //new SetShooterVelocity(1.0), // TODO: Either use distance or measure a working speed
-                //new FeedBalls(2.0),
-                //new LambdaAction(() -> shooter.stop()),
-                new LambdaAction(() -> intake.intakeBalls(0.8)),
-                new DrivePath(TRENCH_FORWARD_PATH),
-                new LambdaAction(() -> intake.stop())
+                new LambdaAction(() -> turret.rotateToAngle(90)),
+                new WaitAction(3.0),
+                new TurnToGoal()
             )
         ));
-        addAction(new SeriesAction(
+        /*addAction(new SeriesAction(
             Arrays.asList(
                 //new LambdaAction(() -> turret.rotateToAngle(130)), // Approximate so Limelight can see
-                new DrivePath(TRENCH_BACKWARD_PATH),
-                new TurnToGoal()
+                new DrivePath(TRENCH_BACKWARD_PATH)
+                //new TurnToGoal()
                 //new VisionAssistedTargeting(), // Estimates distance and spins up shooter
                 //new FeedBalls(2.0),
                 //new LambdaAction(() -> shooter.stop())
             )
-        ));
+        ));*/
         System.out.println("Added actions.");
     }
 
