@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 import raidzero.robot.Constants.ShooterConstants;
 import raidzero.robot.submodules.Shooter;
+import raidzero.robot.utils.TimerBoolean;
 
 /**
  * Action for directly setting the shooter's velocity setpoint.
@@ -14,9 +15,10 @@ public class SetShooterVelocity implements Action {
 
     private static final Shooter shooter = Shooter.getInstance();
 
+    private double percentSpeed = 0.0;
     private double startTime = 0.0;
 
-    private double percentSpeed = 0.0;
+    private TimerBoolean isUpToSpeed = new TimerBoolean(ShooterConstants.UP_TO_SPEED_DURATION);
 
     /**
      * Constructs a SetShooterVelocity action.
@@ -29,7 +31,7 @@ public class SetShooterVelocity implements Action {
 
     @Override
     public boolean isFinished() {
-        return (shooter.isUpToSpeed());
+        return isUpToSpeed.hasDurationPassed();
         // || Timer.getFPGATimestamp() - startTime > ShooterConstants.APPROACH_SETPOINT_TIMEOUT
     }
 
@@ -43,8 +45,8 @@ public class SetShooterVelocity implements Action {
 
     @Override
     public void update() {
+        isUpToSpeed.update(shooter.isUpToSpeed());
     }
-    
 
     @Override
     public void done() {

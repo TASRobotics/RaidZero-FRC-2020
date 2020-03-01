@@ -73,8 +73,8 @@ public class Constants {
         public static final int MIN_POINTS_IN_TALON = 10;
         public static final int TRANSMIT_PERIOD_MS = 3;
 
-        public static final double DEFAULT_CRUISE_VELOCITY = 7;
-        public static final double DEFAULT_TARGET_ACCELERATION = 7;
+        public static final double DEFAULT_CRUISE_VELOCITY = 8.5;
+        public static final double DEFAULT_TARGET_ACCELERATION = 8;
 
         // Joystick to Output mapping
         public static final double JOYSTICK_EXPONENT = 1;
@@ -96,7 +96,7 @@ public class Constants {
         public static final double MAX_SPEED = 20000; // in ticks per 100ms
         public static final double FAKE_MAX_SPEED = 17000; // in ticks per 100ms
         public static final double ERROR_TOLERANCE = 250;
-        public static final double APPROACH_SETPOINT_TIMEOUT = 4; // in seconds
+        public static final double UP_TO_SPEED_DURATION = 0.8; // in seconds
 
         public static final double K_F = 1023.0 / MAX_SPEED;
         public static final double K_P = 0.6;
@@ -104,7 +104,6 @@ public class Constants {
         public static final double K_D = 5.0; // Shouldn't be touched
         public static final int K_INTEGRAL_ZONE = 0; // Shouldn't be touched
     }
-
     /**
      * Hood Constants
      */
@@ -140,6 +139,9 @@ public class Constants {
         public static final double K_D = 0.001;
         public static final int K_INTEGRAL_ZONE = 0;
 
+        public static final int TOLERANCE = 200;
+        public static final double AT_SETPOINT_DURATION = 0.2;
+
         // distance to hood angle regression
         public static final double ATAN_COEFFICIENT = -600670000;//6.0067*10^8
         public static final double DISTANCE_COEFFICIENT = -624343.7;
@@ -158,13 +160,16 @@ public class Constants {
 
         public static final double TICKS_PER_DEGREE = 10732 / 90;
 
-        public static final double MAX_INPUT_PERCENTAGE = 0.3;
+        public static final double MAX_INPUT_PERCENTAGE = 0.4;
 
         public static final double K_F = 0.0;
         public static final double K_P = 0.07;
         public static final double K_I = 0.0;
         public static final double K_D = 0.001;
         public static final int K_INTEGRAL_ZONE = 0;
+
+        public static final int TOLERANCE = 1000;
+        public static final double AT_SETPOINT_DURATION = 0.5;
     }
 
     /**
@@ -238,10 +243,12 @@ public class Constants {
         public static final double MOUNTING_ANGLE = 31.4; // in degrees
         public static final double MOUNTING_HEIGHT = 0.56; // in meters
 
-        public static final double AIM_KP = 0.02;
-        public static final double AIM_KI = 0.003;
+        public static final double AIM_KP = 0.035;
+        public static final double AIM_KI = 0.004;
         public static final double AIM_KD = 0.001;
-        public static final double ANGLE_ADJUST_THRESHOLD = 0.5;
+        public static final double ANGLE_ADJUST_THRESHOLD = 2.0;
+
+        public static final double AIM_ON_TARGET_DURATION = 0.4;
     }
 
     /**

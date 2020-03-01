@@ -139,4 +139,9 @@ public class AdjustableHood extends Submodule {
     public void moveToAngle(HoodAngle angle) {
         moveToTick(angle.ticks);
     }
+
+    public boolean isAtPosition() {
+        return controlState == ControlState.POSITION &&
+               Math.abs(hoodMotor.getClosedLoopError()) < HoodConstants.TOLERANCE;
+    }
 }

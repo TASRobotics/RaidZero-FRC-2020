@@ -51,8 +51,8 @@ public class Turret extends Submodule {
         config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
         config.forwardLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
         config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
-        config.peakOutputForward = 0.3;
-        config.peakOutputReverse = -0.3;
+        config.peakOutputForward = TurretConstants.MAX_INPUT_PERCENTAGE;
+        config.peakOutputReverse = -TurretConstants.MAX_INPUT_PERCENTAGE;
 
         config.slot0.kF = TurretConstants.K_F;
         config.slot0.kP = TurretConstants.K_P;
@@ -123,5 +123,10 @@ public class Turret extends Submodule {
     public void rotateManual(double percentOutput) {
         controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = percentOutput;
+    }
+
+    public boolean isAtPosition() {
+        return controlState == ControlState.POSITION &&
+               Math.abs(turretMotor.getClosedLoopError()) < TurretConstants.TOLERANCE;
     }
 }

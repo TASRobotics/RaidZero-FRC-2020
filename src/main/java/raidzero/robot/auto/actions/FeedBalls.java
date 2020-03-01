@@ -36,7 +36,7 @@ public class FeedBalls implements Action {
     public void start() {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
         startTime = Timer.getFPGATimestamp();
-        hopper.moveBelt(1.0);
+        hopper.moveAtVelocity(-0.65);
     }
 
     @Override

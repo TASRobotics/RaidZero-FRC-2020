@@ -100,6 +100,7 @@ public class Shooter extends Submodule {
      * @return whether the shooter is up to speed
      */
     public boolean isUpToSpeed() {
-        return Math.abs(shooterMotor.getClosedLoopError()) < ShooterConstants.ERROR_TOLERANCE;
+        return Math.abs(outputPercentSpeed) > 0.1 &&
+               Math.abs(shooterMotor.getClosedLoopError()) < ShooterConstants.ERROR_TOLERANCE;
     }
 }
