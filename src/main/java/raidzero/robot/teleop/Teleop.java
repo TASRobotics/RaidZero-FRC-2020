@@ -3,10 +3,8 @@ package raidzero.robot.teleop;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.Constants.IntakeConstants;
-import raidzero.robot.Constants.TurretConstants;
 import raidzero.robot.Constants.HoodConstants.HoodAngle;
 import raidzero.robot.auto.actions.DebugLimelightDistance;
 import raidzero.robot.submodules.AdjustableHood;

@@ -2,7 +2,6 @@ package raidzero.robot.auto.actions;
 
 import edu.wpi.first.wpilibj.Timer;
 import raidzero.robot.submodules.Hopper;
-import raidzero.robot.submodules.Shooter;
 
 /**
  * Action for feeding balls into the shooter. 
@@ -11,7 +10,6 @@ import raidzero.robot.submodules.Shooter;
  */
 public class FeedBalls implements Action {
 
-    private static final Shooter shooter = Shooter.getInstance();
     private static final Hopper hopper = Hopper.getInstance();
 
     private double startTime = 0.0;

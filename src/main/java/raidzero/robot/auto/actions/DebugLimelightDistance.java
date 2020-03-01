@@ -2,11 +2,9 @@ package raidzero.robot.auto.actions;
 
 import edu.wpi.first.wpilibj.MedianFilter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import raidzero.robot.Constants;
 import raidzero.robot.submodules.Limelight;
 import raidzero.robot.submodules.Limelight.CameraMode;
 import raidzero.robot.submodules.Limelight.LedMode;
-import raidzero.robot.utils.InterpolatingDouble;
 import raidzero.robot.utils.LimelightUtils;
 
 /**

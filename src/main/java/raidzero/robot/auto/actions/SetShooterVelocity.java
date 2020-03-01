@@ -2,7 +2,6 @@ package raidzero.robot.auto.actions;
 
 import edu.wpi.first.wpilibj.Timer;
 
-import raidzero.robot.Constants.ShooterConstants;
 import raidzero.robot.submodules.Shooter;
 import raidzero.robot.utils.TimerBoolean;
 
