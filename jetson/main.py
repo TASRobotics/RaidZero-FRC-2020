@@ -25,21 +25,22 @@ def frameManager(cams):
     global camsFrameReady
     global camFrames
     while True:
-        for cam in range(len(camsFrameReady)):
-            cams.capFrame(cam)
-            frame = cams.getFrame(cam).tobytes()
-            for pack in range(PACKETS):
-                camFrames[cam][pack] = bytes(chr(pack), "utf8") + frame[pack*SIZE:(pack+1)*SIZE]
-                #camFrames[cam][pack] = bytes(chr(cam), "utf8") + frame[pack*SIZE:(pack+1)*SIZE]
-                time.sleep(0.01)
-            camsFrameReady[cam] = True
-            print('switched read')
-            #frame = np.fromstring (frame, dtype=np.uint8)
-            #frame = np.reshape(frame, (270, 480, 3))
-            #cv2.imshow(str(cam), frame)
-            #cv2.waitKey(1)
-            #cv2.imwrite('frame'+str(cam), cams.getFrame(cam))
-            
+        for camN in range(len(camsFrameReady)):
+            if not camsFrameReady[camN]:
+                cams.capFrame(camN)
+                frame = cams.getFrame(camN).tobytes()
+                camsFrameReady[camN] = True
+                for pack in range(PACKETS):
+                    camFrames[camN][pack] = bytes(chr(pack), "utf8") + frame[pack*SIZE:(pack+1)*SIZE]
+                    #print("a ", camN, " ", pack)
+                    #camFrames[camN][pack] = bytes(chr(cam), "utf8") + frame[pack*SIZE:(pack+1)*SIZE]
+                    #time.sleep(0.01)
+                #frame = np.fromstring (frame, dtype=np.uint8)
+                #frame = np.reshape(frame, (270, 480, 3))
+                #cv2.imshow(str(cam), frame)
+                #cv2.waitKey(1)
+                #cv2.imwrite('frame'+str(cam), cams.getFrame(cam))
+                
 
 def commManager(cam):
     global camsFrameReady
@@ -51,9 +52,10 @@ def commManager(cam):
         #for cam in range(len(camsFrameReady)):
         if True:
             if camsFrameReady[cam]: 
+                camsFrameReady[cam] = False
                 frame = b""
                 for packet in range(PACKETS):
-                    print(cam, " ", packet)
+                    #print(cam, " ", packet)
                     frame += camFrames[cam][packet][1:]
                     #print(packet)
                     #print(len(out))
@@ -64,12 +66,11 @@ def commManager(cam):
                     #print("\n\nprocess time")
                     #print(tt)
                     #tt = time.time()
-                camsFrameReady[cam] = False
                 frame = np.fromstring (frame, dtype=np.uint8)
                 frame = np.reshape(frame, (270, 480, 3))
                 cv2.imshow(str(cam), frame)
                 cv2.waitKey(1)
-                time.sleep(0.2)
+                #time.sleep(0.2)
 
 def main():
     #cams start
@@ -78,7 +79,7 @@ def main():
     cams = camera.cameraSet()
     camsFrameReady = [False] * cams.getLen()
     socketManager.openSocket()
-    camFrames = np.zeros((4, 12), dtype = (bytes))
+    camFrames = [[None] * 12] * 4
 
     cams = thred.Thread(target=frameManager, args=(cams, )).start()
     comms = thred.Thread(target=commManager, args=(0,)).start()

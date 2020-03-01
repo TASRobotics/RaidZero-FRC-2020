@@ -19,7 +19,7 @@ class cameraSet:
 
     def closeCap(self):
         for cam in self.camArray:
-            self.cam.release()
+            cam.release()
 
     def __init__(self):
         self.camArray = []
@@ -31,6 +31,8 @@ class cameraSet:
                 print('declared camera', str(i))
                 self.camArray.append(cap)
         print('Cameras added:',len(self.camArray))
+
+        
         self.frameArray = [None] * len(self.camArray)
         
 
