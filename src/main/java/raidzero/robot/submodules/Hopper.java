@@ -17,13 +17,6 @@ public class Hopper extends Submodule {
 
     private static Hopper instance = null;
 
-    private LazyTalonFX hopperMotor;
-
-    private ControlState controlState = ControlState.OPEN_LOOP;
-    
-    private double outputOpenLoop = 0.0;
-    private double outputPercentVelocity = 0.0;
-
     public static Hopper getInstance() {
         if (instance == null) {
             instance = new Hopper();
@@ -31,15 +24,23 @@ public class Hopper extends Submodule {
         return instance;
     }
 
-    private Hopper() {}
+    private Hopper() {
+    }
+
+    private LazyTalonFX hopperMotor;
+
+    private ControlState controlState = ControlState.OPEN_LOOP;
+
+    private double outputOpenLoop = 0.0;
+    private double outputPercentVelocity = 0.0;
 
     @Override
     public void onInit() {
         hopperMotor = new LazyTalonFX(HopperConstants.MOTOR_ID);
         hopperMotor.configFactoryDefault();
         hopperMotor.setNeutralMode(NeutralMode.Brake);
-        hopperMotor.setInverted(true);
-        hopperMotor.setSensorPhase(HopperConstants.SENSOR_PHASE);
+        hopperMotor.setInverted(HopperConstants.INVERSION);
+        hopperMotor.setSensorPhase(HopperConstants.FLIP_SENSOR_PHASE);
 
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
@@ -67,13 +68,14 @@ public class Hopper extends Submodule {
                 hopperMotor.set(ControlMode.PercentOutput, outputOpenLoop);
                 break;
             case VELOCITY:
-                hopperMotor.set(ControlMode.Velocity, outputPercentVelocity * HopperConstants.MAX_SPEED);
+                hopperMotor.set(ControlMode.Velocity,
+                        outputPercentVelocity * HopperConstants.MAX_SPEED);
                 break;
         }
     }
 
     @Override
-    public void stop() {                
+    public void stop() {
         controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = 0.0;
         outputPercentVelocity = 0.0;

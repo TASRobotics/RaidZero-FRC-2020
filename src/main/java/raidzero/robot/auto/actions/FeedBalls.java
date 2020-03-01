@@ -5,7 +5,8 @@ import raidzero.robot.submodules.Hopper;
 import raidzero.robot.submodules.Shooter;
 
 /**
- * Action for feeding balls into the shooter.
+ * Action for feeding balls into the shooter. 
+ * 
  * Note: Assumes the shooter is already up to speed.
  */
 public class FeedBalls implements Action {

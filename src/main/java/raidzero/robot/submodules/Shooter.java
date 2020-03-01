@@ -12,10 +12,7 @@ import raidzero.robot.Constants.ShooterConstants;
 
 public class Shooter extends Submodule {
 
-    private static LazyTalonFX shooterMotor;
     private static Shooter instance = null;
-
-    private double outputPercentSpeed = 0.0;
 
     public static Shooter getInstance() {
         if (instance == null) {
@@ -24,7 +21,12 @@ public class Shooter extends Submodule {
         return instance;
     }
 
-    private Shooter() {}
+    private Shooter() {
+    }
+
+    private LazyTalonFX shooterMotor;
+
+    private double outputPercentSpeed = 0.0;
 
     @Override
     public void onInit() {
@@ -32,7 +34,7 @@ public class Shooter extends Submodule {
         shooterMotor.configFactoryDefault();
         shooterMotor.setNeutralMode(ShooterConstants.NEUTRAL_MODE);
         shooterMotor.setInverted(ShooterConstants.INVERSION);
-        
+
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
         config.slot0.kF = ShooterConstants.K_F;
@@ -47,6 +49,7 @@ public class Shooter extends Submodule {
     @Override
     public void onStart(double timestamp) {
         outputPercentSpeed = 0.0;
+        zero();
     }
 
     @Override
@@ -61,9 +64,9 @@ public class Shooter extends Submodule {
         if (Math.abs(outputPercentSpeed) < 0.1) {
             stop();
         } else {
-            shooterMotor.set(ControlMode.Velocity, 
-                outputPercentSpeed * ShooterConstants.FAKE_MAX_SPEED);
-        }        
+            shooterMotor.set(ControlMode.Velocity,
+                    outputPercentSpeed * ShooterConstants.FAKE_MAX_SPEED);
+        }
     }
 
     @Override
@@ -81,8 +84,8 @@ public class Shooter extends Submodule {
      * Fires up the shooter.
      * 
      * @param percentSpeed speed of the shooter in [-1.0, 1.0]
-     * @param freeze       whether to disregard the speed and keep the 
-     *                     previous speed
+     * @param freeze       whether to disregard the speed and keep the previous
+     *                     speed
      */
     public void shoot(double percentSpeed, boolean freeze) {
         if (freeze) {

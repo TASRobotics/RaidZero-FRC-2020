@@ -9,11 +9,15 @@ import raidzero.robot.auto.actions.VisionAssistedTargeting;
 public class Superstructure extends Submodule {
 
     private static Superstructure instance = null;
+
     public static Superstructure getInstance() {
         if (instance == null) {
             instance = new Superstructure();
         }
         return instance;
+    }
+
+    private Superstructure() {
     }
 
     private boolean isAiming = false;
@@ -22,17 +26,13 @@ public class Superstructure extends Submodule {
     private boolean isAimingAndHood = false;
     private ReusableSeriesAction aimAndHoodAction;
 
-    private Superstructure() {}
-
     @Override
     public void onStart(double timestamp) {
         aimAction = new TurnToGoal();
-        aimAndHoodAction = new ReusableSeriesAction(
-            Arrays.asList(
-                new TurnToGoal(),
-                new VisionAssistedTargeting()
-            )
-        );
+        aimAndHoodAction = new ReusableSeriesAction(Arrays.asList(
+            new TurnToGoal(), 
+            new VisionAssistedTargeting()
+        ));
     }
 
     @Override

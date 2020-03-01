@@ -7,15 +7,18 @@ import java.util.List;
  * Class that can call methods that apply to all submodules.
  */
 public class SubmoduleManager {
-    
+
     private static SubmoduleManager instance = null;
+
     public static SubmoduleManager getInstance() {
         if (instance == null) {
             instance = new SubmoduleManager();
         }
         return instance;
     }
-    private SubmoduleManager() {}
+
+    private SubmoduleManager() {
+    }
 
     private List<Submodule> submodules;
 
@@ -29,8 +32,7 @@ public class SubmoduleManager {
     }
 
     /**
-     * Calls the {@link Submodule#onInit()} method for all 
-     * submodules.
+     * Calls the {@link Submodule#onInit()} method for all submodules.
      * 
      * @param timestamp
      */
@@ -39,8 +41,7 @@ public class SubmoduleManager {
     }
 
     /**
-     * Calls the {@link Submodule#onStart(double)} method for all 
-     * submodules.
+     * Calls the {@link Submodule#onStart(double)} method for all submodules.
      * 
      * @param timestamp
      */
@@ -49,8 +50,7 @@ public class SubmoduleManager {
     }
 
     /**
-     * Calls the {@link Submodule#stop()} method for all 
-     * submodules.
+     * Calls the {@link Submodule#stop()} method for all submodules.
      * 
      * @param timestamp
      */
@@ -59,8 +59,8 @@ public class SubmoduleManager {
     }
 
     /**
-     * Calls the {@link Submodule#update(double)} and
-     * {@link Submodule#run()} method for all submodules.
+     * Calls the {@link Submodule#update(double)} and {@link Submodule#run()}
+     * method for all submodules.
      * 
      * @param timestamp
      */

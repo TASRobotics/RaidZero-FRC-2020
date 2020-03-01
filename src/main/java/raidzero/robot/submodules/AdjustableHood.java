@@ -8,8 +8,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidzero.robot.wrappers.LazyTalonSRX;
-import raidzero.robot.Constants.AdjustableHoodConstants;
-import raidzero.robot.Constants.AdjustableHoodConstants.HoodAngle;
+import raidzero.robot.Constants.HoodConstants;
+import raidzero.robot.Constants.HoodConstants.HoodAngle;
 
 public class AdjustableHood extends Submodule {
 
@@ -19,13 +19,6 @@ public class AdjustableHood extends Submodule {
 
     private static AdjustableHood instance = null;
 
-    private LazyTalonSRX hoodMotor;
-
-    private double outputOpenLoop = 0.0;
-    private double outputPosition = 0.0;
-
-    private ControlState controlState = ControlState.OPEN_LOOP;
-
     public static AdjustableHood getInstance() {
         if (instance == null) {
             instance = new AdjustableHood();
@@ -33,29 +26,37 @@ public class AdjustableHood extends Submodule {
         return instance;
     }
 
-    private AdjustableHood() {}
+    private AdjustableHood() {
+    }
+
+    private LazyTalonSRX hoodMotor;
+
+    private double outputOpenLoop = 0.0;
+    private double outputPosition = 0.0;
+
+    private ControlState controlState = ControlState.OPEN_LOOP;
 
     @Override
     public void onInit() {
-        hoodMotor = new LazyTalonSRX(AdjustableHoodConstants.MOTOR_ID);
+        hoodMotor = new LazyTalonSRX(HoodConstants.MOTOR_ID);
         hoodMotor.configFactoryDefault();
-        hoodMotor.setNeutralMode(AdjustableHoodConstants.NEUTRAL_MODE);
-        hoodMotor.setInverted(AdjustableHoodConstants.INVERSION);
-        hoodMotor.setSensorPhase(AdjustableHoodConstants.SENSOR_PHASE);
+        hoodMotor.setNeutralMode(HoodConstants.NEUTRAL_MODE);
+        hoodMotor.setInverted(HoodConstants.INVERSION);
+        hoodMotor.setSensorPhase(HoodConstants.INVERT_SENSOR_PHASE);
 
         TalonSRXConfiguration config = new TalonSRXConfiguration();
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
 
         config.forwardLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
-        config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen; //Open
+        config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
         config.reverseLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
-        config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen; //Closed
+        config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
 
-        config.slot0.kF = AdjustableHoodConstants.K_F;
-        config.slot0.kP = AdjustableHoodConstants.K_P;
-        config.slot0.kI = AdjustableHoodConstants.K_I;
-        config.slot0.kD = AdjustableHoodConstants.K_D;
-        config.slot0.integralZone = AdjustableHoodConstants.K_INTEGRAL_ZONE;
+        config.slot0.kF = HoodConstants.K_F;
+        config.slot0.kP = HoodConstants.K_P;
+        config.slot0.kI = HoodConstants.K_I;
+        config.slot0.kD = HoodConstants.K_D;
+        config.slot0.integralZone = HoodConstants.K_INTEGRAL_ZONE;
 
         hoodMotor.configAllSettings(config);
     }
@@ -101,6 +102,11 @@ public class AdjustableHood extends Submodule {
         hoodMotor.setSelectedSensorPosition(0);
     }
 
+    /**
+     * Returns the position of the hood.
+     * 
+     * @return position in encoder ticks
+     */
     public int getPosition() {
         return hoodMotor.getSelectedSensorPosition();
     }

@@ -18,6 +18,16 @@ public class WheelOfFortune extends Submodule {
 
     private static WheelOfFortune instance = null;
 
+    public static WheelOfFortune getInstance() {
+        if (instance == null) {
+            instance = new WheelOfFortune();
+        }
+        return instance;
+    }
+
+    private WheelOfFortune() {
+    }
+
     private LazyTalonSRX wofMotor;
     private InactiveDoubleSolenoid solenoid;
 
@@ -26,15 +36,6 @@ public class WheelOfFortune extends Submodule {
     private boolean engaged = false;
 
     private ControlState controlState = ControlState.OPEN_LOOP;
-
-    public static WheelOfFortune getInstance() {
-        if (instance == null) {
-            instance = new WheelOfFortune();
-        }
-        return instance;
-    }
-
-    private WheelOfFortune() {}
 
     @Override
     public void onInit() {
@@ -53,8 +54,8 @@ public class WheelOfFortune extends Submodule {
 
         wofMotor.configAllSettings(config);
 
-        solenoid = new InactiveDoubleSolenoid(WheelOfFortuneConstants.WOF_FORWARD_ID, 
-            WheelOfFortuneConstants.WOF_REVERSE_ID);
+        solenoid = new InactiveDoubleSolenoid(WheelOfFortuneConstants.WOF_FORWARD_ID,
+                WheelOfFortuneConstants.WOF_REVERSE_ID);
         solenoid.set(Value.kOff);
     }
 

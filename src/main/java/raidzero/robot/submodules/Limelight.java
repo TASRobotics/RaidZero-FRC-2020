@@ -5,19 +5,9 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import raidzero.robot.Constants.LimelightConstants;
 
-// Reference: http://docs.limelightvision.io/en/latest/networktables_api.html
+// Reference:
+// http://docs.limelightvision.io/en/latest/networktables_api.html
 public class Limelight extends Submodule {
-
-	private static Limelight instance = null;
-	public static Limelight getInstance() {
-        if (instance == null) {
-            instance = new Limelight(LimelightConstants.NAME);
-        }
-        return instance;
-    }
-	
-	private NetworkTable table = null;
-
 	/**
 	 * LED modes for Limelight.
 	 */
@@ -31,16 +21,26 @@ public class Limelight extends Submodule {
 	public static enum CameraMode {
 		Vision, Driver
 	}
-	
+
 	/**
 	 * Stream modes for Limelight.
 	 */
 	public static enum StreamMode {
-		Standard,     // Side-by-side streams if a webcam is attached to Limelight
-		PIP_Main,     // Secondary stream is placed in the lower-right corner of the primary stream
-		PIP_Secondary // Primary stream is placed in the lower-right corner of the secondary stream
+		Standard, // Side-by-side streams if a webcam is attached to Limelight
+		PIP_Main, // Secondary stream is placed in the lower-right corner
+		PIP_Secondary // Primary stream is placed in the lower-right corner
 	}
 
+	private static Limelight instance = null;
+
+	public static Limelight getInstance() {
+		if (instance == null) {
+			instance = new Limelight(LimelightConstants.NAME);
+		}
+		return instance;
+	}
+
+	private NetworkTable table = null;
 	private String tableName;
 
 	private Limelight(String tableName) {
@@ -71,7 +71,7 @@ public class Limelight extends Submodule {
 	}
 
 	/**
-	 * Vertical offset from crosshair to target (-20.5 degrees to 20.5 degrees).
+	 * Vertical offset from crosshair to target (-20.5 to 20.5 degrees).
 	 * 
 	 * @return ty as reported by the Limelight.
 	 */
@@ -105,24 +105,24 @@ public class Limelight extends Submodule {
 	public double getTl() {
 		return getValue("tl").getDouble(0.0);
 	}
-	
+
 	/**
 	 * Returns an array of corner x-coordinates.
 	 *
-	 * Note: Enable "send contours" in the "Output" tab 
-	 * to stream corner coordinates.
+	 * Note: Enable "send contours" in the "Output" tab to stream corner
+	 * coordinates.
 	 * 
 	 * @return Corner x-coordinates.
 	 */
 	public double[] getTCornX() {
 		return getValue("tcornx").getDoubleArray(new double[] {});
 	}
-	
+
 	/**
 	 * Returns an array of corner y-coordinates.
 	 *
-	 * Note: Enable "send contours" in the "Output" tab 
-	 * to stream corner coordinates.
+	 * Note: Enable "send contours" in the "Output" tab to stream corner
+	 * coordinates.
 	 *
 	 * @return Corner y-coordinates.
 	 */
@@ -156,7 +156,7 @@ public class Limelight extends Submodule {
 	public void setPipeline(int number) {
 		getValue("pipeline").setNumber(number);
 	}
-	
+
 	/**
 	 * Sets stream mode for Limelight.
 	 * 
@@ -179,8 +179,8 @@ public class Limelight extends Submodule {
 		return table.getEntry(key);
 	}
 
-    @Override
-    public void stop() {
-        setLedMode(LedMode.Off);
-    }
+	@Override
+	public void stop() {
+		setLedMode(LedMode.Off);
+	}
 }

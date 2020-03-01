@@ -29,8 +29,8 @@ public class TurnToGoal implements Action {
             LimelightConstants.AIM_KD
         );
         pidController.setTolerance(LimelightConstants.ANGLE_ADJUST_THRESHOLD);
-        SmartDashboard.putData("TURN LL", pidController);
-        //pidController.setIntegratorRange(0.0, 1.0);
+        
+        SmartDashboard.putData("Auto-aim PID", pidController);
     }
 
     @Override
