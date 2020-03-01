@@ -1,7 +1,6 @@
 package raidzero.robot.auto.actions;
 
-import edu.wpi.first.wpilibj.Timer;
-
+import raidzero.robot.Constants.ShooterConstants;
 import raidzero.robot.submodules.Shooter;
 import raidzero.robot.utils.TimerBoolean;
 
@@ -15,7 +14,6 @@ public class SetShooterVelocity implements Action {
     private static final Shooter shooter = Shooter.getInstance();
 
     private double percentSpeed = 0.0;
-    private double startTime = 0.0;
 
     private TimerBoolean isUpToSpeed = new TimerBoolean(ShooterConstants.UP_TO_SPEED_DURATION);
 
@@ -31,13 +29,11 @@ public class SetShooterVelocity implements Action {
     @Override
     public boolean isFinished() {
         return isUpToSpeed.hasDurationPassed();
-        // || Timer.getFPGATimestamp() - startTime > ShooterConstants.APPROACH_SETPOINT_TIMEOUT
     }
 
     @Override
     public void start() {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
-        startTime = Timer.getFPGATimestamp();
 
         shooter.shoot(percentSpeed, false);
     }

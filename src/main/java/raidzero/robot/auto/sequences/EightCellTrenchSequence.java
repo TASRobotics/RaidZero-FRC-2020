@@ -8,7 +8,6 @@ import raidzero.robot.auto.actions.*;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.submodules.Intake;
 import raidzero.robot.submodules.Shooter;
-import raidzero.robot.submodules.Turret;
 
 public class EightCellTrenchSequence extends AutoSequence {
 
@@ -28,7 +27,6 @@ public class EightCellTrenchSequence extends AutoSequence {
 
     private static final Intake intake = Intake.getInstance();
     private static final Shooter shooter = Shooter.getInstance();
-    private static final Turret turret = Turret.getInstance();
 
     public EightCellTrenchSequence() {
         System.out.println(DriverStation.getInstance().getAlliance().name());
