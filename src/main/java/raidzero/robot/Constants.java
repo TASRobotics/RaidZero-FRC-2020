@@ -96,7 +96,7 @@ public class Constants {
         public static final double MAX_SPEED = 20000; // in ticks per 100ms
         public static final double FAKE_MAX_SPEED = 17000; // in ticks per 100ms
         public static final double ERROR_TOLERANCE = 250;
-        public static final double UP_TO_SPEED_DURATION = 0.8; // in seconds
+        public static final double UP_TO_SPEED_DURATION = 0.5; // in seconds
 
         public static final double K_F = 1023.0 / MAX_SPEED;
         public static final double K_P = 0.6;
@@ -243,12 +243,13 @@ public class Constants {
         public static final double MOUNTING_ANGLE = 31.4; // in degrees
         public static final double MOUNTING_HEIGHT = 0.56; // in meters
 
+        // TODO: Improve the constants
         public static final double AIM_KP = 0.035;
         public static final double AIM_KI = 0.004;
         public static final double AIM_KD = 0.001;
-        public static final double ANGLE_ADJUST_THRESHOLD = 2.0;
+        public static final double ANGLE_ADJUST_THRESHOLD = 1.0;
 
-        public static final double AIM_ON_TARGET_DURATION = 0.4;
+        public static final double AIM_ON_TARGET_DURATION = 0.3;
     }
 
     /**

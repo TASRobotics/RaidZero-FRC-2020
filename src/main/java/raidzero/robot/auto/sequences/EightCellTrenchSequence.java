@@ -42,7 +42,10 @@ public class EightCellTrenchSequence extends AutoSequence {
                             new TurnTurretToAngle(100),
                             new TurnToGoal()
                         )),
-                        new SetHoodPosition(5800)
+                        new SeriesAction(Arrays.asList(
+                            new WaitAction(0.2),
+                            new SetHoodPosition(5800)
+                        ))
                     )
                 ),
                 new SetShooterVelocity(1.0),
