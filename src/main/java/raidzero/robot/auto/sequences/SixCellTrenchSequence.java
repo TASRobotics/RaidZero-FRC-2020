@@ -9,7 +9,7 @@ import raidzero.robot.pathing.Path;
 import raidzero.robot.submodules.Intake;
 import raidzero.robot.submodules.Shooter;
 
-public class EightCellTrenchSequence extends AutoSequence {
+public class SixCellTrenchSequence extends AutoSequence {
 
     private static final Point[] TRENCH_FORWARD_WAYPOINTS = {
         new Point(120, -24, 0),
@@ -28,7 +28,7 @@ public class EightCellTrenchSequence extends AutoSequence {
     private static final Intake intake = Intake.getInstance();
     private static final Shooter shooter = Shooter.getInstance();
 
-    public EightCellTrenchSequence() {
+    public SixCellTrenchSequence() {
         System.out.println(DriverStation.getInstance().getAlliance().name());
     }
 
@@ -70,11 +70,11 @@ public class EightCellTrenchSequence extends AutoSequence {
 
     @Override
     public void onEnded() {
-        System.out.println("EightCellTrenchSequence ended!");
+        System.out.println("SixCellTrenchSequence ended!");
     }
 
     @Override
     public String getName() {
-        return "Eight Cell Trench";
+        return "Six Cell Trench";
     }
 }

@@ -14,7 +14,7 @@ public class AutoRunner {
     private AutoSequence selectedSequence;
 
     private AutoSequence[] availableSequences = {
-        new EightCellTrenchSequence(),
+        new SixCellTrenchSequence(),
         new TenCellTrenchSequence(),
         new TestSequence(),
         new TestShooterVelocitySequence(),
