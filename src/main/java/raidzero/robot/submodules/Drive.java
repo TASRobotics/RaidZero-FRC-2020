@@ -12,7 +12,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
