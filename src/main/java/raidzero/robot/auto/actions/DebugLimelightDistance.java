@@ -1,7 +1,13 @@
 package raidzero.robot.auto.actions;
 
+import java.util.Map;
+
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.MedianFilter;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+
+import raidzero.robot.dashboard.Tab;
 import raidzero.robot.submodules.Limelight;
 import raidzero.robot.submodules.Limelight.CameraMode;
 import raidzero.robot.submodules.Limelight.LedMode;
@@ -15,6 +21,15 @@ public class DebugLimelightDistance implements Action {
     private static final Limelight limelight = Limelight.getInstance();
 
     private MedianFilter filter = new MedianFilter(5);
+
+    private NetworkTableEntry distanceEntry =
+            Shuffleboard.getTab(Tab.MAIN)
+                .add("Estimated Distance (m)", 0.0)
+                .withWidget(BuiltInWidgets.kNumberBar)
+                .withProperties(Map.of("min", 0.0, "max", 10.0))
+                .withSize(3, 1)
+                .withPosition(2, 0)
+                .getEntry();
 
     public DebugLimelightDistance() {
     }
@@ -36,7 +51,7 @@ public class DebugLimelightDistance implements Action {
     @Override
     public void update() {
         double distance = LimelightUtils.estimateDistance(filter.calculate(limelight.getTy()));
-        SmartDashboard.putNumber("Distance (m)", distance);
+        distanceEntry.setDouble(distance);
     }
 
     @Override

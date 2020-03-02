@@ -2,8 +2,9 @@ package raidzero.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import raidzero.robot.auto.AutoRunner;
+import raidzero.robot.dashboard.Tab;
 import raidzero.robot.teleop.Teleop;
 import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.Limelight;
@@ -60,6 +61,8 @@ public class Robot extends TimedRobot {
         submoduleManager.onInit();
 
         autoRunner = new AutoRunner();
+
+        Shuffleboard.selectTab(Tab.MAIN);
     }
 
     /**

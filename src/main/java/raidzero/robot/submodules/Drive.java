@@ -1,5 +1,7 @@
 package raidzero.robot.submodules;
 
+import java.util.Map;
+
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -12,11 +14,14 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import raidzero.robot.Constants;
 import raidzero.robot.Constants.DriveConstants;
+import raidzero.robot.dashboard.Tab;
 import raidzero.robot.wrappers.*;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.pathing.ProfileFollower;
@@ -71,6 +76,25 @@ public class Drive extends Submodule {
     private double outputLeftDrive = 0.0;
     private double outputRightDrive = 0.0;
     private int outputClosedLoop = 0;
+
+    private NetworkTableEntry gearShiftEntry = Shuffleboard.getTab(Tab.MAIN)
+        .add("Gear Shift", currentGearShift.toString())
+        .withWidget(BuiltInWidgets.kTextView)
+        .withSize(1, 1)
+        .withPosition(3, 2)
+        .getEntry();
+    private NetworkTableEntry leftEncoderEntry = Shuffleboard.getTab(Tab.DEBUG)
+        .add("Left Distance (in)", 0.0)
+        .withWidget(BuiltInWidgets.kTextView)
+        .withSize(1, 1)
+        .withPosition(0, 0)
+        .getEntry();
+    private NetworkTableEntry rightEncoderEntry = Shuffleboard.getTab(Tab.DEBUG)
+        .add("Right Distance (in)", 0.0)
+        .withWidget(BuiltInWidgets.kTextView)
+        .withSize(1, 1)
+        .withPosition(1, 0)
+        .getEntry();
 
     @Override
     public void onInit() {
@@ -251,12 +275,15 @@ public class Drive extends Submodule {
             mpFollower.update();
             outputClosedLoop = mpFollower.getOutput();
         }
-        SmartDashboard.putNumber("left inches", EncoderUtils.ticksToInches(
-                leftLeader.getSensorCollection().getIntegratedSensorPosition(), currentGearShift));
-        SmartDashboard.putNumber("right inches",
-                EncoderUtils.ticksToInches(
-                        -rightLeader.getSensorCollection().getIntegratedSensorPosition(),
-                        currentGearShift));
+        gearShiftEntry.setString(currentGearShift.toString());
+        leftEncoderEntry.setNumber(
+            EncoderUtils.ticksToInches(
+                leftLeader.getSensorCollection().getIntegratedSensorPosition(), currentGearShift)
+        );
+        rightEncoderEntry.setNumber(
+            EncoderUtils.ticksToInches(
+                -rightLeader.getSensorCollection().getIntegratedSensorPosition(), currentGearShift)
+        );
     }
 
     /**

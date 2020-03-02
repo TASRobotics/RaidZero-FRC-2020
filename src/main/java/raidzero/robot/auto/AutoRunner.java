@@ -1,8 +1,9 @@
 package raidzero.robot.auto;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidzero.robot.auto.sequences.*;
+import raidzero.robot.dashboard.Tab;
 
 /**
  * Class that manages autonomous sequences.
@@ -28,7 +29,11 @@ public class AutoRunner {
         for (AutoSequence sequence : availableSequences) {
             chooser.addOption(sequence.getName(), sequence);
         }
-        SmartDashboard.putData("Auto Selection", chooser);
+        Shuffleboard.getTab(Tab.MAIN)
+                .add("Auton Selection", chooser)
+                .withSize(3, 1)
+                .withPosition(2, 1);
+        // SmartDashboard.putData("Auton Selection", chooser);
     }
 
     /**

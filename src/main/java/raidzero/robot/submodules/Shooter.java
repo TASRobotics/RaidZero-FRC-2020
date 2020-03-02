@@ -6,9 +6,12 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import raidzero.robot.Constants;
 import raidzero.robot.Constants.ShooterConstants;
+import raidzero.robot.dashboard.Tab;
 
 public class Shooter extends Submodule {
 
@@ -27,6 +30,19 @@ public class Shooter extends Submodule {
     private LazyTalonFX shooterMotor;
 
     private double outputPercentSpeed = 0.0;
+
+    private NetworkTableEntry shooterVelocityEntry = Shuffleboard.getTab(Tab.MAIN)
+        .add("Shooter Vel", 0)
+        .withWidget(BuiltInWidgets.kTextView)
+        .withSize(1, 1)
+        .withPosition(0, 2)
+        .getEntry();
+    private NetworkTableEntry shooterUpToSpeedEntry = Shuffleboard.getTab(Tab.MAIN)
+        .add("Up To Speed", false)
+        .withWidget(BuiltInWidgets.kTextView)
+        .withSize(1, 1)
+        .withPosition(1, 2)
+        .getEntry();
 
     @Override
     public void onInit() {
@@ -54,9 +70,8 @@ public class Shooter extends Submodule {
 
     @Override
     public void update(double timestamp) {
-        SmartDashboard.putNumber("Shooter Vel", shooterMotor.getSelectedSensorVelocity());
-        SmartDashboard.putNumber("Shooter Target", outputPercentSpeed);
-        SmartDashboard.putBoolean("Shooter Up2Speed", isUpToSpeed());
+        shooterVelocityEntry.setNumber(shooterMotor.getSelectedSensorVelocity());
+        shooterUpToSpeedEntry.setBoolean(isUpToSpeed());
     }
 
     @Override

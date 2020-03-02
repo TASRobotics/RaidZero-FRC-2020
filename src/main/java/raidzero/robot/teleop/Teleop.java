@@ -1,12 +1,15 @@
 package raidzero.robot.teleop;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.Constants.IntakeConstants;
 import raidzero.robot.Constants.HoodConstants.HoodAngle;
 import raidzero.robot.auto.actions.DebugLimelightDistance;
+import raidzero.robot.dashboard.Tab;
 import raidzero.robot.submodules.AdjustableHood;
 import raidzero.robot.submodules.Climb;
 import raidzero.robot.submodules.Drive;
@@ -70,6 +73,13 @@ public class Teleop {
 
     private DriveMode driveMode = DriveMode.TANK;
 
+    private NetworkTableEntry driveModeEntry = Shuffleboard.getTab(Tab.MAIN)
+        .add("Drive Mode", driveMode.toString())
+        .withWidget(BuiltInWidgets.kTextView)
+        .withSize(1, 1)
+        .withPosition(2, 2)
+        .getEntry();
+
     /**
      * Runs at the start of teleop.
      */
@@ -112,7 +122,7 @@ public class Teleop {
         if (p1.getBackButtonPressed()) {
             driveMode = driveMode.next();
         }
-        SmartDashboard.putString("Drive Modes", driveMode.toString());
+        driveModeEntry.setString(driveMode.toString());
         switch (driveMode) {
             case TANK:
                 drive.tank(JoystickUtils.monomialScale(JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
