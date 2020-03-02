@@ -1,15 +1,20 @@
 package raidzero.robot.submodules;
 
+import java.util.Map;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import raidzero.robot.wrappers.LazyTalonSRX;
 import raidzero.robot.Constants.HoodConstants;
 import raidzero.robot.Constants.HoodConstants.HoodAngle;
+import raidzero.robot.dashboard.Tab;
 
 public class AdjustableHood extends Submodule {
 
@@ -35,6 +40,14 @@ public class AdjustableHood extends Submodule {
     private double outputPosition = 0.0;
 
     private ControlState controlState = ControlState.OPEN_LOOP;
+
+    private NetworkTableEntry hoodPositionEntry = Shuffleboard.getTab(Tab.MAIN)
+        .add("Hood Position", 0)
+        .withWidget(BuiltInWidgets.kDial)
+        .withProperties(Map.of("min", 0, "max", 7000))
+        .withSize(2, 2)
+        .withPosition(0, 0)
+        .getEntry();
 
     @Override
     public void onInit() {
@@ -74,7 +87,7 @@ public class AdjustableHood extends Submodule {
         if (hoodMotor.isRevLimitSwitchClosed() == 1) {
             zero();
         }
-        SmartDashboard.putNumber("Hood Pos", hoodMotor.getSelectedSensorPosition());
+        hoodPositionEntry.setNumber(hoodMotor.getSelectedSensorPosition());
     }
 
     @Override
