@@ -1,5 +1,6 @@
 package raidzero.robot.auto.actions;
 
+import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.submodules.Drive;
 
@@ -11,9 +12,16 @@ public class DrivePath implements Action {
     private static final Drive drive = Drive.getInstance();
 
     private Path path;
+    private double maxSpeed;
 
     public DrivePath(Path path) {
         this.path = path;
+        maxSpeed = DriveConstants.DEFAULT_CRUISE_VELOCITY;
+    }
+    
+    public DrivePath(Path path, double maxSpeed) {
+        this.path = path;
+        this.maxSpeed = maxSpeed;
     }
 
     @Override
