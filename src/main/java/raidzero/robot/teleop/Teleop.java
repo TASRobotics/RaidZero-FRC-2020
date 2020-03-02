@@ -73,12 +73,12 @@ public class Teleop {
 
     private DriveMode driveMode = DriveMode.TANK;
 
-    private NetworkTableEntry driveModeEntry = Shuffleboard.getTab(Tab.MAIN)
+    /*private NetworkTableEntry driveModeEntry = Shuffleboard.getTab(Tab.MAIN)
         .add("Drive Mode", driveMode.toString())
         .withWidget(BuiltInWidgets.kTextView)
         .withSize(1, 1)
         .withPosition(2, 2)
-        .getEntry();
+        .getEntry();*/
 
     /**
      * Runs at the start of teleop.
@@ -122,7 +122,7 @@ public class Teleop {
         if (p1.getBackButtonPressed()) {
             driveMode = driveMode.next();
         }
-        driveModeEntry.setString(driveMode.toString());
+        //driveModeEntry.setString(driveMode.toString());
         switch (driveMode) {
             case TANK:
                 drive.tank(JoystickUtils.monomialScale(JoystickUtils.deadband(-p1.getY(Hand.kLeft)),

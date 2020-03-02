@@ -20,7 +20,7 @@ public class TenCellTrenchSequence extends AutoSequence {
     private static final Point[] RZ_BACKWARD = {
         new Point(240, -109, 249),
         new Point(161, -95, 180)
-    }
+    };
 
     private static final Point[] TRENCH_FORWARD_WAYPOINTS = {
         new Point(161, -95, 0),

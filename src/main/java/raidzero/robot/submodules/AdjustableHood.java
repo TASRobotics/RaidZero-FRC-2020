@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidzero.robot.wrappers.LazyTalonSRX;
 import raidzero.robot.Constants.HoodConstants;
 import raidzero.robot.Constants.HoodConstants.HoodAngle;
@@ -41,13 +42,13 @@ public class AdjustableHood extends Submodule {
 
     private ControlState controlState = ControlState.OPEN_LOOP;
 
-    private NetworkTableEntry hoodPositionEntry = Shuffleboard.getTab(Tab.MAIN)
+    /*private NetworkTableEntry hoodPositionEntry = Shuffleboard.getTab(Tab.MAIN)
         .add("Hood Position", 0)
         .withWidget(BuiltInWidgets.kDial)
         .withProperties(Map.of("min", 0, "max", 7000))
         .withSize(2, 2)
         .withPosition(0, 0)
-        .getEntry();
+        .getEntry();*/
 
     @Override
     public void onInit() {
@@ -87,7 +88,8 @@ public class AdjustableHood extends Submodule {
         if (hoodMotor.isRevLimitSwitchClosed() == 1) {
             zero();
         }
-        hoodPositionEntry.setNumber(hoodMotor.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Hood Angle", hoodMotor.getSelectedSensorPosition());
+        //hoodPositionEntry.setNumber(hoodMotor.getSelectedSensorPosition());
     }
 
     @Override
