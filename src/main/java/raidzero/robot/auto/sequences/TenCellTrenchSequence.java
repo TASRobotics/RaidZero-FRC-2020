@@ -20,7 +20,7 @@ public class TenCellTrenchSequence extends AutoSequence {
     private static final Point[] RZ_BACKWARD = {
         new Point(240, -109, 249),
         new Point(161, -95, 180)
-    }
+    };
 
     private static final Point[] TRENCH_FORWARD_WAYPOINTS = {
         new Point(161, -95, 0),
@@ -46,25 +46,26 @@ public class TenCellTrenchSequence extends AutoSequence {
     public void sequence() {
         addAction(new SeriesAction(
             Arrays.asList(
-                new ParallelAction(
-                    Arrays.asList(
-                        new SeriesAction(Arrays.asList(
-                            new TurnTurretToAngle(100),
-                            new TurnToGoal()
-                        )),
-                        new SeriesAction(Arrays.asList(
-                            new SetHoodPosition(5800)
-                        ))
-                    )
-                ),
-                new SetShooterVelocity(1.0),
-                new FeedBalls(2.0),
-                new LambdaAction(() -> shooter.stop()),
                 new LambdaAction(() -> intake.intakeBalls(1.0)),
-                new DrivePath(new Path(TRENCH_FORWARD_WAYPOINTS, false)),
+                new DrivePath(new Path(RZ_FORWARD, false, 10,
+                    DriveConstants.DEFAULT_TARGET_ACCELERATION)),
                 new LambdaAction(() -> intake.stop())
+        )));
+        addAction(new SeriesAction(Arrays.asList(
+                new ParallelAction(Arrays.asList(
+                    new DrivePath(new Path(RZ_BACKWARD, false, 10,
+                        DriveConstants.DEFAULT_TARGET_ACCELERATION)),
+                    new SetShooterVelocity(1.0),
+                    new TurnTurretToAngle(90),
+                    new SetHoodPosition(5800)
+                )),
+                new TurnToGoal(),
+                new FeedBalls(3.0)
             )
         ));
+        addAction(new SeriesAction(Arrays.asList(
+            new LambdaAction(() -> intake.intakeBalls(1.0))
+        )));
         addAction(new SeriesAction(
             Arrays.asList(
                 new ParallelAction(Arrays.asList(
