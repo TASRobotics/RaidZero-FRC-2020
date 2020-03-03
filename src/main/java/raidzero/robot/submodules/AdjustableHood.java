@@ -42,13 +42,13 @@ public class AdjustableHood extends Submodule {
 
     private ControlState controlState = ControlState.OPEN_LOOP;
 
-    /*private NetworkTableEntry hoodPositionEntry = Shuffleboard.getTab(Tab.MAIN)
+    private NetworkTableEntry hoodPositionEntry = Shuffleboard.getTab(Tab.MAIN)
         .add("Hood Position", 0)
         .withWidget(BuiltInWidgets.kDial)
         .withProperties(Map.of("min", 0, "max", 7000))
         .withSize(2, 2)
         .withPosition(0, 0)
-        .getEntry();*/
+        .getEntry();
 
     @Override
     public void onInit() {
@@ -89,7 +89,7 @@ public class AdjustableHood extends Submodule {
             zero();
         }
         SmartDashboard.putNumber("Hood Angle", hoodMotor.getSelectedSensorPosition());
-        //hoodPositionEntry.setNumber(hoodMotor.getSelectedSensorPosition());
+        hoodPositionEntry.setNumber(hoodMotor.getSelectedSensorPosition());
     }
 
     @Override

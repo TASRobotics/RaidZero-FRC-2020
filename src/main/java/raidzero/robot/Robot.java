@@ -61,8 +61,6 @@ public class Robot extends TimedRobot {
         submoduleManager.onInit();
 
         autoRunner = new AutoRunner();
-
-        Shuffleboard.selectTab(Tab.MAIN);
     }
 
     /**

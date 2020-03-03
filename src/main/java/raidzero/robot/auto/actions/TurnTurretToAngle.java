@@ -25,6 +25,7 @@ public class TurnTurretToAngle implements Action {
 
     @Override
     public void start() {
+        atSetpoint.reset();
         turret.rotateToAngle(angle);
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
     }

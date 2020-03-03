@@ -35,6 +35,7 @@ public class SetShooterVelocity implements Action {
     public void start() {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
 
+        isUpToSpeed.reset();
         shooter.shoot(percentSpeed, false);
     }
 

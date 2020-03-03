@@ -23,6 +23,12 @@ public class TimerBoolean {
         this.duration = duration;
     }
 
+    public void reset() {
+        previousBoolean = false;
+        startTime = 0.0;
+        started = false;
+    }
+
     public void update(boolean currentBoolean) {
         if (!previousBoolean && currentBoolean) { // If just switched to true
             started = true;

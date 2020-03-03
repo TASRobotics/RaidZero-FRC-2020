@@ -31,7 +31,7 @@ public class Shooter extends Submodule {
 
     private double outputPercentSpeed = 0.0;
 
-    /*private NetworkTableEntry shooterVelocityEntry = Shuffleboard.getTab(Tab.MAIN)
+    private NetworkTableEntry shooterVelocityEntry = Shuffleboard.getTab(Tab.MAIN)
         .add("Shooter Vel", 0)
         .withWidget(BuiltInWidgets.kTextView)
         .withSize(1, 1)
@@ -42,7 +42,7 @@ public class Shooter extends Submodule {
         .withWidget(BuiltInWidgets.kTextView)
         .withSize(1, 1)
         .withPosition(1, 2)
-        .getEntry();*/
+        .getEntry();
 
     @Override
     public void onInit() {
@@ -70,8 +70,8 @@ public class Shooter extends Submodule {
 
     @Override
     public void update(double timestamp) {
-        //shooterVelocityEntry.setNumber(shooterMotor.getSelectedSensorVelocity());
-        //shooterUpToSpeedEntry.setBoolean(isUpToSpeed());
+        shooterVelocityEntry.setNumber(shooterMotor.getSelectedSensorVelocity());
+        shooterUpToSpeedEntry.setBoolean(isUpToSpeed());
     }
 
     @Override

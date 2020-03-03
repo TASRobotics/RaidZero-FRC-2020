@@ -73,12 +73,12 @@ public class Teleop {
 
     private DriveMode driveMode = DriveMode.TANK;
 
-    /*private NetworkTableEntry driveModeEntry = Shuffleboard.getTab(Tab.MAIN)
+    private NetworkTableEntry driveModeEntry = Shuffleboard.getTab(Tab.MAIN)
         .add("Drive Mode", driveMode.toString())
         .withWidget(BuiltInWidgets.kTextView)
         .withSize(1, 1)
         .withPosition(2, 2)
-        .getEntry();*/
+        .getEntry();
 
     /**
      * Runs at the start of teleop.
@@ -122,7 +122,7 @@ public class Teleop {
         if (p1.getBackButtonPressed()) {
             driveMode = driveMode.next();
         }
-        //driveModeEntry.setString(driveMode.toString());
+        driveModeEntry.setString(driveMode.toString());
         switch (driveMode) {
             case TANK:
                 drive.tank(JoystickUtils.monomialScale(JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
@@ -205,6 +205,31 @@ public class Teleop {
 
     private void p2Loop() {
         /**
+         * Override
+         */
+        if (p2.getBumper(Hand.kLeft)) {
+            /**
+             * WOF Override
+             */
+            wheelOfFortune.spin(JoystickUtils.deadband(p2.getX(Hand.kRight)));
+
+            /**
+             * Shooter Override
+             */
+            // If left bumper held shooter override
+            shooter.shoot(JoystickUtils.deadband(p2.getTriggerAxis(Hand.kRight)), false);
+
+            if (p2.getAButtonPressed()) {
+                // TODO: PID turret 90 degrees
+                superstructure.setTurretPIDing(true);
+            } else if (p2.getAButtonReleased()) {
+                superstructure.setTurretPIDing(false);
+            }
+
+            return;
+        }
+
+        /**
          * Compressor
          */
         if (p2.getBackButtonPressed()) {
@@ -252,6 +277,10 @@ public class Teleop {
         if (p2.getAButtonPressed()) {
             superstructure.setAiming(true);
         } else if (p2.getAButtonReleased()) {
+            // In case the override button is released while PIDing
+            if (superstructure.isTurretPIDing()) {
+                superstructure.setTurretPIDing(false);
+            }
             superstructure.setAiming(false);
         }
         // Turn turret using right joystick
@@ -263,9 +292,9 @@ public class Teleop {
          * Shooter
          */
         if (p2.getBumperPressed(Hand.kRight)) {
-            shooter.shoot(1, false);
+            shooter.shoot(1.0, false);
         } else if (p2.getBumperReleased(Hand.kRight)) {
-            shooter.shoot(0, false);
+            shooter.shoot(0.0, false);
         }
 
         /**
@@ -275,24 +304,6 @@ public class Teleop {
             superstructure.setAimingAndHood(true);
         } else {
             superstructure.setAimingAndHood(false);
-        }
-
-        /**
-         * Override
-         */
-        if (p2.getBumper(Hand.kLeft)) {
-            /**
-             * WOF Override
-             */
-            wheelOfFortune.spin(JoystickUtils.deadband(p2.getY(Hand.kRight)));
-
-            /**
-             * Shooter Override
-             */
-            // If left bumper held shooter override
-            shooter.shoot(JoystickUtils.deadband(p2.getTriggerAxis(Hand.kRight)), false);
-
-            return;
         }
 
         /**

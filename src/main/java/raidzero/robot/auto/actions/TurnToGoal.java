@@ -40,6 +40,8 @@ public class TurnToGoal implements Action {
 
     @Override
     public void start() {
+        onTarget.reset();
+
         pidController.reset();
         pidController.setSetpoint(0.0);
 

@@ -25,6 +25,7 @@ public class SetHoodPosition implements Action {
 
     @Override
     public void start() {
+        atSetpoint.reset();
         hood.moveToTick(position);
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
     }

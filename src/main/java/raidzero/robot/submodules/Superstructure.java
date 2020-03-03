@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import raidzero.robot.auto.actions.ReusableSeriesAction;
 import raidzero.robot.auto.actions.TurnToGoal;
+import raidzero.robot.auto.actions.TurnTurretToAngle;
 import raidzero.robot.auto.actions.VisionAssistedTargeting;
 
 public class Superstructure extends Submodule {
@@ -26,6 +27,9 @@ public class Superstructure extends Submodule {
     private boolean isAimingAndHood = false;
     private ReusableSeriesAction aimAndHoodAction;
 
+    private boolean isTurretPIDing = false;
+    private TurnTurretToAngle turretPIDAction;
+
     @Override
     public void onStart(double timestamp) {
         aimAction = new TurnToGoal();
@@ -33,6 +37,7 @@ public class Superstructure extends Submodule {
             new TurnToGoal(), 
             new VisionAssistedTargeting()
         ));
+        turretPIDAction = new TurnTurretToAngle(90);
     }
 
     @Override
@@ -43,12 +48,16 @@ public class Superstructure extends Submodule {
         if (isAimingAndHood) {
             aimAndHoodAction.update();
         }
+        if (isTurretPIDing) {
+            turretPIDAction.update();
+        }
     }
 
     @Override
     public void stop() {
         setAiming(false);
         setAimingAndHood(false);
+        setTurretPIDing(false);
     }
 
     /**
@@ -87,6 +96,26 @@ public class Superstructure extends Submodule {
             aimAndHoodAction.start();
         } else {
             aimAndHoodAction.done();
+        }
+    }
+
+    public boolean isTurretPIDing() {
+        return isTurretPIDing;
+    }
+
+    public void setTurretPIDing(boolean status) {
+        if (status == isTurretPIDing) {
+            return;
+        }
+        isTurretPIDing = status;
+        if (status) {
+            if (isAiming || isAimingAndHood) {
+                isTurretPIDing = false;
+                return;
+            }
+            turretPIDAction.start();
+        } else {
+            turretPIDAction.done();
         }
     }
 }
