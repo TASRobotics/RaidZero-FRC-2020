@@ -28,7 +28,7 @@ public class Intake extends Submodule {
 
     private double outputOpenLoop = 0.0;
 
-    private Value position = Value.kOff;
+    private Value position = Value.kReverse;
 
     @Override
     public void onInit() {
@@ -39,6 +39,7 @@ public class Intake extends Submodule {
 
         solenoid = new InactiveDoubleSolenoid(IntakeConstants.INTAKE_FORWARD_ID,
                 IntakeConstants.INTAKE_REVERSE_ID);
+        solenoid.set(position);
     }
 
     @Override

@@ -78,7 +78,7 @@ public class Drive extends Submodule {
     private int outputClosedLoop = 0;
 
     private NetworkTableEntry gearShiftEntry = Shuffleboard.getTab(Tab.MAIN)
-        .add("Gear Shift", currentGearShift.toString())
+        .add("Gear Shift", "EMPTY")
         .withWidget(BuiltInWidgets.kTextView)
         .withSize(1, 1)
         .withPosition(3, 2)

@@ -22,14 +22,14 @@ public class DebugLimelightDistance implements Action {
 
     private MedianFilter filter = new MedianFilter(5);
 
-    private NetworkTableEntry distanceEntry =
+    /*private NetworkTableEntry distanceEntry =
             Shuffleboard.getTab(Tab.MAIN)
                 .add("Estimated Distance (m)", 0.0)
                 .withWidget(BuiltInWidgets.kNumberBar)
                 .withProperties(Map.of("min", 0.0, "max", 10.0))
                 .withSize(3, 1)
                 .withPosition(2, 0)
-                .getEntry();
+                .getEntry();*/
 
     public DebugLimelightDistance() {
     }
@@ -51,7 +51,7 @@ public class DebugLimelightDistance implements Action {
     @Override
     public void update() {
         double distance = LimelightUtils.estimateDistance(filter.calculate(limelight.getTy()));
-        distanceEntry.setDouble(distance);
+        //distanceEntry.setDouble(distance);
     }
 
     @Override

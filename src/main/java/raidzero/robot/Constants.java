@@ -73,7 +73,7 @@ public class Constants {
         public static final int MIN_POINTS_IN_TALON = 10;
         public static final int TRANSMIT_PERIOD_MS = 3;
 
-        public static final double DEFAULT_CRUISE_VELOCITY = 8.5;
+        public static final double DEFAULT_CRUISE_VELOCITY = 8;
         public static final double DEFAULT_TARGET_ACCELERATION = 8;
 
         // Joystick to Output mapping
@@ -139,7 +139,7 @@ public class Constants {
         public static final double K_D = 0.001;
         public static final int K_INTEGRAL_ZONE = 0;
 
-        public static final int TOLERANCE = 200;
+        public static final int TOLERANCE = 400;
         public static final double AT_SETPOINT_DURATION = 0.2;
 
         // distance to hood angle regression
@@ -169,7 +169,7 @@ public class Constants {
         public static final int K_INTEGRAL_ZONE = 0;
 
         public static final int TOLERANCE = 1000;
-        public static final double AT_SETPOINT_DURATION = 0.5;
+        public static final double AT_SETPOINT_DURATION = 0.05;
     }
 
     /**
@@ -247,9 +247,9 @@ public class Constants {
         public static final double AIM_KP = 0.035;
         public static final double AIM_KI = 0.004;
         public static final double AIM_KD = 0.001;
-        public static final double ANGLE_ADJUST_THRESHOLD = 1.0;
+        public static final double ANGLE_ADJUST_THRESHOLD = 2.0;
 
-        public static final double AIM_ON_TARGET_DURATION = 0.3;
+        public static final double AIM_ON_TARGET_DURATION = 0.2;
     }
 
     /**
