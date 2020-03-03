@@ -77,8 +77,8 @@ public class Drive extends Submodule {
     private double outputRightDrive = 0.0;
     private int outputClosedLoop = 0;
 
-    /*private NetworkTableEntry gearShiftEntry = Shuffleboard.getTab(Tab.MAIN)
-        .add("Gear Shift", currentGearShift.toString())
+    private NetworkTableEntry gearShiftEntry = Shuffleboard.getTab(Tab.MAIN)
+        .add("Gear Shift", "EMPTY")
         .withWidget(BuiltInWidgets.kTextView)
         .withSize(1, 1)
         .withPosition(3, 2)
@@ -94,7 +94,7 @@ public class Drive extends Submodule {
         .withWidget(BuiltInWidgets.kTextView)
         .withSize(1, 1)
         .withPosition(1, 0)
-        .getEntry();*/
+        .getEntry();
 
     @Override
     public void onInit() {
@@ -275,7 +275,7 @@ public class Drive extends Submodule {
             mpFollower.update();
             outputClosedLoop = mpFollower.getOutput();
         }
-        /*gearShiftEntry.setString(currentGearShift.toString());
+        gearShiftEntry.setString(currentGearShift.toString());
         leftEncoderEntry.setNumber(
             EncoderUtils.ticksToInches(
                 leftLeader.getSensorCollection().getIntegratedSensorPosition(), currentGearShift)
@@ -283,7 +283,7 @@ public class Drive extends Submodule {
         rightEncoderEntry.setNumber(
             EncoderUtils.ticksToInches(
                 -rightLeader.getSensorCollection().getIntegratedSensorPosition(), currentGearShift)
-        );*/
+        );
     }
 
     /**
