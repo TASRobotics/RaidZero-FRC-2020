@@ -29,6 +29,10 @@ public abstract class AutoSequence {
      * {@link AutoRunner}.
      */
     public final void run() {
+        // Reset the actions
+        actions.clear();
+        currentAction = null;
+
         sequence();
 
         // End the sequence if there aren't any actions
