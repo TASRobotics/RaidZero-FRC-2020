@@ -123,25 +123,27 @@ public class Teleop {
             driveMode = driveMode.next();
         }
         driveModeEntry.setString(driveMode.toString());
-        switch (driveMode) {
-            case TANK:
-                drive.tank(JoystickUtils.monomialScale(JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
-                        DriveConstants.JOYSTICK_EXPONENT, DriveConstants.JOYSTICK_COEFFICIENT),
-                        JoystickUtils.monomialScale(JoystickUtils.deadband(-p1.getY(Hand.kRight)),
-                                DriveConstants.JOYSTICK_EXPONENT,
-                                DriveConstants.JOYSTICK_COEFFICIENT),
-                        reverse);
-                break;
-            case ARCADE:
-                drive.arcade(JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
-                        JoystickUtils.deadband(p1.getX(Hand.kRight)), reverse);
-                break;
-            case CURVATURE:
-                double xSpeed = JoystickUtils.deadband(-p1.getY(Hand.kLeft));
-                drive.curvatureDrive(xSpeed, JoystickUtils.deadband(p1.getX(Hand.kRight)),
-                        Math.abs(xSpeed) < 0.1 // TODO: Change quick turn
-                );
-                break;
+        if (!superstructure.isCloseAligning()) {
+            switch (driveMode) {
+                case TANK:
+                    drive.tank(JoystickUtils.monomialScale(JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
+                            DriveConstants.JOYSTICK_EXPONENT, DriveConstants.JOYSTICK_COEFFICIENT),
+                            JoystickUtils.monomialScale(JoystickUtils.deadband(-p1.getY(Hand.kRight)),
+                                    DriveConstants.JOYSTICK_EXPONENT,
+                                    DriveConstants.JOYSTICK_COEFFICIENT),
+                            reverse);
+                    break;
+                case ARCADE:
+                    drive.arcade(JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
+                            JoystickUtils.deadband(p1.getX(Hand.kRight)), reverse);
+                    break;
+                case CURVATURE:
+                    double xSpeed = JoystickUtils.deadband(-p1.getY(Hand.kLeft));
+                    drive.curvatureDrive(xSpeed, JoystickUtils.deadband(p1.getX(Hand.kRight)),
+                            Math.abs(xSpeed) < 0.1 // TODO: Change quick turn
+                    );
+                    break;
+            }
         }
 
         // Braking
@@ -180,8 +182,11 @@ public class Teleop {
                 drive.setGearShift(GearShift.LOW);
             }
 
-
-            superstructure.move32Inches(p1.getBackButton());
+            if (p1.getBButtonPressed()) {
+                superstructure.setCloseAlign(true);
+            } else if (p1.getBButtonReleased()) {
+                superstructure.setCloseAlign(false);
+            }
 
             /**
              * Intake
@@ -288,7 +293,9 @@ public class Teleop {
             superstructure.setAiming(false);
         }
         // Turn turret using right joystick
-        turret.rotateManual(JoystickUtils.deadband(p2.getX(Hand.kRight)));
+        if (!superstructure.isUsingTurret()) {
+            turret.rotateManual(JoystickUtils.deadband(p2.getX(Hand.kRight)));
+        }
 
         /**
          * Shooter

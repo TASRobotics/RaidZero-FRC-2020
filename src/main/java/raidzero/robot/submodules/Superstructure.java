@@ -33,13 +33,14 @@ public class Superstructure extends Submodule {
     private boolean isTurretPIDing = false;
     private TurnTurretToAngle turretPIDAction;
 
-    private boolean isMoving32Inches = false;
-    private DrivePath move32InchesPath;
+    private boolean isCloseAligning = false;
+    private DrivePath closeAlignAction;
 
-    private static final Point[] MOVE32INCHES_POINTS = {
-        new Point(0,0,180),
-        new Point(32,0,180)
+    private static final Point[] CLOSE_ALIGN_POINTS = {
+        new Point(0, 0, 0),
+        new Point(34, 0, 0)
     };
+    private static final Path CLOSE_ALIGN_PATH = new Path(CLOSE_ALIGN_POINTS, false, 8.5, 8);
 
     @Override
     public void onStart(double timestamp) {
@@ -49,6 +50,7 @@ public class Superstructure extends Submodule {
             new VisionAssistedTargeting()
         ));
         turretPIDAction = new TurnTurretToAngle(90);
+        closeAlignAction = new DrivePath(CLOSE_ALIGN_PATH);
     }
 
     @Override
@@ -62,8 +64,8 @@ public class Superstructure extends Submodule {
         if (isTurretPIDing) {
             turretPIDAction.update();
         }
-        if (isMoving32Inches) {
-            move32InchesPath.update();
+        if (isCloseAligning) {
+            closeAlignAction.update();
         }
     }
 
@@ -72,6 +74,10 @@ public class Superstructure extends Submodule {
         setAiming(false);
         setAimingAndHood(false);
         setTurretPIDing(false);
+    }
+
+    public boolean isAiming() {
+        return isAiming;
     }
 
     /**
@@ -94,6 +100,10 @@ public class Superstructure extends Submodule {
         } else {
             aimAction.done();
         }
+    }
+
+    public boolean isAimingAndHood() {
+        return isAimingAndHood;
     }
 
     /**
@@ -133,21 +143,24 @@ public class Superstructure extends Submodule {
         }   
     }
 
-    public boolean isMoving32Inches() {
-        return isMoving32Inches;
+    public boolean isCloseAligning() {
+        return isCloseAligning;
     }
 
-    public void move32Inches(boolean status) {
-        if (status == isMoving32Inches) {
+    public void setCloseAlign(boolean status) {
+        if (status == isCloseAligning) {
             return;
         }
-        isMoving32Inches = status;
+        isCloseAligning = status;
         setTurretPIDing(status);
         if (status) {
-            move32InchesPath = new DrivePath(new Path(MOVE32INCHES_POINTS, false, 8.5, 8));
-            move32InchesPath.start();
+            closeAlignAction.start();
         } else {
-            move32InchesPath.done();
+            closeAlignAction.done();
         }
+    }
+
+    public boolean isUsingTurret() {
+        return isAiming || isAimingAndHood || isTurretPIDing || isCloseAligning;
     }
 }
