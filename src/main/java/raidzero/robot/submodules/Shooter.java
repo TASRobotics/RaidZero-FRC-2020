@@ -39,7 +39,7 @@ public class Shooter extends Submodule {
         .getEntry();
     private NetworkTableEntry shooterUpToSpeedEntry = Shuffleboard.getTab(Tab.MAIN)
         .add("Up To Speed", false)
-        .withWidget(BuiltInWidgets.kTextView)
+        .withWidget(BuiltInWidgets.kBooleanBox)
         .withSize(1, 1)
         .withPosition(1, 2)
         .getEntry();

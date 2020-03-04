@@ -155,7 +155,9 @@ public class Teleop {
          * Hopper
          */
         int p1Pov = p1.getPOV();
-        if (p1Pov >= 315 || p1Pov <= 45) {
+        if (p1Pov == -1) {
+            hopper.moveBelt(0);
+        } else if (p1Pov >= 315 || p1Pov <= 45) {
             hopper.moveBelt(-1.0);
         } else if (p1Pov <= 225 && p1Pov >= 135) {
             hopper.moveBelt(1.0);
@@ -207,7 +209,7 @@ public class Teleop {
         /**
          * Override
          */
-        if (p2.getBumper(Hand.kLeft)) {
+        if (p2.getBumper(Hand.kLeft)) {            
             /**
              * WOF Override
              */
@@ -225,7 +227,6 @@ public class Teleop {
             } else if (p2.getAButtonReleased()) {
                 superstructure.setTurretPIDing(false);
             }
-
             return;
         }
 
