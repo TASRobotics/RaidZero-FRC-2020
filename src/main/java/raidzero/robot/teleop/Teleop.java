@@ -178,6 +178,9 @@ public class Teleop {
                 drive.setGearShift(GearShift.LOW);
             }
 
+
+            superstructure.move32Inches(p1.getBackButton());
+
             /**
              * Intake
              */
@@ -225,7 +228,6 @@ public class Teleop {
             } else if (p2.getAButtonReleased()) {
                 superstructure.setTurretPIDing(false);
             }
-
             return;
         }
 
@@ -284,9 +286,7 @@ public class Teleop {
             superstructure.setAiming(false);
         }
         // Turn turret using right joystick
-        if (!p2.getStickButton(Hand.kRight)) {
-            turret.rotateManual(JoystickUtils.deadband(p2.getX(Hand.kRight)));
-        }
+        turret.rotateManual(JoystickUtils.deadband(p2.getX(Hand.kRight)));
 
         /**
          * Shooter
