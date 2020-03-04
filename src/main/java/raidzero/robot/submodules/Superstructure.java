@@ -2,10 +2,13 @@ package raidzero.robot.submodules;
 
 import java.util.Arrays;
 
+import raidzero.robot.auto.actions.DrivePath;
 import raidzero.robot.auto.actions.ReusableSeriesAction;
 import raidzero.robot.auto.actions.TurnToGoal;
 import raidzero.robot.auto.actions.TurnTurretToAngle;
 import raidzero.robot.auto.actions.VisionAssistedTargeting;
+import raidzero.pathgen.Point;
+import raidzero.robot.pathing.Path;
 
 public class Superstructure extends Submodule {
 
@@ -30,6 +33,14 @@ public class Superstructure extends Submodule {
     private boolean isTurretPIDing = false;
     private TurnTurretToAngle turretPIDAction;
 
+    private boolean isMoving32Inches = false;
+    private DrivePath move32InchesPath;
+
+    private static final Point[] MOVE32INCHES_POINTS = {
+        new Point(0,0,180),
+        new Point(32,0,180)
+    };
+
     @Override
     public void onStart(double timestamp) {
         aimAction = new TurnToGoal();
@@ -50,6 +61,9 @@ public class Superstructure extends Submodule {
         }
         if (isTurretPIDing) {
             turretPIDAction.update();
+        }
+        if (isMoving32Inches) {
+            move32InchesPath.update();
         }
     }
 
@@ -116,6 +130,24 @@ public class Superstructure extends Submodule {
             turretPIDAction.start();
         } else {
             turretPIDAction.done();
+        }   
+    }
+
+    public boolean isMoving32Inches() {
+        return isMoving32Inches;
+    }
+
+    public void move32Inches(boolean status) {
+        if (status == isMoving32Inches) {
+            return;
+        }
+        isMoving32Inches = status;
+        setTurretPIDing(status);
+        if (status) {
+            move32InchesPath = new DrivePath(new Path(MOVE32INCHES_POINTS, false, 8.5, 8));
+            move32InchesPath.start();
+        } else {
+            move32InchesPath.done();
         }
     }
 }
