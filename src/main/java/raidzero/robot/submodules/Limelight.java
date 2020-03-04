@@ -1,9 +1,13 @@
 package raidzero.robot.submodules;
 
+import edu.wpi.cscore.HttpCamera;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+
 import raidzero.robot.Constants.LimelightConstants;
+import raidzero.robot.dashboard.Tab;
 
 // Reference:
 // http://docs.limelightvision.io/en/latest/networktables_api.html
@@ -45,6 +49,12 @@ public class Limelight extends Submodule {
 
 	private Limelight(String tableName) {
 		this.tableName = tableName;
+		
+		HttpCamera cameraStream = new HttpCamera("limelight", "http://10.42.53.11:5800/stream.mjpg");
+		Shuffleboard.getTab(Tab.MAIN)
+				.add("Limelight", cameraStream)
+				.withPosition(5, 0)
+				.withSize(3, 3);
 	}
 
 	@Override
