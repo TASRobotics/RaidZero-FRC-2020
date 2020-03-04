@@ -3,13 +3,20 @@ package raidzero.robot.submodules;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import raidzero.robot.wrappers.LazyTalonSRX;
 import raidzero.robot.wrappers.InactiveDoubleSolenoid;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import raidzero.robot.Constants.IntakeConstants;
+import raidzero.robot.dashboard.Tab;
 
 /**
  * Sucks BOBA balls and definitely not other balls
  */
 public class Intake extends Submodule {
+
+    private static enum Position {
+        DOWN, UP
+    }
 
     private static Intake instance = null;
 
@@ -28,7 +35,13 @@ public class Intake extends Submodule {
 
     private double outputOpenLoop = 0.0;
 
-    private Value position = Value.kReverse;
+    private Position position = Position.UP;
+
+    private NetworkTableEntry intakePositionEntry = Shuffleboard.getTab(Tab.MAIN)
+        .add("Intake Position", position.toString())
+        .withPosition(4, 2)
+        .withSize(1, 1)
+        .getEntry();
 
     @Override
     public void onInit() {
@@ -39,7 +52,7 @@ public class Intake extends Submodule {
 
         solenoid = new InactiveDoubleSolenoid(IntakeConstants.INTAKE_FORWARD_ID,
                 IntakeConstants.INTAKE_REVERSE_ID);
-        solenoid.set(position);
+        setPosition(position);
     }
 
     @Override
@@ -67,19 +80,29 @@ public class Intake extends Submodule {
         outputOpenLoop = percentOutput;
     }
 
+    public void setPosition(Position pos) {
+        position = pos;
+        intakePositionEntry.setString(position.toString());
+        if (position == Position.DOWN) {
+            solenoid.set(Value.kForward);
+        } else {
+            solenoid.set(Value.kReverse);
+        }
+    }
+
     /**
      * Moves the intake out or in depending on what state it is in.
      */
     public void invertStraw() {
         invertPos();
-        solenoid.set(position);
+        setPosition(position);
     }
 
     private void invertPos() {
-        if (position == Value.kReverse) {
-            position = Value.kForward;
+        if (position == Position.DOWN) {
+            position = Position.UP;
             return;
         }
-        position = Value.kReverse;
+        position = Position.DOWN;
     }
 }

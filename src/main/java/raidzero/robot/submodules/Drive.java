@@ -261,6 +261,8 @@ public class Drive extends Submodule {
         outputRightDrive = 0.0;
         outputClosedLoop = 0;
 
+        setGearShift(GearShift.LOW);
+
         profilingLeader.clearMotionProfileTrajectories();
     }
 
