@@ -27,6 +27,14 @@ public class StealCellSequence extends AutoSequence {
     private static final Path TO_FRONT_GOAL_PATH = new Path(TO_FRONT_GOAL_WAYPOINTS, true,
         10.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
+    private static final Point[] TO_BAR_CELLS_WAYPOINTS = {
+        new Point(160, -95, -40),
+        new Point(188, -138),
+        new Point(232, -154)
+    };
+    private static final Path TO_BAR_CELLS_PATH = new Path(TO_BAR_CELLS_WAYPOINTS, true,
+        10.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+
     private static final Drive drive = Drive.getInstance();
     private static final Intake intake = Intake.getInstance();
     private static final Shooter shooter = Shooter.getInstance();
@@ -58,6 +66,7 @@ public class StealCellSequence extends AutoSequence {
                 new LambdaAction(() -> drive.setBrakeMode(true)),
                 new FeedBalls(4.0),
                 new LambdaAction(() -> drive.setBrakeMode(false)),
+                new DrivePath(TO_BAR_CELLS_PATH),
                 new LambdaAction(() -> intake.stop()),
                 new LambdaAction(() -> shooter.stop())
             )
