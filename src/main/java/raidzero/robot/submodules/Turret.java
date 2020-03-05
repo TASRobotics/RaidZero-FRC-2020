@@ -9,7 +9,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import raidzero.robot.wrappers.LazyTalonSRX;
 
 import raidzero.robot.Constants.TurretConstants;
-import raidzero.robot.submodules.AdjustableHood.ControlState;
 
 public class Turret extends Submodule {
 

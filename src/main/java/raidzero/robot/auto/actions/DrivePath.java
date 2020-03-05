@@ -1,6 +1,5 @@
 package raidzero.robot.auto.actions;
 
-import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.submodules.Drive;
 

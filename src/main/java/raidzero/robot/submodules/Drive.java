@@ -1,7 +1,5 @@
 package raidzero.robot.submodules;
 
-import java.util.Map;
-
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;

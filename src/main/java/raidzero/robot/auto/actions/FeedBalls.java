@@ -26,7 +26,6 @@ public class FeedBalls implements Action {
 
     @Override
     public boolean isFinished() {
-        // TODO: Obviously make this configurable and not based on time...
         return Timer.getFPGATimestamp() - startTime > duration;
     }
 

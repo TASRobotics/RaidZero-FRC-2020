@@ -140,7 +140,7 @@ public class Teleop {
                 case CURVATURE:
                     double xSpeed = JoystickUtils.deadband(-p1.getY(Hand.kLeft));
                     drive.curvatureDrive(xSpeed, JoystickUtils.deadband(p1.getX(Hand.kRight)),
-                            Math.abs(xSpeed) < 0.1 // TODO: Change quick turn
+                            Math.abs(xSpeed) < 0.1
                     );
                     break;
             }
@@ -230,7 +230,6 @@ public class Teleop {
             shooter.shoot(JoystickUtils.deadband(p2.getTriggerAxis(Hand.kRight)), false);
 
             if (p2.getAButtonPressed()) {
-                // TODO: PID turret 90 degrees
                 superstructure.setTurretPIDing(true);
             } else if (p2.getAButtonReleased()) {
                 superstructure.setTurretPIDing(false);
