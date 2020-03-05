@@ -87,6 +87,8 @@ public class Teleop {
         drive.stop();
         drive.setGearShift(GearShift.LOW);
 
+        climb.lock();
+
         debugDistance.start();
     }
 
@@ -124,23 +126,29 @@ public class Teleop {
         }
         driveModeEntry.setString(driveMode.toString());
         if (!superstructure.isCloseAligning()) {
+            double speedMultiplier = 1.0;
+            if (climb.isUnlocked()) {
+                speedMultiplier = 0.5;
+            }
             switch (driveMode) {
                 case TANK:
-                    drive.tank(JoystickUtils.monomialScale(JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
-                            DriveConstants.JOYSTICK_EXPONENT, DriveConstants.JOYSTICK_COEFFICIENT),
-                            JoystickUtils.monomialScale(JoystickUtils.deadband(-p1.getY(Hand.kRight)),
-                                    DriveConstants.JOYSTICK_EXPONENT,
-                                    DriveConstants.JOYSTICK_COEFFICIENT),
-                            reverse);
+                    drive.tank(
+                        JoystickUtils.deadband(-p1.getY(Hand.kLeft)) * speedMultiplier,
+                        JoystickUtils.deadband(-p1.getY(Hand.kRight)) * speedMultiplier,
+                        reverse
+                    );
                     break;
                 case ARCADE:
-                    drive.arcade(JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
-                            JoystickUtils.deadband(p1.getX(Hand.kRight)), reverse);
+                    drive.arcade(
+                        JoystickUtils.deadband(-p1.getY(Hand.kLeft)) * speedMultiplier,
+                        JoystickUtils.deadband(p1.getX(Hand.kRight)) * speedMultiplier, 
+                        reverse
+                    );
                     break;
                 case CURVATURE:
-                    double xSpeed = JoystickUtils.deadband(-p1.getY(Hand.kLeft));
+                    double xSpeed = JoystickUtils.deadband(-p1.getY(Hand.kLeft)) * speedMultiplier;
                     drive.curvatureDrive(xSpeed, JoystickUtils.deadband(p1.getX(Hand.kRight)),
-                            Math.abs(xSpeed) < 0.1
+                        Math.abs(xSpeed) < 0.1
                     );
                     break;
             }

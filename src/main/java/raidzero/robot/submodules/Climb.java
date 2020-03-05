@@ -62,6 +62,17 @@ public class Climb extends Submodule {
         climbMotor.set(ControlMode.PercentOutput, 0);
     }
 
+    public boolean isUnlocked() {
+        return unlocked;
+    }
+
+    /**
+     * Locks the climb.
+     */
+    public void lock() {
+        unlocked = false;
+    }
+
     /**
      * Unlocks the climb.
      */
