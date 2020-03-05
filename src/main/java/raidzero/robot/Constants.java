@@ -281,7 +281,7 @@ public class Constants {
     /**
      * Joystick Constants
      */
-    public static final double JOYSTICK_DEADBAND = 0.08;
+    public static final double JOYSTICK_DEADBAND = 0.01;
 
     public static final int TIMEOUT_MS = 10;
 }
