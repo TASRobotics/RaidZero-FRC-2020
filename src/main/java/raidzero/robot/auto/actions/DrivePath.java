@@ -19,7 +19,6 @@ public class DrivePath implements Action {
     @Override
     public boolean isFinished() {
         if (drive.isFinishedWithPath()) {
-            System.out.println("[Auto] Path finished!");
             return true;
         }
         return false;

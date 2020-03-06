@@ -32,7 +32,7 @@ public class SetHoodPosition implements Action {
 
     @Override
     public void update() {
-        atSetpoint.update(hood.isAtPosition());   
+        atSetpoint.update(hood.isAtPosition());
     }
 
     @Override

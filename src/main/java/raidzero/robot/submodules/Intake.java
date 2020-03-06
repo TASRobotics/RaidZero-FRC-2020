@@ -14,7 +14,7 @@ import raidzero.robot.dashboard.Tab;
  */
 public class Intake extends Submodule {
 
-    private static enum Position {
+    public static enum Position {
         DOWN, UP
     }
 
