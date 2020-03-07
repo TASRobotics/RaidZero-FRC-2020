@@ -266,7 +266,6 @@ public class Constants {
     public static final InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> 
         DISTANCE_TO_HOOD_TICKS = new InterpolatingTreeMap<>(20);
     static {
-        // TODO: Perhaps load this from a file?
         /*DISTANCE_TO_HOOD_TICKS.put(new InterpolatingDouble(2.94), new InterpolatingDouble(4683.0));
         DISTANCE_TO_HOOD_TICKS.put(new InterpolatingDouble(4.55), new InterpolatingDouble(6000.0));
         DISTANCE_TO_HOOD_TICKS.put(new InterpolatingDouble(1.38), new InterpolatingDouble(2000.0));
