@@ -193,8 +193,8 @@ public class Constants {
     public static final class HopperConstants {
         public static final int MOTOR_ID = 5;
 
-        public static final InvertType INVERSION = InvertType.InvertMotorOutput;
-        public static final boolean FLIP_SENSOR_PHASE = true;
+        public static final InvertType INVERSION = InvertType.None;
+        public static final boolean FLIP_SENSOR_PHASE = false;
 
         public static final int MAX_SPEED = 19000;
 

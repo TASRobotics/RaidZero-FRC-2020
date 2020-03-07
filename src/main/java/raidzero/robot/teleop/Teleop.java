@@ -166,13 +166,13 @@ public class Teleop {
          */
         int p1Pov = p1.getPOV();
         if (p1Pov == -1) {
-            hopper.moveBelt(0);
+            hopper.stop();
         } else if (p1Pov >= 315 || p1Pov <= 45) {
-            hopper.moveBelt(-0.75);
+            hopper.moveAtVelocity(0.75);
         } else if (p1Pov <= 225 && p1Pov >= 135) {
-            hopper.moveBelt(0.75);
+            hopper.moveAtVelocity(-0.75);
         } else {
-            hopper.moveBelt(0);
+            hopper.stop();
         }
 
         //
@@ -267,7 +267,7 @@ public class Teleop {
          * Hopper
          */
         if (p1.getPOV() == -1) {
-            double p2LeftJoystick = JoystickUtils.deadband(p2.getY(Hand.kLeft));
+            double p2LeftJoystick = JoystickUtils.deadband(-p2.getY(Hand.kLeft));
             if (p2LeftJoystick > 0) {
                 hopper.moveAtVelocity(0.75);
             } else if (p2LeftJoystick < 0) {

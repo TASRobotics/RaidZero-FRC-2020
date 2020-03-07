@@ -24,9 +24,9 @@ public class FeedBalls implements Action {
      * Constructs a FeedBalls action.
      * 
      * @param duration duration to feed the balls for
+     * @param backward whether to run the hopper backwards
      */
     public FeedBalls(double duration, boolean backward) {
-        System.out.println("HeY yAlL");
         this.duration = duration;
         this.backward = backward;
     }
@@ -40,7 +40,7 @@ public class FeedBalls implements Action {
     public void start() {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
         startTime = Timer.getFPGATimestamp();
-        hopper.moveAtVelocity((backward ? 1 : -1) * 0.65);
+        hopper.moveAtVelocity((backward ? -1 : 1) * 0.65);
     }
 
     @Override
