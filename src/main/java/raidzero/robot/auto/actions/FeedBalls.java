@@ -26,6 +26,7 @@ public class FeedBalls implements Action {
      * @param duration duration to feed the balls for
      */
     public FeedBalls(double duration, boolean backward) {
+        System.out.println("HeY yAlL");
         this.duration = duration;
         this.backward = backward;
     }

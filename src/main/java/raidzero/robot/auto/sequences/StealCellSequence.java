@@ -16,31 +16,31 @@ public class StealCellSequence extends AutoSequence {
 
     private static final Point[] TO_STEAL_CELLS_WAYPOINTS = {
         new Point(150, -285, 0),
-        new Point(258, -285, 0)
+        new Point(260, -285, 0)
     };
     private static final Path TO_STEAL_CELLS_PATH = new Path(TO_STEAL_CELLS_WAYPOINTS, false, 
-        7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+        10.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] CURVE_BACK_WAYPOINTS = {
-        new Point(258, -285, 180),
-        new Point(210, -305, 180)
+        new Point(260, -285, 180),
+        new Point(205, -300, 180)
     };
     private static final Path CURVE_BACK_PATH = new Path(CURVE_BACK_WAYPOINTS, true, 
-        10.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+        7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] GET_SECOND_CELL_WAYPOINTS = {
-        new Point(210, -305, 0),
-        new Point(258, -305, 0)
+        new Point(205, -300, 0),
+        new Point(260, -300, 0)
     };
     private static final Path GET_SECOND_CELL_PATH = new Path(GET_SECOND_CELL_WAYPOINTS, false, 
-        10.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+        8.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] TO_GOAL_WAYPOINT = {
-        new Point(258, -305, 180),
-        new Point(140, -100, 120)
+        new Point(260, -300, 180),
+        new Point(210, -100, 160)
     };
     private static final Path TO_GOAL_PATH = new Path(TO_GOAL_WAYPOINT, true, 
-        8.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+        9.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Drive drive = Drive.getInstance();
     private static final Intake intake = Intake.getInstance();
@@ -65,16 +65,19 @@ public class StealCellSequence extends AutoSequence {
                 new DrivePath(CURVE_BACK_PATH),
                 new WaitAction(0.1),
                 new DrivePath(GET_SECOND_CELL_PATH),
+                new WaitAction(0.1),
+                new LambdaAction(() -> intake.intakeBalls(0.5)),
                 new ParallelAction(
                     Arrays.asList(
                         new DrivePath(TO_GOAL_PATH),
-                        new SetShooterVelocity(1.0),
-                        new TurnTurretToAngle(130),
-                        new SetHoodPosition(5000)
+                        new SetShooterVelocity(1.0)
                     )
                 ),
-                new TurnToGoal(),
+                new TurnTurretToAngle(130),
+                new SetHoodPosition(5800),
                 new LambdaAction(() -> drive.setBrakeMode(true)),
+                new WaitAction(0.1),
+                new TurnToGoal(),
                 new FeedBalls(0.6, true),
                 new FeedBalls(4.0),
                 new LambdaAction(() -> drive.setBrakeMode(false)),

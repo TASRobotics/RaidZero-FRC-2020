@@ -168,9 +168,9 @@ public class Teleop {
         if (p1Pov == -1) {
             hopper.moveBelt(0);
         } else if (p1Pov >= 315 || p1Pov <= 45) {
-            hopper.moveBelt(-1.0);
+            hopper.moveBelt(-0.75);
         } else if (p1Pov <= 225 && p1Pov >= 135) {
-            hopper.moveBelt(1.0);
+            hopper.moveBelt(0.75);
         } else {
             hopper.moveBelt(0);
         }

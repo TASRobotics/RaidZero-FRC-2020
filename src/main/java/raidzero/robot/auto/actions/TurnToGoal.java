@@ -30,6 +30,7 @@ public class TurnToGoal implements Action {
             LimelightConstants.AIM_KI, 
             LimelightConstants.AIM_KD
         );
+        pidController.setIntegratorRange(LimelightConstants.minI, LimelightConstants.maxI);
         pidController.setTolerance(LimelightConstants.ANGLE_ADJUST_THRESHOLD);
     }
 
