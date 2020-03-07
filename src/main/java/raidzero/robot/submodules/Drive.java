@@ -66,7 +66,7 @@ public class Drive extends Submodule {
     // Profile follower
     private ProfileFollower mpFollower;
 
-    private GearShift currentGearShift;
+    private GearShift currentGearShift = GearShift.LOW;
 
     private double quickStopAccumulator = 0.0;
 
