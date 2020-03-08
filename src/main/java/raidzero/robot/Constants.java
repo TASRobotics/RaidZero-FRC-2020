@@ -84,7 +84,7 @@ public class Constants {
         public static final SimpleMotorFeedforward FEED_FORWARD = 
             new SimpleMotorFeedforward(kS, kV, kA);
 
-        public static final double MAX_VELOCITY = 3.0; // in m/s
+        public static final double MAX_VELOCITY = 2.5; // in m/s
         public static final double MAX_ACCELERATION = 2.0; // in m/s
 
         public static final double TRACK_WIDTH_METERS = 1.032;

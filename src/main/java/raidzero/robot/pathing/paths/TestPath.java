@@ -19,11 +19,11 @@ public class TestPath extends Path {
     @Override
     public Trajectory generateTrajectory() {
         Pose2d startPose = new Pose2d(
-            Units.feetToMeters(0), Units.feetToMeters(0),
+            Units.inchesToMeters(0), Units.inchesToMeters(0),
             Rotation2d.fromDegrees(0));
 
         Pose2d endPose = new Pose2d(
-            Units.feetToMeters(4), Units.feetToMeters(4),
+            Units.inchesToMeters(60), Units.inchesToMeters(30),
             Rotation2d.fromDegrees(0));
     
         List<Translation2d> interiorWaypoints = new ArrayList<>();
@@ -35,7 +35,7 @@ public class TestPath extends Path {
         TrajectoryConfig config = new TrajectoryConfig(maxVelocity, maxAcceleration);
         config.setReversed(false);
         config.setKinematics(drive.getKinematics());
-        config.addConstraint(DriveConstants.VOLTAGE_CONSTRAINT);
+        // config.addConstraint(DriveConstants.VOLTAGE_CONSTRAINT);
     
         // Uses clamped cubic splines
         return TrajectoryGenerator.generateTrajectory(
