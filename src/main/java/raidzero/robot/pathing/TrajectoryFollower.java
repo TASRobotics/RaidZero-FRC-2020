@@ -3,10 +3,8 @@ package raidzero.robot.pathing;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 
 /**
@@ -50,7 +48,6 @@ public class TrajectoryFollower {
         var targetWheelSpeeds = kinematics.toWheelSpeeds(
             controller.calculate(currentPose, sampled)
         );
-        SmartDashboard.putString("Traj Pose", sampled.toString());
         return targetWheelSpeeds;
     }
 

@@ -262,7 +262,6 @@ public class Constants {
         public static final double MOUNTING_ANGLE = 31.4; // in degrees
         public static final double MOUNTING_HEIGHT = 0.56; // in meters
 
-        // TODO: Improve the constants
         public static final double AIM_KP = 0.0238;
         public static final double AIM_KI = 0.03;
         public static final double AIM_KD = 0.00198;

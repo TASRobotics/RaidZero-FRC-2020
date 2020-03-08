@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -86,16 +85,46 @@ public class Drive extends Submodule {
         .withPosition(3, 2)
         .getEntry();
     private NetworkTableEntry leftEncoderEntry = Shuffleboard.getTab(Tab.DEBUG)
-        .add("Left Distance (in)", 0.0)
-        .withWidget(BuiltInWidgets.kTextView)
-        .withSize(1, 1)
+        .add("Left Velocity (m/s)", 0.0)
+        .withWidget(BuiltInWidgets.kGraph) // TODO: Change this to kTextView
+        .withSize(2, 2)
         .withPosition(0, 0)
         .getEntry();
     private NetworkTableEntry rightEncoderEntry = Shuffleboard.getTab(Tab.DEBUG)
-        .add("Right Distance (in)", 0.0)
+        .add("Right Velocity (m/s)", 0.0)
+        .withWidget(BuiltInWidgets.kGraph) // TODO: Change this to kTextView
+        .withSize(2, 2)
+        .withPosition(2, 0)
+        .getEntry();
+    private NetworkTableEntry leftEncoderTargetEntry = Shuffleboard.getTab(Tab.DEBUG)
+        .add("Left Target Velocity (m/s)", 0.0)
+        .withWidget(BuiltInWidgets.kGraph) // TODO: Change this to kTextView
+        .withSize(2, 2)
+        .withPosition(4, 0)
+        .getEntry();
+    private NetworkTableEntry rightEncoderTargetEntry = Shuffleboard.getTab(Tab.DEBUG)
+        .add("Right Target Velocity (m/s)", 0.0)
+        .withWidget(BuiltInWidgets.kGraph) // TODO: Change this to kTextView
+        .withSize(2, 2)
+        .withPosition(6, 0)
+        .getEntry();
+    private NetworkTableEntry odometryXEntry = Shuffleboard.getTab(Tab.DEBUG)
+        .add("Odometry X (m)", 0.0)
         .withWidget(BuiltInWidgets.kTextView)
         .withSize(1, 1)
-        .withPosition(1, 0)
+        .withPosition(0, 2)
+        .getEntry();
+    private NetworkTableEntry odometryYEntry = Shuffleboard.getTab(Tab.DEBUG)
+        .add("Odometry Y (m)", 0.0)
+        .withWidget(BuiltInWidgets.kTextView)
+        .withSize(1, 1)
+        .withPosition(1, 2)
+        .getEntry();
+    private NetworkTableEntry odometryAngleEntry = Shuffleboard.getTab(Tab.DEBUG)
+        .add("Odometry Angle (deg)", 0.0)
+        .withWidget(BuiltInWidgets.kTextView)
+        .withSize(1, 1)
+        .withPosition(2, 1)
         .getEntry();
 
     @Override
@@ -208,7 +237,18 @@ public class Drive extends Submodule {
             // Update trajectory follower here
             tankVelocity(trajectoryFollower.update(currentPose));
         }
-        SmartDashboard.putString("Current Pose", currentPose.toString());
+        gearShiftEntry.setString(currentGearShift.toString());
+        leftEncoderEntry.setNumber(
+            EncoderUtils.ticksPer100msToMetersPerSec(
+                leftLeader.getSensorCollection().getIntegratedSensorVelocity(), currentGearShift)
+        );
+        rightEncoderEntry.setNumber(
+            EncoderUtils.ticksPer100msToMetersPerSec(
+                -rightLeader.getSensorCollection().getIntegratedSensorVelocity(), currentGearShift)
+        );
+        odometryXEntry.setDouble(currentPose.getTranslation().getX());
+        odometryYEntry.setDouble(currentPose.getTranslation().getY());
+        odometryAngleEntry.setDouble(currentPose.getRotation().getDegrees());
     }
 
     /**
@@ -310,31 +350,27 @@ public class Drive extends Submodule {
      * @param rightVelocity velocity in m/s
      */
     public void tankVelocity(double leftVelocity, double rightVelocity) {
+        leftEncoderTargetEntry.setDouble(leftVelocity);
+        rightEncoderTargetEntry.setDouble(rightVelocity);
+
         outputLeftVelocity = EncoderUtils.metersPerSecToTicksPer100ms(leftVelocity, 
             currentGearShift);
         outputRightVelocity = EncoderUtils.metersPerSecToTicksPer100ms(rightVelocity, 
             currentGearShift);
 
-        double leftCurrentVelocity = EncoderUtils.ticksToMeters(
+        double leftCurrentVelocity = EncoderUtils.ticksPer100msToMetersPerSec(
             leftLeader.getSelectedSensorVelocity(), currentGearShift);
         double leftAcceleration = (leftVelocity - leftCurrentVelocity) 
             / DriveConstants.LOOP_PERIOD_SECONDS;
-        double rightCurrentVelocity = EncoderUtils.ticksToMeters(
+        double rightCurrentVelocity = EncoderUtils.ticksPer100msToMetersPerSec(
             rightLeader.getSelectedSensorVelocity(), currentGearShift);
         double rightAcceleration = (rightVelocity - rightCurrentVelocity)
             / DriveConstants.LOOP_PERIOD_SECONDS;
-
-        SmartDashboard.putNumber("left_measure", leftCurrentVelocity);
-        SmartDashboard.putNumber("left_ref", leftVelocity);
-        SmartDashboard.putNumber("right_measure", rightCurrentVelocity);
-        SmartDashboard.putNumber("right_ref", rightVelocity);
         
         outputLeftFeedforward = DriveConstants.FEED_FORWARD.calculate(
             leftVelocity, leftAcceleration);
         outputRightFeedforward = DriveConstants.FEED_FORWARD.calculate(
             rightVelocity, rightAcceleration);
-        SmartDashboard.putNumber("left_FF", outputLeftFeedforward);
-        SmartDashboard.putNumber("right_FF", outputRightFeedforward);
     }
 
     /**

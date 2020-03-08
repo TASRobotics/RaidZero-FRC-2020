@@ -2,13 +2,10 @@ package raidzero.robot.submodules;
 
 import java.util.Arrays;
 
-import raidzero.robot.auto.actions.DrivePath;
 import raidzero.robot.auto.actions.ReusableSeriesAction;
 import raidzero.robot.auto.actions.TurnToGoal;
 import raidzero.robot.auto.actions.TurnTurretToAngle;
 import raidzero.robot.auto.actions.VisionAssistedTargeting;
-import raidzero.pathgen.Point;
-import raidzero.robot.pathing.Path;
 
 public class Superstructure extends Submodule {
 

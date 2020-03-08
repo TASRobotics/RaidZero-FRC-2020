@@ -10,11 +10,7 @@ import raidzero.robot.submodules.*;
 
 public class TestSequence extends AutoSequence {
 
-    private static final Path PATH = new TestPath();        
-
-    private static final Drive drive = Drive.getInstance();
-    private static final Intake intake = Intake.getInstance();
-    private static final Shooter shooter = Shooter.getInstance();
+    private static final Path PATH = new TestPath();
 
     public TestSequence() {
         System.out.println(DriverStation.getInstance().getAlliance().name());
