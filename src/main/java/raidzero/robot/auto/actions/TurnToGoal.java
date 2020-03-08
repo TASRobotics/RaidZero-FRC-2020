@@ -9,6 +9,7 @@ import raidzero.robot.submodules.Limelight;
 import raidzero.robot.submodules.Turret;
 import raidzero.robot.submodules.Limelight.CameraMode;
 import raidzero.robot.submodules.Limelight.LedMode;
+import raidzero.robot.utils.TimerBoolean;
 
 /**
  * Action for turning the turret towards the goal using vision.
@@ -21,22 +22,27 @@ public class TurnToGoal implements Action {
     private PIDController pidController;
     private double headingError;
 
+    private TimerBoolean onTarget = new TimerBoolean(LimelightConstants.AIM_ON_TARGET_DURATION);
+
     public TurnToGoal() {
         pidController = new PIDController(
             LimelightConstants.AIM_KP, 
             LimelightConstants.AIM_KI, 
             LimelightConstants.AIM_KD
         );
+        pidController.setIntegratorRange(LimelightConstants.minI, LimelightConstants.maxI);
         pidController.setTolerance(LimelightConstants.ANGLE_ADJUST_THRESHOLD);
     }
 
     @Override
     public boolean isFinished() {
-        return pidController.atSetpoint();
+        return onTarget.hasDurationPassed();
     }
 
     @Override
     public void start() {
+        onTarget.reset();
+
         pidController.reset();
         pidController.setSetpoint(0.0);
 
@@ -49,23 +55,28 @@ public class TurnToGoal implements Action {
     @Override
     public void update() {
         if (!limelight.hasTarget()) {
-            turret.stop();
+            onTarget.update(false);
+            if (turret.isInPercentMode()) {
+                turret.stop();
+            }
             return;
 		}
         headingError = -limelight.getTx();
 
         double output = MathUtil.clamp(
             pidController.calculate(headingError),
-            -TurretConstants.MAX_INPUT_PERCENTAGE, 
+            -TurretConstants.MAX_INPUT_PERCENTAGE,
             TurretConstants.MAX_INPUT_PERCENTAGE
         );
         turret.rotateManual(output);
+        
+        onTarget.update(pidController.atSetpoint());
     }
 
     @Override
     public void done() {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' finished!");
-        limelight.setLedMode(LedMode.Off);
+        //limelight.setLedMode(LedMode.Off);
         turret.stop();
     }
 }

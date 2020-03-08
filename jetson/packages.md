@@ -1,7 +1,7 @@
 # Packages
 
 absl
-> pip install  absl-py
+> pip install absl-py
 
 opencv
 > pip install opencv-python

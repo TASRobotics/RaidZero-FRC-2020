@@ -20,8 +20,8 @@ public class DriveOpenLoop implements Action {
     /**
      * Constructs a DriveOpenLoop action.
      * 
-     * @param left left percent output in [-1, 1]
-     * @param right right percent output in [-1, 1]
+     * @param left     left percent output in [-1, 1]
+     * @param right    right percent output in [-1, 1]
      * @param duration drive duration in seconds
      */
     public DriveOpenLoop(double left, double right, double duration) {

@@ -3,22 +3,22 @@ package raidzero.robot.submodules;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import raidzero.robot.wrappers.LazyTalonSRX;
 import raidzero.robot.wrappers.InactiveDoubleSolenoid;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import raidzero.robot.Constants.IntakeConstants;
+import raidzero.robot.dashboard.Tab;
 
 /**
  * Sucks BOBA balls and definitely not other balls
  */
 public class Intake extends Submodule {
 
+    public static enum Position {
+        DOWN, UP
+    }
+
     private static Intake instance = null;
-
-    private LazyTalonSRX intakeMotor;
-    private InactiveDoubleSolenoid solenoid;
-    
-    private double outputOpenLoop = 0.0;
-
-    private Value position = Value.kOff;
 
     public static Intake getInstance() {
         if (instance == null) {
@@ -27,7 +27,21 @@ public class Intake extends Submodule {
         return instance;
     }
 
-    private Intake() {}
+    private Intake() {
+    }
+
+    private LazyTalonSRX intakeMotor;
+    private InactiveDoubleSolenoid solenoid;
+
+    private double outputOpenLoop = 0.0;
+
+    private Position position = Position.UP;
+
+    private NetworkTableEntry intakePositionEntry = Shuffleboard.getTab(Tab.MAIN)
+        .add("Intake Position", position.toString())
+        .withPosition(4, 2)
+        .withSize(1, 1)
+        .getEntry();
 
     @Override
     public void onInit() {
@@ -36,8 +50,14 @@ public class Intake extends Submodule {
         intakeMotor.setNeutralMode(IntakeConstants.NEUTRAL_MODE);
         intakeMotor.setInverted(IntakeConstants.INVERSION);
 
-        solenoid = new InactiveDoubleSolenoid(IntakeConstants.INTAKE_FORWARD_ID, 
-            IntakeConstants.INTAKE_REVERSE_ID);
+        solenoid = new InactiveDoubleSolenoid(IntakeConstants.INTAKE_FORWARD_ID,
+                IntakeConstants.INTAKE_REVERSE_ID);
+        setPosition(position);
+    }
+
+    @Override
+    public void onStart(double timestamp) {
+        outputOpenLoop = 0.0;
     }
 
     @Override
@@ -52,7 +72,7 @@ public class Intake extends Submodule {
     }
 
     /**
-     * Spins the intake using percent output.
+     * Spins the intake using open-loop control.
      * 
      * @param percentOutput the percent output in [-1, 1]
      */
@@ -60,19 +80,29 @@ public class Intake extends Submodule {
         outputOpenLoop = percentOutput;
     }
 
+    public void setPosition(Position pos) {
+        position = pos;
+        intakePositionEntry.setString(position.toString());
+        if (position == Position.DOWN) {
+            solenoid.set(Value.kForward);
+        } else {
+            solenoid.set(Value.kReverse);
+        }
+    }
+
     /**
      * Moves the intake out or in depending on what state it is in.
      */
     public void invertStraw() {
         invertPos();
-        solenoid.set(position);
+        setPosition(position);
     }
 
     private void invertPos() {
-        if (position == Value.kReverse) {
-            position = Value.kForward;
+        if (position == Position.DOWN) {
+            position = Position.UP;
             return;
         }
-        position = Value.kReverse;
+        position = Position.DOWN;
     }
 }

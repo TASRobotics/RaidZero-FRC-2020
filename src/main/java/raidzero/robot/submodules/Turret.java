@@ -21,12 +21,6 @@ public class Turret extends Submodule {
 
     private static Turret instance = null;
 
-    private LazyTalonSRX turretMotor;
-    
-    private double outputOpenLoop = 0.0;
-    private double outputPosition = 0.0;
-    private ControlState controlState = ControlState.OPEN_LOOP;
-
     public static Turret getInstance() {
         if (instance == null) {
             instance = new Turret();
@@ -34,7 +28,14 @@ public class Turret extends Submodule {
         return instance;
     }
 
-    private Turret() {}
+    private Turret() {
+    }
+
+    private LazyTalonSRX turretMotor;
+
+    private double outputOpenLoop = 0.0;
+    private double outputPosition = 0.0;
+    private ControlState controlState = ControlState.OPEN_LOOP;
 
     @Override
     public void onInit() {
@@ -42,6 +43,7 @@ public class Turret extends Submodule {
         turretMotor.configFactoryDefault();
         turretMotor.setNeutralMode(TurretConstants.NEUTRAL_MODE);
         turretMotor.setInverted(TurretConstants.INVERSION);
+        turretMotor.setSensorPhase(TurretConstants.INVERT_PHASE);
 
         TalonSRXConfiguration config = new TalonSRXConfiguration();
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
@@ -49,6 +51,8 @@ public class Turret extends Submodule {
         config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
         config.forwardLimitSwitchSource = LimitSwitchSource.FeedbackConnector;
         config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
+        config.peakOutputForward = TurretConstants.MAX_INPUT_PERCENTAGE;
+        config.peakOutputReverse = -TurretConstants.MAX_INPUT_PERCENTAGE;
 
         config.slot0.kF = TurretConstants.K_F;
         config.slot0.kP = TurretConstants.K_P;
@@ -60,24 +64,37 @@ public class Turret extends Submodule {
     }
 
     @Override
+    public void onStart(double timestamp) {
+        controlState = ControlState.OPEN_LOOP;
+        outputOpenLoop = 0.0;
+        outputPosition = 0.0;
+        zero();
+    }
+
+    @Override
+    public void update(double timestamp) {
+        if (turretMotor.getSensorCollection().isFwdLimitSwitchClosed()) {
+            zero();
+        }
+    }
+
+    @Override
     public void run() {
         switch (controlState) {
             case OPEN_LOOP:
                 turretMotor.set(ControlMode.PercentOutput, outputOpenLoop);
                 break;
             case POSITION:
-                turretMotor.set(ControlMode.MotionMagic, outputPosition);
+                turretMotor.set(ControlMode.Position, outputPosition);
                 break;
-        }
-        if (turretMotor.getSensorCollection().isRevLimitSwitchClosed()) {
-            zero();
         }
     }
 
     @Override
     public void stop() {
-        controlState = ControlState.POSITION;
+        controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = 0.0;
+        outputPosition = 0.0;
         turretMotor.set(ControlMode.PercentOutput, 0);
     }
 
@@ -87,13 +104,13 @@ public class Turret extends Submodule {
     }
 
     /**
-     * Rotates the turret to the specified angle using closed-loop PID.
+     * Rotates the turret to the specified angle using closed-loop control.
      * 
      * @param angle the angle to rotate to
      */
     public void rotateToAngle(double angle) {
         controlState = ControlState.POSITION;
-        outputPosition = angle * TurretConstants.DEGREES_TO_TICKS;
+        outputPosition = -angle * TurretConstants.TICKS_PER_DEGREE;
     }
 
     /**
@@ -106,5 +123,14 @@ public class Turret extends Submodule {
     public void rotateManual(double percentOutput) {
         controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = percentOutput;
+    }
+
+    public boolean isInPercentMode() {
+        return controlState == ControlState.OPEN_LOOP;
+    }
+
+    public boolean isAtPosition() {
+        return controlState == ControlState.POSITION &&
+               Math.abs(turretMotor.getClosedLoopError()) < TurretConstants.TOLERANCE;
     }
 }

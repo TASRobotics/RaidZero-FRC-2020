@@ -3,21 +3,12 @@ package raidzero.robot.submodules;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.PWM;
-import edu.wpi.first.wpilibj.Servo;
 import raidzero.robot.Constants.ClimbConstants;
 import raidzero.robot.wrappers.LazyTalonSRX;
 
 public class Climb extends Submodule {
 
     private static Climb instance = null;
-    
-    private LazyTalonSRX climbMotor;
-    private PWM servo;
-
-    private boolean unlocked = false;
-    private double outputOpenLoop = 0.0;
-    private int serve = -1;
-    
     public static Climb getInstance() {
         if (instance == null) {
             instance = new Climb();
@@ -25,8 +16,16 @@ public class Climb extends Submodule {
         return instance;
     }
 
-    private Climb() {}
-    
+    private Climb() {
+    }
+
+    private LazyTalonSRX climbMotor;
+    private PWM servo;
+
+    private boolean unlocked = false;
+    private double outputOpenLoop = 0.0;
+    private int outputServoPosition = -1;
+
     @Override
     public void onInit() {
         servo = new PWM(9);
@@ -37,12 +36,22 @@ public class Climb extends Submodule {
     }
 
     @Override
-    public void run() {
+    public void onStart(double timestamp) {
+        outputServoPosition = 1;
+        outputOpenLoop = 0.0;
+    }
+
+    @Override
+    public void update(double timestamp) {
         if (!unlocked) {
-            serve = 1;
+            outputServoPosition = 1;
             outputOpenLoop = 0.0;
         }
-        servo.setPosition(serve);
+    }
+
+    @Override
+    public void run() {
+        servo.setPosition(outputServoPosition);
         climbMotor.set(ControlMode.PercentOutput, outputOpenLoop);
     }
 
@@ -52,6 +61,17 @@ public class Climb extends Submodule {
         climbMotor.set(ControlMode.PercentOutput, 0);
     }
 
+    public boolean isUnlocked() {
+        return unlocked;
+    }
+
+    /**
+     * Locks the climb.
+     */
+    public void lock() {
+        unlocked = false;
+    }
+
     /**
      * Unlocks the climb.
      */
@@ -59,16 +79,22 @@ public class Climb extends Submodule {
         unlocked = true;
     }
 
+    /**
+     * Opens the servo.
+     */
     public void openServo() {
-        serve = -1;
-    }
-
-    public void closeServo() {
-        serve = 1;  
+        outputServoPosition = -1;
     }
 
     /**
-     * Climbs using percent output.
+     * Closes the servo.
+     */
+    public void closeServo() {
+        outputServoPosition = 1;
+    }
+
+    /**
+     * Climbs using open-loop control..
      * 
      * @param percentOutput percent output in [-1, 1]
      */

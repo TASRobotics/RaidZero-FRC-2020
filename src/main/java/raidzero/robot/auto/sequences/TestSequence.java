@@ -2,19 +2,22 @@ package raidzero.robot.auto.sequences;
 
 import java.util.Arrays;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import raidzero.robot.auto.actions.*;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.pathing.paths.TestPath;
-import raidzero.robot.submodules.Intake;
+import raidzero.robot.submodules.*;
 
 public class TestSequence extends AutoSequence {
 
-    private static final Path PATH = new TestPath();
+    private static final Path PATH = new TestPath();        
 
+    private static final Drive drive = Drive.getInstance();
     private static final Intake intake = Intake.getInstance();
+    private static final Shooter shooter = Shooter.getInstance();
 
     public TestSequence() {
-
+        System.out.println(DriverStation.getInstance().getAlliance().name());
     }
 
     @Override

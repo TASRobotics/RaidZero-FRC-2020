@@ -6,16 +6,16 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import raidzero.robot.Constants;
 import raidzero.robot.Constants.ShooterConstants;
+import raidzero.robot.dashboard.Tab;
 
 public class Shooter extends Submodule {
 
-    private static LazyTalonFX shooterMotor;
     private static Shooter instance = null;
-
-    private double outputSpeed = 0.0;
 
     public static Shooter getInstance() {
         if (instance == null) {
@@ -24,7 +24,25 @@ public class Shooter extends Submodule {
         return instance;
     }
 
-    private Shooter() {}
+    private Shooter() {
+    }
+
+    private LazyTalonFX shooterMotor;
+
+    private double outputPercentSpeed = 0.0;
+
+    private NetworkTableEntry shooterVelocityEntry = Shuffleboard.getTab(Tab.MAIN)
+        .add("Shooter Vel", 0)
+        .withWidget(BuiltInWidgets.kTextView)
+        .withSize(1, 1)
+        .withPosition(0, 2)
+        .getEntry();
+    private NetworkTableEntry shooterUpToSpeedEntry = Shuffleboard.getTab(Tab.MAIN)
+        .add("Up To Speed", false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withSize(1, 1)
+        .withPosition(1, 2)
+        .getEntry();
 
     @Override
     public void onInit() {
@@ -32,7 +50,6 @@ public class Shooter extends Submodule {
         shooterMotor.configFactoryDefault();
         shooterMotor.setNeutralMode(ShooterConstants.NEUTRAL_MODE);
         shooterMotor.setInverted(ShooterConstants.INVERSION);
-        
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
         config.slot0.kF = ShooterConstants.K_F;
@@ -45,20 +62,30 @@ public class Shooter extends Submodule {
     }
 
     @Override
+    public void onStart(double timestamp) {
+        outputPercentSpeed = 0.0;
+        zero();
+    }
+
+    @Override
     public void update(double timestamp) {
-        SmartDashboard.putNumber("Shooter Vel", shooterMotor.getSelectedSensorVelocity());
-        SmartDashboard.putNumber("Shooter Target", outputSpeed);
-        SmartDashboard.putBoolean("Shooter Up2Speed", isUpToSpeed());
+        shooterVelocityEntry.setNumber(shooterMotor.getSelectedSensorVelocity());
+        shooterUpToSpeedEntry.setBoolean(isUpToSpeed());
     }
 
     @Override
     public void run() {
-        shooterMotor.set(ControlMode.Velocity, outputSpeed);
+        if (Math.abs(outputPercentSpeed) < 0.1) {
+            stop();
+        } else {
+            shooterMotor.set(ControlMode.Velocity,
+                    outputPercentSpeed * ShooterConstants.FAKE_MAX_SPEED);
+        }
     }
 
     @Override
     public void stop() {
-        outputSpeed = 0.0;
+        outputPercentSpeed = 0.0;
         shooterMotor.set(ControlMode.PercentOutput, 0);
     }
 
@@ -71,13 +98,14 @@ public class Shooter extends Submodule {
      * Fires up the shooter.
      * 
      * @param percentSpeed speed of the shooter in [-1.0, 1.0]
-     * @param freeze whether to disregard the speed and keep the previous speed
+     * @param freeze       whether to disregard the speed and keep the previous
+     *                     speed
      */
     public void shoot(double percentSpeed, boolean freeze) {
         if (freeze) {
             return;
         }
-        outputSpeed = percentSpeed * ShooterConstants.MAX_SPEED;
+        outputPercentSpeed = percentSpeed;
     }
 
     /**
@@ -86,6 +114,7 @@ public class Shooter extends Submodule {
      * @return whether the shooter is up to speed
      */
     public boolean isUpToSpeed() {
-        return Math.abs(shooterMotor.getClosedLoopError()) < ShooterConstants.ERROR_TOLERANCE;
+        return Math.abs(outputPercentSpeed) > 0.1 &&
+               Math.abs(shooterMotor.getClosedLoopError()) < ShooterConstants.ERROR_TOLERANCE;
     }
 }

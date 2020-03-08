@@ -2,9 +2,13 @@ package raidzero.robot.submodules;
 
 import java.util.Arrays;
 
+import raidzero.robot.auto.actions.DrivePath;
 import raidzero.robot.auto.actions.ReusableSeriesAction;
 import raidzero.robot.auto.actions.TurnToGoal;
+import raidzero.robot.auto.actions.TurnTurretToAngle;
 import raidzero.robot.auto.actions.VisionAssistedTargeting;
+import raidzero.pathgen.Point;
+import raidzero.robot.pathing.Path;
 
 public class Superstructure extends Submodule {
 
@@ -16,23 +20,36 @@ public class Superstructure extends Submodule {
         return instance;
     }
 
+    private Superstructure() {
+    }
+
     private boolean isAiming = false;
     private TurnToGoal aimAction;
 
-    private boolean isAimingAndShooting = false;
-    private ReusableSeriesAction aimAndShootAction;
+    private boolean isAimingAndHood = false;
+    private ReusableSeriesAction aimAndHoodAction;
 
-    private Superstructure() {}
+    private boolean isTurretPIDing = false;
+    private TurnTurretToAngle turretPIDAction;
+
+    /*private boolean isCloseAligning = false;
+    private DrivePath closeAlignAction;
+
+    private static final Point[] CLOSE_ALIGN_POINTS = {
+        new Point(0, 0, 0),
+        new Point(34, 0, 0)
+    };
+    private static final Path CLOSE_ALIGN_PATH = new Path(CLOSE_ALIGN_POINTS, false, 8.5, 8);*/
 
     @Override
     public void onStart(double timestamp) {
         aimAction = new TurnToGoal();
-        aimAndShootAction = new ReusableSeriesAction(
-            Arrays.asList(
-                new TurnToGoal(),
-                new VisionAssistedTargeting()
-            )
-        );
+        aimAndHoodAction = new ReusableSeriesAction(Arrays.asList(
+            new TurnToGoal(), 
+            new VisionAssistedTargeting()
+        ));
+        turretPIDAction = new TurnTurretToAngle(90);
+        //closeAlignAction = new DrivePath(CLOSE_ALIGN_PATH);
     }
 
     @Override
@@ -40,15 +57,26 @@ public class Superstructure extends Submodule {
         if (isAiming) {
             aimAction.update();
         }
-        if (isAimingAndShooting) {
-            aimAndShootAction.update();
+        if (isAimingAndHood) {
+            aimAndHoodAction.update();
         }
+        if (isTurretPIDing) {
+            turretPIDAction.update();
+        }
+        /*if (isCloseAligning) {
+            closeAlignAction.update();
+        }*/
     }
 
     @Override
     public void stop() {
         setAiming(false);
-        setAimingAndShooting(false);
+        setAimingAndHood(false);
+        setTurretPIDing(false);
+    }
+
+    public boolean isAiming() {
+        return isAiming;
     }
 
     /**
@@ -63,7 +91,7 @@ public class Superstructure extends Submodule {
         isAiming = status;
         if (status) {
             // Don't aim if the robot is aiming and shooting already
-            if (isAimingAndShooting) {
+            if (isAimingAndHood) {
                 isAiming = false;
                 return;
             }
@@ -73,20 +101,65 @@ public class Superstructure extends Submodule {
         }
     }
 
+    public boolean isAimingAndHood() {
+        return isAimingAndHood;
+    }
+
     /**
      * Sets the aiming & shooting status.
      * 
      * @param status the status
      */
-    public void setAimingAndShooting(boolean status) {
-        if (status == isAimingAndShooting) {
+    public void setAimingAndHood(boolean status) {
+        if (status == isAimingAndHood) {
             return;
         }
-        isAimingAndShooting = status;
+        isAimingAndHood = status;
         if (status) {
-            aimAndShootAction.start();
+            aimAndHoodAction.start();
         } else {
-            aimAndShootAction.done();
+            aimAndHoodAction.done();
         }
+    }
+
+    public boolean isTurretPIDing() {
+        return isTurretPIDing;
+    }
+
+    public void setTurretPIDing(boolean status) {
+        if (status == isTurretPIDing) {
+            return;
+        }
+        isTurretPIDing = status;
+        if (status) {
+            if (isAiming || isAimingAndHood) {
+                isTurretPIDing = false;
+                return;
+            }
+            turretPIDAction.start();
+        } else {
+            turretPIDAction.done();
+        }   
+    }
+
+    /*public boolean isCloseAligning() {
+        return isCloseAligning;
+    }
+
+    public void setCloseAlign(boolean status) {
+        if (status == isCloseAligning) {
+            return;
+        }
+        isCloseAligning = status;
+        setTurretPIDing(status);
+        if (status) {
+            closeAlignAction.start();
+        } else {
+            closeAlignAction.done();
+        }
+    }*/
+
+    public boolean isUsingTurret() {
+        return isAiming || isAimingAndHood || isTurretPIDing; // || isCloseAligning;
     }
 }

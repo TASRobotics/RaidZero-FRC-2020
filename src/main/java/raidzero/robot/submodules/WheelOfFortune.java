@@ -18,6 +18,16 @@ public class WheelOfFortune extends Submodule {
 
     private static WheelOfFortune instance = null;
 
+    public static WheelOfFortune getInstance() {
+        if (instance == null) {
+            instance = new WheelOfFortune();
+        }
+        return instance;
+    }
+
+    private WheelOfFortune() {
+    }
+
     private LazyTalonSRX wofMotor;
     private InactiveDoubleSolenoid solenoid;
 
@@ -26,15 +36,6 @@ public class WheelOfFortune extends Submodule {
     private boolean engaged = false;
 
     private ControlState controlState = ControlState.OPEN_LOOP;
-
-    public static WheelOfFortune getInstance() {
-        if (instance == null) {
-            instance = new WheelOfFortune();
-        }
-        return instance;
-    }
-
-    private WheelOfFortune() {}
 
     @Override
     public void onInit() {
@@ -53,9 +54,16 @@ public class WheelOfFortune extends Submodule {
 
         wofMotor.configAllSettings(config);
 
-        solenoid = new InactiveDoubleSolenoid(WheelOfFortuneConstants.WOF_FORWARD_ID, 
-            WheelOfFortuneConstants.WOF_REVERSE_ID);
+        solenoid = new InactiveDoubleSolenoid(WheelOfFortuneConstants.WOF_FORWARD_ID,
+                WheelOfFortuneConstants.WOF_REVERSE_ID);
         solenoid.set(Value.kOff);
+    }
+
+    @Override
+    public void onStart(double timestamp) {
+        controlState = ControlState.OPEN_LOOP;
+        outputOpenLoop = 0.0;
+        outputPosition = 0.0;
     }
 
     @Override
@@ -77,16 +85,29 @@ public class WheelOfFortune extends Submodule {
         wofMotor.set(ControlMode.PercentOutput, 0);
     }
 
+    /**
+     * Spins the manipulator using open-loop control.
+     * 
+     * @param percentOutput the percent output in [-1, 1]
+     */
     public void spin(double percentOutput) {
         controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = percentOutput;
     }
 
+    /**
+     * Spins the manipulator to a position using closed-loop control.
+     * 
+     * @param position target position in encoder units
+     */
     public void spinToPosition(double position) {
         controlState = ControlState.POSITION;
         outputPosition = position;
     }
 
+    /**
+     * Toggles the manipulator between up & down.
+     */
     public void engage() {
         engaged = !engaged;
         if (engaged) {
@@ -95,4 +116,5 @@ public class WheelOfFortune extends Submodule {
             solenoid.set(Value.kReverse);
         }
     }
+
 }

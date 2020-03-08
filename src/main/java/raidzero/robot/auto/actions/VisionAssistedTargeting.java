@@ -3,14 +3,12 @@ package raidzero.robot.auto.actions;
 import edu.wpi.first.wpilibj.MedianFilter;
 import edu.wpi.first.wpilibj.Timer;
 
-import raidzero.robot.Constants;
-import raidzero.robot.Constants.ShooterConstants;
+import raidzero.robot.submodules.AdjustableHood;
 import raidzero.robot.submodules.Limelight;
-import raidzero.robot.submodules.Shooter;
 import raidzero.robot.submodules.Limelight.CameraMode;
 import raidzero.robot.submodules.Limelight.LedMode;
-import raidzero.robot.utils.InterpolatingDouble;
 import raidzero.robot.utils.LimelightUtils;
+import raidzero.robot.Constants.HoodConstants;
 
 /**
  * Action for using vision to estimate distance and choose an appropiate velocity setpoint.
@@ -18,10 +16,10 @@ import raidzero.robot.utils.LimelightUtils;
 public class VisionAssistedTargeting implements Action {
 
     private enum ActionPhase {
-        ESTIMATING_DISTANCE, APPROACHING_SETPOINT
+        ESTIMATING_DISTANCE, SET_HOOD_POSITION
     }
 
-    private static final Shooter shooter = Shooter.getInstance();
+    private static final AdjustableHood hood = AdjustableHood.getInstance();
     private static final Limelight limelight = Limelight.getInstance();
 
     private static final double FILTER_PERIOD = 0.2;
@@ -35,8 +33,7 @@ public class VisionAssistedTargeting implements Action {
 
     @Override
     public boolean isFinished() {
-        return phase == ActionPhase.APPROACHING_SETPOINT && (shooter.isUpToSpeed() ||
-            Timer.getFPGATimestamp() - startTime > ShooterConstants.APPROACH_SETPOINT_TIMEOUT);
+        return phase == ActionPhase.SET_HOOD_POSITION;
     }
 
     @Override
@@ -60,15 +57,12 @@ public class VisionAssistedTargeting implements Action {
             }
             // Filter time is up
             double distance = LimelightUtils.estimateDistance(filter.calculate(limelight.getTy()));
-            InterpolatingDouble targetSpeed = Constants.DISTANCE_TO_SPEED.getInterpolated(
-                new InterpolatingDouble(distance));
             System.out.println("Distance: " + distance + " m");
-            System.out.println("Target Shooter Speed: " + (targetSpeed.value * 100) + "%");
-
-            shooter.shoot(targetSpeed.value, false);
+            
+            hood.moveToTick(distanceToHoodTick(distance));
 
             startTime = Timer.getFPGATimestamp();
-            phase = ActionPhase.APPROACHING_SETPOINT;
+            phase = ActionPhase.SET_HOOD_POSITION;
         } 
     }
 
@@ -77,5 +71,18 @@ public class VisionAssistedTargeting implements Action {
         limelight.setLedMode(LedMode.Off);
 
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' finished!");
+    }
+
+    /**
+     * Uses a curve fit to estimate the hood angle at a certain distance.
+     * 
+     * @param distance distance from the target (m)
+     * @return hood position (encoder tick)
+     */
+    private int distanceToHoodTick(double distance) {
+        int tick = (int) (HoodConstants.ATAN_COEFFICIENT * 
+            (Math.atan(HoodConstants.DISTANCE_COEFFICIENT * distance)) + 
+            HoodConstants.ANGLE_CONSTANT);
+        return tick;
     }
 }
