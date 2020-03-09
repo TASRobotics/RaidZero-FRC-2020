@@ -1,5 +1,6 @@
 package raidzero.robot;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -58,6 +59,13 @@ public class Robot extends TimedRobot {
             moduleSuperstructure
         );
         submoduleManager.onInit();
+
+        // TODO: Move this into a submodule
+        /*NetworkDict(f"/GStreamer/{func.name}")["/streams"] = [
+                f"rtsp://{url}{port}/{func.name}",
+            ]*/
+        NetworkTableInstance.getDefault().getTable("GStreamer/test")
+            .getEntry("streams").setString("rtsp://10.42.53.69:5804/test");
 
         autoRunner = new AutoRunner();
     }
