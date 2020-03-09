@@ -1,62 +1,76 @@
 package raidzero.robot.pathing;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
-import raidzero.robot.Constants.DriveConstants;
+
 import raidzero.robot.submodules.Drive;
 
-public abstract class Path {
+public class Path {
 
     protected static final Drive drive = Drive.getInstance();
-
-    protected double maxVelocity;
-    protected double maxAcceleration;
 
     protected Trajectory trajectory;
 
     /**
-     * Constructor using default constants.
+     * Initializes a path with a trajectory.
      */
-    public Path() {
-        this(DriveConstants.MAX_VELOCITY, DriveConstants.MAX_ACCELERATION);
+    private Path(Trajectory trajectory) {
+        this.trajectory = trajectory;
     }
 
-    /**
-     * Initializes a path and generates a trajectory.
-     * 
-     * @param maxVelocity maximum velocity in m/s
-     * @param maxAcceleration maximum acceleration in m/s^2
-     */
-    public Path(double maxVelocity, double maxAcceleration) {
-        this.maxVelocity = maxVelocity;
-        this.maxAcceleration = maxAcceleration;
-
-        trajectory = generateTrajectory();
+    public static Path fromWaypoints(Pose2d start, Pose2d end, boolean reversed, 
+        double maxVelocity, double maxAcceleration
+    ) {
+        return fromWaypoints(start, new ArrayList<>(), end, reversed, maxVelocity, maxAcceleration);
     }
 
-    /**
-     * This method should be overriden to generate the trajectory.
-     * 
-     * @return path trajectory
-     */
-    protected abstract Trajectory generateTrajectory();
+    public static Path fromWaypoints(Pose2d start, List<Translation2d> interiorWaypoints, 
+        Pose2d end, boolean reversed, double maxVelocity, double maxAcceleration
+    ) {
+        TrajectoryConfig config = new TrajectoryConfig(maxVelocity, maxAcceleration);
+        config.setReversed(reversed);
+        config.setKinematics(drive.getKinematics());
+        // config.addConstraint(DriveConstants.VOLTAGE_CONSTRAINT);
+    
+        // Uses clamped cubic splines
+        return new Path(TrajectoryGenerator.generateTrajectory(
+            start, interiorWaypoints, end, config));
+    }
+
+    public static Path fromWaypoints(List<Pose2d> waypoints, boolean reversed, 
+        double maxVelocity, double maxAcceleration
+    ) {
+        TrajectoryConfig config = new TrajectoryConfig(maxVelocity, maxAcceleration);
+        config.setReversed(reversed);
+        config.setKinematics(drive.getKinematics());
+        // config.addConstraint(DriveConstants.VOLTAGE_CONSTRAINT);
+    
+        // Uses quintic hermite splines
+        return new Path(TrajectoryGenerator.generateTrajectory(waypoints, config));
+    }
 
     /**
      * Returns a trajectory loaded from a JSON file.
      * Note: PathWeaver files usually look like XXX.wpilib.json
      * 
      * @param filename name of the JSON path file
-     * @return loaded trajectory
+     * @return path with loaded trajectory
      */
-    protected Trajectory loadFromJson(String filename) {
+    protected Path fromJson(String filename) {
         try {
-            return TrajectoryUtil.fromPathweaverJson(
+            return new Path(TrajectoryUtil.fromPathweaverJson(
                 Filesystem.getDeployDirectory().toPath().resolve("paths/" + filename)
-            );
+            ));
         } catch (IOException exception) {
             DriverStation.reportError("Unable to open trajectory: " + filename, exception.getStackTrace());
         }

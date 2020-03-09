@@ -65,7 +65,6 @@ public class TrajectoryFollower {
      * @param trajectory the trajectory to follow
      */
     public void start(Trajectory trajectory) {
-        reset();
         currentTrajectory = trajectory;
         timer.start();
     }

@@ -47,6 +47,7 @@ public class DrivePath implements Action {
     public void start() {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
         if (isFirstPath) {
+            drive.zero();
             /**
              * Set the odometry pose to the start of the trajectory.
              * Note: Should only do this on the first trajectory.
@@ -54,6 +55,7 @@ public class DrivePath implements Action {
             drive.resetOdometry(path.getTrajectory().getInitialPose());
         }
         drive.setGearShift(GearShift.LOW);
+        drive.setBrakeMode(true);
         drive.setDrivePath(path);
     }
 
@@ -64,5 +66,6 @@ public class DrivePath implements Action {
     public void done() {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' finished!");
         drive.stop();
+        drive.setBrakeMode(false);
     }
 }

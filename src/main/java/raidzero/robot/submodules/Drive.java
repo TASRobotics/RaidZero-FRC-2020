@@ -11,10 +11,12 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
@@ -69,6 +71,8 @@ public class Drive extends Submodule {
 
     private double quickStopAccumulator = 0.0;
 
+    private DifferentialDriveWheelSpeeds lastWheelSpeeds;
+
     // Output
     private double outputLeftDrive = 0.0;
     private double outputRightDrive = 0.0;
@@ -86,26 +90,22 @@ public class Drive extends Submodule {
         .getEntry();
     private NetworkTableEntry leftEncoderEntry = Shuffleboard.getTab(Tab.DEBUG)
         .add("Left Velocity (m/s)", 0.0)
-        .withWidget(BuiltInWidgets.kGraph) // TODO: Change this to kTextView
-        .withSize(2, 2)
+        .withSize(1, 1)
         .withPosition(0, 0)
         .getEntry();
     private NetworkTableEntry rightEncoderEntry = Shuffleboard.getTab(Tab.DEBUG)
         .add("Right Velocity (m/s)", 0.0)
-        .withWidget(BuiltInWidgets.kGraph) // TODO: Change this to kTextView
-        .withSize(2, 2)
+        .withSize(1, 1)
         .withPosition(2, 0)
         .getEntry();
     private NetworkTableEntry leftEncoderTargetEntry = Shuffleboard.getTab(Tab.DEBUG)
         .add("Left Target Velocity (m/s)", 0.0)
-        .withWidget(BuiltInWidgets.kGraph) // TODO: Change this to kTextView
-        .withSize(2, 2)
+        .withSize(1, 1)
         .withPosition(4, 0)
         .getEntry();
     private NetworkTableEntry rightEncoderTargetEntry = Shuffleboard.getTab(Tab.DEBUG)
         .add("Right Target Velocity (m/s)", 0.0)
-        .withWidget(BuiltInWidgets.kGraph) // TODO: Change this to kTextView
-        .withSize(2, 2)
+        .withSize(1, 1)
         .withPosition(6, 0)
         .getEntry();
     private NetworkTableEntry odometryXEntry = Shuffleboard.getTab(Tab.DEBUG)
@@ -212,6 +212,7 @@ public class Drive extends Submodule {
     public void onStart(double timestamp) {
         stop();
         zero();
+        resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)));
     }
 
     /**
@@ -350,27 +351,26 @@ public class Drive extends Submodule {
      * @param rightVelocity velocity in m/s
      */
     public void tankVelocity(double leftVelocity, double rightVelocity) {
-        leftEncoderTargetEntry.setDouble(leftVelocity);
-        rightEncoderTargetEntry.setDouble(rightVelocity);
+        leftEncoderTargetEntry.setNumber(leftVelocity);
+        rightEncoderTargetEntry.setNumber(rightVelocity);
 
         outputLeftVelocity = EncoderUtils.metersPerSecToTicksPer100ms(leftVelocity, 
             currentGearShift);
         outputRightVelocity = EncoderUtils.metersPerSecToTicksPer100ms(rightVelocity, 
             currentGearShift);
 
-        double leftCurrentVelocity = EncoderUtils.ticksPer100msToMetersPerSec(
-            leftLeader.getSelectedSensorVelocity(), currentGearShift);
-        double leftAcceleration = (leftVelocity - leftCurrentVelocity) 
+        double leftAcceleration = (leftVelocity - lastWheelSpeeds.leftMetersPerSecond) 
             / DriveConstants.LOOP_PERIOD_SECONDS;
-        double rightCurrentVelocity = EncoderUtils.ticksPer100msToMetersPerSec(
-            rightLeader.getSelectedSensorVelocity(), currentGearShift);
-        double rightAcceleration = (rightVelocity - rightCurrentVelocity)
+        double rightAcceleration = (rightVelocity - lastWheelSpeeds.rightMetersPerSecond)
             / DriveConstants.LOOP_PERIOD_SECONDS;
-        
+
         outputLeftFeedforward = DriveConstants.FEED_FORWARD.calculate(
             leftVelocity, leftAcceleration);
         outputRightFeedforward = DriveConstants.FEED_FORWARD.calculate(
             rightVelocity, rightAcceleration);
+
+        lastWheelSpeeds.leftMetersPerSecond = leftVelocity;
+        lastWheelSpeeds.rightMetersPerSecond = rightVelocity;
     }
 
     /**
@@ -526,6 +526,11 @@ public class Drive extends Submodule {
             stop();
 
             Trajectory trajectory = path.getTrajectory();
+
+            State initialState = trajectory.sample(0.0);
+            lastWheelSpeeds = getKinematics().toWheelSpeeds(
+                new ChassisSpeeds(initialState.velocityMetersPerSecond, 0,
+                    initialState.curvatureRadPerMeter * initialState.velocityMetersPerSecond));
 
             // Reset & start trajectory follower
             trajectoryFollower.reset();
