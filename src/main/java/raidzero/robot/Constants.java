@@ -94,14 +94,14 @@ public class Constants {
         public static final InvertType INVERSION = InvertType.None;
 
         public static final double MAX_SPEED = 20000; // in ticks per 100ms
-        public static final double FAKE_MAX_SPEED = 17000; // in ticks per 100ms
+        public static final double FAKE_MAX_SPEED = 16000; // in ticks per 100ms
         public static final double ERROR_TOLERANCE = 250;
         public static final double UP_TO_SPEED_DURATION = 0.5; // in seconds
 
         public static final double K_F = 1023.0 / MAX_SPEED;
-        public static final double K_P = 0.6;
+        public static final double K_P = 1;
         public static final double K_I = 0; // Shouldn't be touched
-        public static final double K_D = 5.0; // Shouldn't be touched
+        public static final double K_D = 4.0; // Shouldn't be touched
         public static final int K_INTEGRAL_ZONE = 0; // Shouldn't be touched
     }
     /**
