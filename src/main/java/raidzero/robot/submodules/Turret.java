@@ -76,6 +76,8 @@ public class Turret extends Submodule {
         if (turretMotor.getSensorCollection().isFwdLimitSwitchClosed()) {
             zero();
         }
+        System.out.println("Pos: " + turretMotor.getSelectedSensorPosition());
+        System.out.println("Target Pos: " + outputPosition);
     }
 
     @Override
@@ -123,6 +125,10 @@ public class Turret extends Submodule {
     public void rotateManual(double percentOutput) {
         controlState = ControlState.OPEN_LOOP;
         outputOpenLoop = percentOutput;
+    }
+
+    public int getPosition() {
+        return turretMotor.getClosedLoopError();
     }
 
     public boolean isInPercentMode() {

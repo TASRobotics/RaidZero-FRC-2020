@@ -78,6 +78,8 @@ public class Robot extends TimedRobot {
         // Stop autonomous
         autoRunner.stop();
         submoduleManager.onStop(Timer.getFPGATimestamp());
+
+        moduleDrive.setBrakeMode(false);
     }
 
     /**
@@ -122,5 +124,4 @@ public class Robot extends TimedRobot {
         teleop.onLoop();
         submoduleManager.onLoop(Timer.getFPGATimestamp());
     }
-
 }

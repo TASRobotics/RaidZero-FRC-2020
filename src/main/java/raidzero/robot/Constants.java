@@ -169,7 +169,7 @@ public class Constants {
         public static final int K_INTEGRAL_ZONE = 0;
 
         public static final int TOLERANCE = 1000;
-        public static final double AT_SETPOINT_DURATION = 0.05;
+        public static final double AT_SETPOINT_DURATION = 0.1;
     }
 
     /**
@@ -244,7 +244,7 @@ public class Constants {
         public static final double MOUNTING_HEIGHT = 0.56; // in meters
 
         // TODO: Improve the constants
-        public static final double AIM_KP = 0.0238;
+        public static final double AIM_KP = 0.03;
         public static final double AIM_KI = 0.03;
         public static final double AIM_KD = 0.00198;
         public static final double maxI = 0.08;
@@ -252,7 +252,7 @@ public class Constants {
 
         public static final double ANGLE_ADJUST_THRESHOLD = 1;
 
-        public static final double AIM_ON_TARGET_DURATION = 0.2;
+        public static final double AIM_ON_TARGET_DURATION = 0.12;
     }
 
     /**

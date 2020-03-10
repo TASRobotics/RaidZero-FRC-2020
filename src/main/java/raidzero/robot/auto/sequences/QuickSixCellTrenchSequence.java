@@ -12,13 +12,11 @@ import raidzero.robot.submodules.Intake;
 import raidzero.robot.submodules.Shooter;
 import raidzero.robot.submodules.Intake.Position;
 
-public class SixCellTrenchSequence extends AutoSequence {
+public class QuickSixCellTrenchSequence extends AutoSequence {
 
     private static final Point[] TRENCH_FORWARD_WAYPOINTS = {
         new Point(120, -24, 0),
-        new Point(222, -24, 0),
-        new Point(300, -24, 0),
-        new Point(330, -24, 0)
+        new Point(285, -24, 0)
     };
     private static final Path TRENCH_FORWARD_PATH = new Path(TRENCH_FORWARD_WAYPOINTS, false, 
         7.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
@@ -26,11 +24,7 @@ public class SixCellTrenchSequence extends AutoSequence {
     private static final Point[] TRENCH_BACKWARD_WAYPOINTS = {
         new Point(330, -24, 180),
         new Point(200, -24, 180),
-        new Point(120, -30, 180)//delete this
-        /*add these after testing, should help with accuracy and time
-        new Point(332, -24, 180),
-        new Point(170, -100, 180)
-        */
+        new Point(120, -30, 180)
     };
     private static final Path TRENCH_BACKWARD_PATH = new Path(TRENCH_BACKWARD_WAYPOINTS, true,
         11.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
@@ -39,7 +33,7 @@ public class SixCellTrenchSequence extends AutoSequence {
     private static final Intake intake = Intake.getInstance();
     private static final Shooter shooter = Shooter.getInstance();
 
-    public SixCellTrenchSequence() {
+    public QuickSixCellTrenchSequence() {
         System.out.println(DriverStation.getInstance().getAlliance().name());
     }
 
@@ -47,7 +41,6 @@ public class SixCellTrenchSequence extends AutoSequence {
     public void sequence() {
         addAction(new SeriesAction(
             Arrays.asList(
-                new LambdaAction(() -> drive.setBrakeMode(true)),
                 new ParallelAction(
                     Arrays.asList(
                         new SetShooterVelocity(1.0),
@@ -59,7 +52,9 @@ public class SixCellTrenchSequence extends AutoSequence {
                         new SetHoodPosition(6100)
                     )
                 ),
+                new LambdaAction(() -> drive.setBrakeMode(true)),
                 new FeedBalls(2.0),
+                new LambdaAction(() -> drive.setBrakeMode(false)),
                 //new LambdaAction(() -> shooter.stop()),
                 new LambdaAction(() -> intake.intakeBalls(1.0)),
                 new DrivePath(TRENCH_FORWARD_PATH)
@@ -85,11 +80,11 @@ public class SixCellTrenchSequence extends AutoSequence {
 
     @Override
     public void onEnded() {
-        System.out.println("SixCellTrenchSequence ended!");
+        System.out.println("QuickSixCellTrenchSequence ended!");
     }
 
     @Override
     public String getName() {
-        return "Six Cell Trench";
+        return "Quick Six Cell Trench";
     }
 }
