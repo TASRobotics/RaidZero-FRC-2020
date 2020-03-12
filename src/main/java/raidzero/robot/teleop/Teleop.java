@@ -23,6 +23,9 @@ import raidzero.robot.submodules.Drive.GearShift;
 import raidzero.robot.utils.JoystickUtils;
 import raidzero.robot.wrappers.InactiveCompressor;
 
+/**
+ * TODO: Rewrite to make button assignments easier
+ */
 public class Teleop {
 
     private enum DriveMode {
@@ -223,6 +226,20 @@ public class Teleop {
 
     private void p2Loop() {
         /**
+         * Hopper
+         */
+        if (p1.getPOV() == -1) {
+            double p2LeftJoystick = JoystickUtils.deadband(-p2.getY(Hand.kLeft));
+            if (p2LeftJoystick > 0) {
+                hopper.moveAtVelocity(0.75);
+            } else if (p2LeftJoystick < 0) {
+                hopper.moveAtVelocity(-0.75);
+            } else {
+                hopper.stop();
+            }
+        }
+
+        /**
          * Override
          */
         if (p2.getBumper(Hand.kLeft)) {            
@@ -261,20 +278,6 @@ public class Teleop {
             climb.openServo();
         } else {
             climb.closeServo();
-        }
-
-        /**
-         * Hopper
-         */
-        if (p1.getPOV() == -1) {
-            double p2LeftJoystick = JoystickUtils.deadband(-p2.getY(Hand.kLeft));
-            if (p2LeftJoystick > 0) {
-                hopper.moveAtVelocity(0.75);
-            } else if (p2LeftJoystick < 0) {
-                hopper.moveAtVelocity(-0.75);
-            } else {
-                hopper.stop();
-            }
         }
 
         /**
