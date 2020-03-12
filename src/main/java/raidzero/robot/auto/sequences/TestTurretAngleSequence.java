@@ -15,6 +15,7 @@ public class TestTurretAngleSequence extends AutoSequence {
         addAction(new SeriesAction(
             Arrays.asList(
                 new TurnTurretToAngle(90),
+                new TurnToGoal(),
                 new FeedBalls(2.0)
             )
         ));

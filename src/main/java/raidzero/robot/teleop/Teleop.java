@@ -252,7 +252,17 @@ public class Teleop {
              * Shooter Override
              */
             // If left bumper held shooter override
-            shooter.shoot(JoystickUtils.deadband(p2.getTriggerAxis(Hand.kRight)), false);
+            double rightTrigger = JoystickUtils.deadband(p2.getTriggerAxis(Hand.kRight));
+            if (Math.abs(rightTrigger) > 0) {
+                shooter.shoot(rightTrigger, false);
+            } else {
+                if (p2.getBumper(Hand.kRight)) {
+                    shooter.shoot(0.8125, false);
+                } else {
+                    shooter.stop();
+                }
+            }
+            
 
             if (p2.getAButtonPressed()) {
                 superstructure.setTurretPIDing(true);

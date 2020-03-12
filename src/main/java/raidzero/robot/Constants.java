@@ -244,13 +244,13 @@ public class Constants {
         public static final double MOUNTING_HEIGHT = 0.56; // in meters
 
         // TODO: Improve the constants
-        public static final double AIM_KP = 0.03;
+        public static final double AIM_KP = 0.04;
         public static final double AIM_KI = 0.03;
         public static final double AIM_KD = 0.00198;
         public static final double maxI = 0.08;
         public static final double minI = -0.08;
 
-        public static final double ANGLE_ADJUST_THRESHOLD = 1;
+        public static final double ANGLE_ADJUST_THRESHOLD = 2;
 
         public static final double AIM_ON_TARGET_DURATION = 0.12;
     }

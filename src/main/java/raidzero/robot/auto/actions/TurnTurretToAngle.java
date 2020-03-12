@@ -32,7 +32,6 @@ public class TurnTurretToAngle implements Action {
 
     @Override
     public void update() {
-        System.out.println(turret.getPosition());
         atSetpoint.update(turret.isAtPosition());   
     }
 
