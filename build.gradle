@@ -61,9 +61,11 @@ dependencies {
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
 
-    implementation 'com.github.Oblarg.Oblog:lib:3.1.0'
+    // implementation 'com.github.Oblarg.Oblog:lib:3.1.0'
 
     compile project(':pathgen')
+    compile "com.github.dominikWin:badlog:v0.1.1"
+    
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:3.2.4'
 

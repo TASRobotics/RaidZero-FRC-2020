@@ -113,14 +113,14 @@ public class Constants {
         public static final InvertType INVERSION = InvertType.None;
 
         public static final double MAX_SPEED = 20000; // in ticks per 100ms
-        public static final double FAKE_MAX_SPEED = 17000; // in ticks per 100ms
+        public static final double FAKE_MAX_SPEED = 16000; // in ticks per 100ms
         public static final double ERROR_TOLERANCE = 250;
         public static final double UP_TO_SPEED_DURATION = 0.5; // in seconds
 
         public static final double K_F = 1023.0 / MAX_SPEED;
-        public static final double K_P = 0.6;
+        public static final double K_P = 1;
         public static final double K_I = 0; // Shouldn't be touched
-        public static final double K_D = 5.0; // Shouldn't be touched
+        public static final double K_D = 4.0; // Shouldn't be touched
         public static final int K_INTEGRAL_ZONE = 0; // Shouldn't be touched
     }
     /**
@@ -188,7 +188,7 @@ public class Constants {
         public static final int K_INTEGRAL_ZONE = 0;
 
         public static final int TOLERANCE = 1000;
-        public static final double AT_SETPOINT_DURATION = 0.05;
+        public static final double AT_SETPOINT_DURATION = 0.1;
     }
 
     /**
@@ -262,15 +262,16 @@ public class Constants {
         public static final double MOUNTING_ANGLE = 31.4; // in degrees
         public static final double MOUNTING_HEIGHT = 0.56; // in meters
 
-        public static final double AIM_KP = 0.0238;
+        // TODO: Improve the constants
+        public static final double AIM_KP = 0.04;
         public static final double AIM_KI = 0.03;
         public static final double AIM_KD = 0.00198;
         public static final double maxI = 0.08;
         public static final double minI = -0.08;
 
-        public static final double ANGLE_ADJUST_THRESHOLD = 1;
+        public static final double ANGLE_ADJUST_THRESHOLD = 2;
 
-        public static final double AIM_ON_TARGET_DURATION = 0.2;
+        public static final double AIM_ON_TARGET_DURATION = 0.12;
     }
 
     /**

@@ -23,6 +23,9 @@ import raidzero.robot.submodules.Drive.GearShift;
 import raidzero.robot.utils.JoystickUtils;
 import raidzero.robot.wrappers.InactiveCompressor;
 
+/**
+ * TODO: Rewrite to make button assignments easier
+ */
 public class Teleop {
 
     private enum DriveMode {
@@ -223,6 +226,53 @@ public class Teleop {
 
     private void p2Loop() {
         /**
+         * Hopper
+         */
+        if (p1.getPOV() == -1) {
+            double p2LeftJoystick = JoystickUtils.deadband(-p2.getY(Hand.kLeft));
+            if (p2LeftJoystick > 0) {
+                hopper.moveAtVelocity(0.75);
+            } else if (p2LeftJoystick < 0) {
+                hopper.moveAtVelocity(-0.75);
+            } else {
+                hopper.stop();
+            }
+        }
+
+        /**
+         * Override
+         */
+        if (p2.getBumper(Hand.kLeft)) {            
+            /**
+             * WOF Override
+             */
+            wheelOfFortune.spin(JoystickUtils.deadband(p2.getX(Hand.kRight)));
+
+            /**
+             * Shooter Override
+             */
+            // If left bumper held shooter override
+            double rightTrigger = JoystickUtils.deadband(p2.getTriggerAxis(Hand.kRight));
+            if (Math.abs(rightTrigger) > 0) {
+                shooter.shoot(rightTrigger, false);
+            } else {
+                if (p2.getBumper(Hand.kRight)) {
+                    shooter.shoot(0.8125, false);
+                } else {
+                    shooter.stop();
+                }
+            }
+            
+
+            if (p2.getAButtonPressed()) {
+                superstructure.setTurretPIDing(true);
+            } else if (p2.getAButtonReleased()) {
+                superstructure.setTurretPIDing(false);
+            }
+            return;
+        }
+
+        /**
          * Compressor
          */
         if (p2.getBackButtonPressed()) {
@@ -238,20 +288,6 @@ public class Teleop {
             climb.openServo();
         } else {
             climb.closeServo();
-        }
-
-        /**
-         * Hopper
-         */
-        if (p1.getPOV() == -1) {
-            double p2LeftJoystick = JoystickUtils.deadband(-p2.getY(Hand.kLeft));
-            if (p2LeftJoystick > 0) {
-                hopper.moveAtVelocity(0.75);
-            } else if (p2LeftJoystick < 0) {
-                hopper.moveAtVelocity(-0.75);
-            } else {
-                hopper.stop();
-            }
         }
 
         /**

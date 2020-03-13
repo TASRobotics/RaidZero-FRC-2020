@@ -157,6 +157,6 @@ public class AdjustableHood extends Submodule {
 
     public boolean isAtPosition() {
         return controlState == ControlState.POSITION &&
-               Math.abs(hoodMotor.getClosedLoopError()) < HoodConstants.TOLERANCE;
+               Math.abs(Math.abs(outputPosition) - Math.abs(hoodMotor.getSelectedSensorPosition())) < HoodConstants.TOLERANCE;
     }
 }

@@ -131,6 +131,6 @@ public class Turret extends Submodule {
 
     public boolean isAtPosition() {
         return controlState == ControlState.POSITION &&
-               Math.abs(turretMotor.getClosedLoopError()) < TurretConstants.TOLERANCE;
+               Math.abs(Math.abs(turretMotor.getSelectedSensorPosition()) - Math.abs(outputPosition)) < TurretConstants.TOLERANCE;
     }
 }
