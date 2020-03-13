@@ -89,23 +89,23 @@ public class Drive extends Submodule {
         .withPosition(3, 2)
         .getEntry();
     private NetworkTableEntry leftEncoderEntry = Shuffleboard.getTab(Tab.DEBUG)
-        .add("Left Velocity (m/s)", 0.0)
-        .withSize(1, 1)
+        .add("Left Velocity (mps)", 0.0)
+        .withSize(2, 1)
         .withPosition(0, 0)
         .getEntry();
     private NetworkTableEntry rightEncoderEntry = Shuffleboard.getTab(Tab.DEBUG)
-        .add("Right Velocity (m/s)", 0.0)
-        .withSize(1, 1)
+        .add("Right Velocity (mps)", 0.0)
+        .withSize(2, 1)
         .withPosition(2, 0)
         .getEntry();
     private NetworkTableEntry leftEncoderTargetEntry = Shuffleboard.getTab(Tab.DEBUG)
-        .add("Left Target Velocity (m/s)", 0.0)
-        .withSize(1, 1)
+        .add("Left Target Velocity (mps)", 0.0)
+        .withSize(2, 1)
         .withPosition(4, 0)
         .getEntry();
     private NetworkTableEntry rightEncoderTargetEntry = Shuffleboard.getTab(Tab.DEBUG)
-        .add("Right Target Velocity (m/s)", 0.0)
-        .withSize(1, 1)
+        .add("Right Target Velocity (mps)", 0.0)
+        .withSize(2, 1)
         .withPosition(6, 0)
         .getEntry();
     private NetworkTableEntry odometryXEntry = Shuffleboard.getTab(Tab.DEBUG)
@@ -124,7 +124,7 @@ public class Drive extends Submodule {
         .add("Odometry Angle (deg)", 0.0)
         .withWidget(BuiltInWidgets.kTextView)
         .withSize(1, 1)
-        .withPosition(2, 1)
+        .withPosition(2, 2)
         .getEntry();
 
     @Override

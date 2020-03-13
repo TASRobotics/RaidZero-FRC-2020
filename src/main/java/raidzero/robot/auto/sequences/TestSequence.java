@@ -15,12 +15,12 @@ public class TestSequence extends AutoSequence {
 
     private static final Path PATH = Path.fromWaypoints(
         new Pose2d(
-            Units.inchesToMeters(250), Units.inchesToMeters(-296),
-            Rotation2d.fromDegrees(180)
+            Units.inchesToMeters(0), Units.inchesToMeters(0),
+            Rotation2d.fromDegrees(0)
         ),
         new Pose2d(
-            Units.inchesToMeters(120), Units.inchesToMeters(-94),
-            Rotation2d.fromDegrees(90)
+            1.5, 0.8,//Units.inchesToMeters(60), Units.inchesToMeters(30),
+            Rotation2d.fromDegrees(0)
         ),
         false, DriveConstants.DEFAULT_VELOCITY, DriveConstants.DEFAULT_ACCELERATION
     );

@@ -55,7 +55,7 @@ public class Constants {
         public static final double PIGEON_SCALE = 3600.0 / 8192.0;
 
         // kF should stay at 0 since the drive is using an arbitrary feedforward term
-        public static final double PRIMARY_P = 0.015; // 0.188 4.04
+        public static final double PRIMARY_P = 0.03; // 0.188 0.015 0.05
 
         public static final double METERS_PER_INCH = 0.0254;
         public static final double INCHES_PER_METER = 1.0 / 0.0254;
@@ -79,7 +79,7 @@ public class Constants {
         public static final double kV = 4.34;
 
         // Voltage needed to induce a given acceleration in the motor shaft.
-        public static final double kA = 0.0; // 0.417
+        public static final double kA = 0.417; // 0.417
 
         public static final SimpleMotorFeedforward FEED_FORWARD = 
             new SimpleMotorFeedforward(kS, kV, kA);
