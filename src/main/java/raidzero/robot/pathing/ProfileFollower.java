@@ -12,7 +12,7 @@ import raidzero.pathgen.PathPoint;
 import raidzero.pathgen.Point;
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.submodules.Drive.GearShift;
-import raidzero.robot.utils.EncoderUtils;
+import raidzero.robot.util.EncoderUtils;
 
 public class ProfileFollower {
 

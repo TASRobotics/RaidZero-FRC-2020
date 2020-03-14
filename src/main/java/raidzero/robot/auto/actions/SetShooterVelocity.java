@@ -2,7 +2,7 @@ package raidzero.robot.auto.actions;
 
 import raidzero.robot.Constants.ShooterConstants;
 import raidzero.robot.submodules.Shooter;
-import raidzero.robot.utils.TimerBoolean;
+import raidzero.lib.util.TimedBoolean;
 
 /**
  * Action for directly setting the shooter's velocity setpoint.
@@ -15,7 +15,7 @@ public class SetShooterVelocity implements Action {
 
     private double percentSpeed = 0.0;
 
-    private TimerBoolean isUpToSpeed = new TimerBoolean(ShooterConstants.UP_TO_SPEED_DURATION);
+    private TimedBoolean isUpToSpeed = new TimedBoolean(ShooterConstants.UP_TO_SPEED_DURATION);
 
     /**
      * Constructs a SetShooterVelocity action.

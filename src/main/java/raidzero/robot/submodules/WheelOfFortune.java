@@ -6,8 +6,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-import raidzero.robot.wrappers.LazyTalonSRX;
-import raidzero.robot.wrappers.InactiveDoubleSolenoid;
+import raidzero.lib.wrapper.LazyTalonSRX;
+import raidzero.lib.wrapper.InactiveDoubleSolenoid;
 import raidzero.robot.Constants.WheelOfFortuneConstants;
 
 public class WheelOfFortune extends Submodule {

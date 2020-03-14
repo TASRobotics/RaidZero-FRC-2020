@@ -1,14 +1,14 @@
-package raidzero.robot.wrappers;
+package raidzero.lib.wrapper;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
-public class LazyTalonSRX extends TalonSRX {
+public class LazyTalonFX extends TalonFX {
     
     protected double prevVal = 0;
     protected ControlMode prevControlMode = null;
 
-    public LazyTalonSRX(int deviceNumber) {
+    public LazyTalonFX(int deviceNumber) {
         super(deviceNumber);
     }
 

@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
-import raidzero.robot.wrappers.LazyTalonFX;
+import raidzero.lib.wrapper.LazyTalonFX;
 
 import raidzero.robot.Constants.HopperConstants;
 

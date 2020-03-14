@@ -1,4 +1,4 @@
-package raidzero.robot.utils;
+package raidzero.robot.util;
 
 import raidzero.robot.Constants;
 

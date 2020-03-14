@@ -2,7 +2,7 @@ package raidzero.robot.auto.actions;
 
 import raidzero.robot.pathing.Path;
 import raidzero.robot.submodules.Drive;
-import raidzero.robot.utils.FinishConditionInterface;
+import raidzero.lib.util.FinishConditionInterface;
 
 /**
  * Action for following a path.

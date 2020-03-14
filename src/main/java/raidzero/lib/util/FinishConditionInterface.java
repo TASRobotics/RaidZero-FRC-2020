@@ -1,4 +1,4 @@
-package raidzero.robot.utils;
+package raidzero.lib.util;
 
 import java.lang.FunctionalInterface;
 

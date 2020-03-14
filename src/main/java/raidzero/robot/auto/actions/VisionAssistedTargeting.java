@@ -7,7 +7,7 @@ import raidzero.robot.submodules.AdjustableHood;
 import raidzero.robot.submodules.Limelight;
 import raidzero.robot.submodules.Limelight.CameraMode;
 import raidzero.robot.submodules.Limelight.LedMode;
-import raidzero.robot.utils.LimelightUtils;
+import raidzero.robot.util.LimelightUtils;
 import raidzero.robot.Constants.HoodConstants;
 
 /**

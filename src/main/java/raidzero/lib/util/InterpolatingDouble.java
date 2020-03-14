@@ -1,4 +1,4 @@
-package raidzero.robot.utils;
+package raidzero.lib.util;
 
 /**
  * A Double that can be interpolated using the InterpolatingTreeMap.

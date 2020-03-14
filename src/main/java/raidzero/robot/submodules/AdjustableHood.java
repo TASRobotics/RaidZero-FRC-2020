@@ -12,7 +12,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
-import raidzero.robot.wrappers.LazyTalonSRX;
+import raidzero.lib.wrapper.LazyTalonSRX;
 import raidzero.robot.Constants.HoodConstants;
 import raidzero.robot.Constants.HoodConstants.HoodAngle;
 import raidzero.robot.dashboard.Tab;

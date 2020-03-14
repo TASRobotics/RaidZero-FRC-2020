@@ -11,7 +11,7 @@ import raidzero.robot.dashboard.Tab;
 import raidzero.robot.submodules.Limelight;
 import raidzero.robot.submodules.Limelight.CameraMode;
 import raidzero.robot.submodules.Limelight.LedMode;
-import raidzero.robot.utils.LimelightUtils;
+import raidzero.robot.util.LimelightUtils;
 
 /**
  * Action for debugging limelight distance estimation.

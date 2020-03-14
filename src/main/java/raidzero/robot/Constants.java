@@ -3,8 +3,8 @@ package raidzero.robot;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import raidzero.robot.utils.InterpolatingDouble;
-import raidzero.robot.utils.InterpolatingTreeMap;
+import raidzero.lib.util.InterpolatingDouble;
+import raidzero.lib.util.InterpolatingTreeMap;
 
 public class Constants {
     /**
