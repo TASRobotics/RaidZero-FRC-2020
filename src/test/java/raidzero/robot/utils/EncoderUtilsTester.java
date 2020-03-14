@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.submodules.Drive.GearShift;
-import raidzero.robot.utils.EncoderUtils;
+import raidzero.robot.util.EncoderUtils;
 
 public class EncoderUtilsTester {
 
