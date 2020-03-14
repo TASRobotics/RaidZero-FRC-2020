@@ -40,7 +40,6 @@ public class DriveOpenLoop implements Action {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
         startTime = Timer.getFPGATimestamp();
 
-        drive.setOpenLoop();
         drive.tank(leftOutput, rightOutput, false);
     }
 

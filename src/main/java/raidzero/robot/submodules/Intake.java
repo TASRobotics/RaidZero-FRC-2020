@@ -9,10 +9,15 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import raidzero.robot.Constants.IntakeConstants;
 import raidzero.robot.dashboard.Tab;
 
-/**
- * Sucks BOBA balls and definitely not other balls
- */
 public class Intake extends Submodule {
+
+    public static class PeriodicIO {
+        // Inputs
+
+        // Outputs
+        // [-1.0, 1.0] if OPEN_LOOP, [-1.0, 1.0] if VELOCITY
+        public double demand = 0.0;
+    }
 
     public static enum Position {
         DOWN, UP
@@ -30,12 +35,14 @@ public class Intake extends Submodule {
     private Intake() {
     }
 
+    // Hardware components
     private LazyTalonSRX intakeMotor;
     private InactiveDoubleSolenoid solenoid;
 
-    private double outputOpenLoop = 0.0;
-
+    // Hardware states
     private Position position = Position.UP;
+
+    private PeriodicIO periodicIO = new PeriodicIO();
 
     private NetworkTableEntry intakePositionEntry = Shuffleboard.getTab(Tab.MAIN)
         .add("Intake Position", position.toString())
@@ -57,29 +64,34 @@ public class Intake extends Submodule {
 
     @Override
     public void onStart(double timestamp) {
-        outputOpenLoop = 0.0;
+        periodicIO = new PeriodicIO();
     }
 
     @Override
-    public void run() {
-        intakeMotor.set(ControlMode.PercentOutput, outputOpenLoop);
+    public void writePeriodicOutputs() {
+        intakeMotor.set(ControlMode.PercentOutput, periodicIO.demand);
     }
 
     @Override
     public void stop() {
-        outputOpenLoop = 0.0;
+        periodicIO.demand = 0.0;
         intakeMotor.set(ControlMode.PercentOutput, 0);
     }
 
     /**
      * Spins the intake using open-loop control.
      * 
-     * @param percentOutput the percent output in [-1, 1]
+     * @param percentOutput the percent output in [-1.0, 1.0]
      */
     public void intakeBalls(double percentOutput) {
-        outputOpenLoop = percentOutput;
+        periodicIO.demand = percentOutput;
     }
 
+    /**
+     * Sets the position of the intake.
+     * 
+     * @param pos the target position
+     */
     public void setPosition(Position pos) {
         position = pos;
         intakePositionEntry.setString(position.toString());

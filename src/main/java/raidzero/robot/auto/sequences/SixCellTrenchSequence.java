@@ -3,13 +3,12 @@ package raidzero.robot.auto.sequences;
 import java.util.Arrays;
 
 import edu.wpi.first.wpilibj.DriverStation;
+
 import raidzero.pathgen.Point;
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.auto.actions.*;
 import raidzero.robot.pathing.Path;
-import raidzero.robot.submodules.Drive;
-import raidzero.robot.submodules.Intake;
-import raidzero.robot.submodules.Shooter;
+import raidzero.robot.submodules.*;
 import raidzero.robot.submodules.Intake.Position;
 
 public class SixCellTrenchSequence extends AutoSequence {
@@ -26,16 +25,11 @@ public class SixCellTrenchSequence extends AutoSequence {
     private static final Point[] TRENCH_BACKWARD_WAYPOINTS = {
         new Point(330, -24, 180),
         new Point(200, -24, 180),
-        new Point(180, -24, 180)//delete this
-        /*add these after testing, should help with accuracy and time
-        new Point(332, -24, 180),
-        new Point(170, -100, 180)
-        */
+        new Point(180, -24, 180)
     };
     private static final Path TRENCH_BACKWARD_PATH = new Path(TRENCH_BACKWARD_WAYPOINTS, true,
         14, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
-    private static final Drive drive = Drive.getInstance();
     private static final Intake intake = Intake.getInstance();
     private static final Shooter shooter = Shooter.getInstance();
 
@@ -64,7 +58,7 @@ public class SixCellTrenchSequence extends AutoSequence {
                 new FeedBalls(1.5),
                 //new LambdaAction(() -> shooter.stop()),
                 new LambdaAction(() -> intake.intakeBalls(1.0)),
-                new DrivePath(TRENCH_FORWARD_PATH)
+                new DrivePath(TRENCH_FORWARD_PATH, true)
             )
         ));
         addAction(new SeriesAction(

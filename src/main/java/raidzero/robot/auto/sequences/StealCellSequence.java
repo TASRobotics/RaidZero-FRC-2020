@@ -58,7 +58,7 @@ public class StealCellSequence extends AutoSequence {
                     Arrays.asList(
                         new LambdaAction(() -> intake.setPosition(Position.DOWN)),
                         new LambdaAction(() -> intake.intakeBalls(1.0)),
-                        new DrivePath(TO_STEAL_CELLS_PATH)
+                        new DrivePath(TO_STEAL_CELLS_PATH, true)
                     )
                 ),
                 new WaitAction(0.1),

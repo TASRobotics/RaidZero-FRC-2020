@@ -12,6 +12,15 @@ import raidzero.robot.Constants.TurretConstants;
 
 public class Turret extends Submodule {
 
+    public static class PeriodicIO {
+        // Inputs
+        public int position = 0; // in encoder ticks
+
+        // Outputs
+        // [-1.0, 1.0] if OPEN_LOOP, encoder ticks if POSITION
+        public double demand = 0.0;
+    }
+
     /**
      * 63:1
      */
@@ -31,11 +40,13 @@ public class Turret extends Submodule {
     private Turret() {
     }
 
+    // Hardware components
     private LazyTalonSRX turretMotor;
 
-    private double outputOpenLoop = 0.0;
-    private double outputPosition = 0.0;
+    // Control state
     private ControlState controlState = ControlState.OPEN_LOOP;
+
+    private PeriodicIO periodicIO = new PeriodicIO();
 
     @Override
     public void onInit() {
@@ -66,9 +77,14 @@ public class Turret extends Submodule {
     @Override
     public void onStart(double timestamp) {
         controlState = ControlState.OPEN_LOOP;
-        outputOpenLoop = 0.0;
-        outputPosition = 0.0;
+        
+        periodicIO = new PeriodicIO();
         zero();
+    }
+
+    @Override
+    public void readPeriodicInputs() {
+        periodicIO.position = turretMotor.getSelectedSensorPosition();
     }
 
     @Override
@@ -79,23 +95,21 @@ public class Turret extends Submodule {
     }
 
     @Override
-    public void run() {
+    public void writePeriodicOutputs() {
         switch (controlState) {
             case OPEN_LOOP:
-                turretMotor.set(ControlMode.PercentOutput, outputOpenLoop);
+                turretMotor.set(ControlMode.PercentOutput, periodicIO.demand);
                 break;
             case POSITION:
-                turretMotor.set(ControlMode.Position, outputPosition);
+                turretMotor.set(ControlMode.Position, periodicIO.demand);
                 break;
         }
     }
 
     @Override
     public void stop() {
-        controlState = ControlState.OPEN_LOOP;
-        outputOpenLoop = 0.0;
-        outputPosition = 0.0;
-        turretMotor.set(ControlMode.PercentOutput, 0);
+        rotateManual(0.0);
+        turretMotor.set(ControlMode.PercentOutput, 0.0);
     }
 
     @Override
@@ -109,8 +123,10 @@ public class Turret extends Submodule {
      * @param angle the angle to rotate to
      */
     public void rotateToAngle(double angle) {
-        controlState = ControlState.POSITION;
-        outputPosition = -angle * TurretConstants.TICKS_PER_DEGREE;
+        if (controlState != ControlState.POSITION) {
+            controlState = ControlState.POSITION;
+        }
+        periodicIO.demand = -angle * TurretConstants.TICKS_PER_DEGREE;
     }
 
     /**
@@ -121,16 +137,19 @@ public class Turret extends Submodule {
      * @param percentOutput the percent output in [-1, 1]
      */
     public void rotateManual(double percentOutput) {
-        controlState = ControlState.OPEN_LOOP;
-        outputOpenLoop = percentOutput;
+        if (controlState != ControlState.OPEN_LOOP) {
+            controlState = ControlState.OPEN_LOOP;
+        }
+        periodicIO.demand = percentOutput;
     }
 
-    public boolean isInPercentMode() {
+    public boolean isInOpenLoop() {
         return controlState == ControlState.OPEN_LOOP;
     }
 
     public boolean isAtPosition() {
+        double error = Math.abs(Math.abs(periodicIO.position) - Math.abs(periodicIO.demand));
         return controlState == ControlState.POSITION &&
-               Math.abs(Math.abs(turretMotor.getSelectedSensorPosition()) - Math.abs(outputPosition)) < TurretConstants.TOLERANCE;
+            error < TurretConstants.TOLERANCE;
     }
 }

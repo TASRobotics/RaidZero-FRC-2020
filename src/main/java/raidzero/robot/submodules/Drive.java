@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
@@ -20,12 +21,27 @@ import edu.wpi.first.wpiutil.math.MathUtil;
 import raidzero.robot.Constants;
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.dashboard.Tab;
-import raidzero.robot.wrappers.*;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.pathing.ProfileFollower;
 import raidzero.robot.utils.EncoderUtils;
+import raidzero.robot.wrappers.InactiveDoubleSolenoid;
+import raidzero.robot.wrappers.LazyTalonFX;
 
 public class Drive extends Submodule {
+    public static class PeriodicIO {
+        // Inputs
+        public double leftPosition = 0; // in encoder ticks
+        public double rightPosition = 0; // in encoder ticks
+
+        public double leftVelocity = 0; // in encoder ticks per 100ms
+        public double rightVelocity = 0; // in encoder ticks per 100ms
+
+        // Outputs
+        public double leftDemand = 0.0; // in percent [-1.0, 1.0]
+        public double rightDemand = 0.0; // in percent [-1.0, 1.0]
+
+        public int closedLoopStatus = SetValueMotionProfile.Disable.value;
+    }
 
     public static enum GearShift {
         HIGH, LOW
@@ -47,10 +63,9 @@ public class Drive extends Submodule {
     private Drive() {
     }
 
-    private LazyTalonFX leftLeader;
-    private LazyTalonFX leftFollower;
-    private LazyTalonFX rightLeader; // Also the "ultimate master" for profiling
-    private LazyTalonFX rightFollower;
+    // Hardware components
+    private LazyTalonFX leftLeader, leftFollower;
+    private LazyTalonFX rightLeader, rightFollower; // right leader is the "ultimate master"
 
     // Should be references to one of the 4 motors
     private LazyTalonFX profilingLeader;
@@ -60,21 +75,20 @@ public class Drive extends Submodule {
 
     private PigeonIMU pigeon;
 
-    // Control states
-    private ControlState controlState;
-
-    // Profile follower
-    private ProfileFollower mpFollower;
-
+    // Hardware states
     private GearShift currentGearShift = GearShift.LOW;
+
+    // Control state
+    private ControlState controlState = ControlState.OPEN_LOOP;
+
+    // Controllers
+    private ProfileFollower mpFollower;
 
     private double quickStopAccumulator = 0.0;
 
-    // Output
-    private double outputLeftDrive = 0.0;
-    private double outputRightDrive = 0.0;
-    private int outputClosedLoop = 0;
+    private PeriodicIO periodicIO = new PeriodicIO();
 
+    // Dashboard entries
     private NetworkTableEntry gearShiftEntry = Shuffleboard.getTab(Tab.MAIN)
         .add("Gear Shift", "EMPTY")
         .withWidget(BuiltInWidgets.kTextView)
@@ -130,9 +144,6 @@ public class Drive extends Submodule {
         // Gear shift
         gearShiftSolenoid = new InactiveDoubleSolenoid(DriveConstants.GEARSHIFT_FORWARD_ID,
                 DriveConstants.GEARSHIFT_REVERSE_ID);
-
-        // Control state
-        controlState = ControlState.OPEN_LOOP;
     }
 
     /**
@@ -255,13 +266,23 @@ public class Drive extends Submodule {
     public void onStart(double timestamp) {
         controlState = ControlState.OPEN_LOOP;
 
-        outputLeftDrive = 0.0;
-        outputRightDrive = 0.0;
-        outputClosedLoop = 0;
+        periodicIO = new PeriodicIO();
 
         setGearShift(GearShift.LOW);
 
         profilingLeader.clearMotionProfileTrajectories();
+    }
+
+    @Override
+    public void readPeriodicInputs() {
+        TalonFXSensorCollection left = leftLeader.getSensorCollection();
+        TalonFXSensorCollection right = rightLeader.getSensorCollection();
+
+        periodicIO.leftPosition = left.getIntegratedSensorPosition();
+        periodicIO.rightPosition = right.getIntegratedSensorPosition();
+
+        periodicIO.leftVelocity = left.getIntegratedSensorVelocity();
+        periodicIO.rightVelocity = right.getIntegratedSensorVelocity();
     }
 
     /**
@@ -273,16 +294,16 @@ public class Drive extends Submodule {
     public void update(double timestamp) {
         if (controlState == ControlState.PATH_FOLLOWING) {
             mpFollower.update();
-            outputClosedLoop = mpFollower.getOutput();
+            periodicIO.closedLoopStatus = mpFollower.getOutput();
         }
         gearShiftEntry.setString(currentGearShift.toString());
         leftEncoderEntry.setNumber(
             EncoderUtils.ticksToInches(
-                leftLeader.getSensorCollection().getIntegratedSensorPosition(), currentGearShift)
+                periodicIO.leftPosition, currentGearShift)
         );
         rightEncoderEntry.setNumber(
             EncoderUtils.ticksToInches(
-                -rightLeader.getSensorCollection().getIntegratedSensorPosition(), currentGearShift)
+                -periodicIO.rightPosition, currentGearShift)
         );
     }
 
@@ -290,14 +311,14 @@ public class Drive extends Submodule {
      * Runs the motors with different control modes depending on the state.
      */
     @Override
-    public void run() {
+    public void writePeriodicOutputs() {
         switch (controlState) {
             case OPEN_LOOP:
-                leftLeader.set(ControlMode.PercentOutput, outputLeftDrive);
-                rightLeader.set(ControlMode.PercentOutput, outputRightDrive);
+                leftLeader.set(ControlMode.PercentOutput, periodicIO.leftDemand);
+                rightLeader.set(ControlMode.PercentOutput, periodicIO.rightDemand);
                 break;
             case PATH_FOLLOWING:
-                profilingLeader.set(ControlMode.MotionProfileArc, outputClosedLoop);
+                profilingLeader.set(ControlMode.MotionProfileArc, periodicIO.closedLoopStatus);
                 profilingFollower.follow(profilingLeader, FollowerType.AuxOutput1);
                 break;
         }
@@ -310,9 +331,9 @@ public class Drive extends Submodule {
     public void stop() {
         controlState = ControlState.OPEN_LOOP;
 
-        outputLeftDrive = 0.0;
-        outputRightDrive = 0.0;
-        outputClosedLoop = SetValueMotionProfile.Disable.value;
+        periodicIO.leftDemand = 0.0;
+        periodicIO.rightDemand = 0.0;
+        periodicIO.closedLoopStatus = SetValueMotionProfile.Disable.value;
 
         leftLeader.set(ControlMode.Disabled, 0.0);
         rightLeader.set(ControlMode.Disabled, 0.0);
@@ -329,16 +350,7 @@ public class Drive extends Submodule {
          */
         leftLeader.getSensorCollection().setIntegratedSensorPosition(0.0, Constants.TIMEOUT_MS);
         rightLeader.getSensorCollection().setIntegratedSensorPosition(0.0, Constants.TIMEOUT_MS);
-        pigeon.setYaw(0.0);
-    }
-
-    /**
-     * Switches the base to open-loop control mode.
-     * 
-     * Note: Should be called after finishing motion profiling.
-     */
-    public void setOpenLoop() {
-        controlState = ControlState.OPEN_LOOP;
+        pigeon.setFusedHeading(0.0);
     }
 
     /**
@@ -349,13 +361,16 @@ public class Drive extends Submodule {
      * @param reverse whether to reverse the inputs or not
      */
     public void tank(double left, double right, boolean reverse) {
+        if (controlState != ControlState.OPEN_LOOP) {
+            controlState = ControlState.OPEN_LOOP;
+        }
         if (reverse) {
-            outputLeftDrive = -left;
-            outputRightDrive = -right;
+            periodicIO.leftDemand = -left;
+            periodicIO.rightDemand = -right;
             return;
         }
-        outputLeftDrive = left;
-        outputRightDrive = right;
+        periodicIO.leftDemand = left;
+        periodicIO.rightDemand = right;
     }
 
     /**
@@ -366,12 +381,15 @@ public class Drive extends Submodule {
      * @param reverse       whether to reverse the inputs or not
      */
     public void arcade(double leftJoystick, double rightJoystick, boolean reverse) {
+        if (controlState != ControlState.OPEN_LOOP) {
+            controlState = ControlState.OPEN_LOOP;
+        }
         if (reverse) {
             leftJoystick *= -1;
             rightJoystick *= -1;
         }
-        outputLeftDrive = leftJoystick + rightJoystick;
-        outputRightDrive = leftJoystick - rightJoystick;
+        periodicIO.leftDemand = leftJoystick + rightJoystick;
+        periodicIO.rightDemand = leftJoystick - rightJoystick;
     }
 
     /**
@@ -384,6 +402,10 @@ public class Drive extends Submodule {
      *                    turn-in-place maneuvers.
      */
     public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
+        if (controlState != ControlState.OPEN_LOOP) {
+            controlState = ControlState.OPEN_LOOP;
+        }
+
         xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0);
         zRotation = MathUtil.clamp(zRotation, -1.0, 1.0);
 
@@ -437,8 +459,8 @@ public class Drive extends Submodule {
             leftMotorOutput /= maxMagnitude;
             rightMotorOutput /= maxMagnitude;
         }
-        outputLeftDrive = leftMotorOutput;
-        outputRightDrive = rightMotorOutput;
+        periodicIO.leftDemand = leftMotorOutput;
+        periodicIO.rightDemand = rightMotorOutput;
     }
 
     /**
@@ -485,20 +507,32 @@ public class Drive extends Submodule {
     /**
      * Makes the drive start following a Path.
      * 
-     * @param path the path to follow
+     * @param path           the path to follow
+     * @param zeroAllSensors whether to zero all sensors to the first point
      */
-    public void setDrivePath(Path path) {
+    public void setDrivePath(Path path, boolean zeroAllSensors) {
         if (mpFollower != null) {
-            // Stops & resets everything
+            // Stop the drivetrain first
             stop();
-            zero();
-            // The path may start at a different angle at times
-            pigeon.setYaw(path.getFirstPoint().angle.orElse(0.0));
+
+            if (zeroAllSensors) {
+                zero();
+
+                double angle = path.getFirstPoint().angle.orElse(0.0);
+
+                // The path may start at a different angle at times
+                pigeon.setFusedHeading(angle);
+            } else if (path.isReversed()) {
+                // TODO: Check to see if this is correct
+                pigeon.setFusedHeading(pigeon.getFusedHeading() + 180);
+            }
+
             mpFollower.reset();
 
             mpFollower.setGearShift(currentGearShift);
             mpFollower.setReverse(path.isReversed());
             mpFollower.start(path.getPathPoints());
+
             controlState = ControlState.PATH_FOLLOWING;
         }
     }
