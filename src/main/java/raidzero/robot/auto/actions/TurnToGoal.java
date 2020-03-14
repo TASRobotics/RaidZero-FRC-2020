@@ -56,7 +56,7 @@ public class TurnToGoal implements Action {
     public void update() {
         if (!limelight.hasTarget()) {
             onTarget.update(false);
-            if (turret.isInPercentMode()) {
+            if (turret.isInOpenLoop()) {
                 turret.stop();
             }
             return;

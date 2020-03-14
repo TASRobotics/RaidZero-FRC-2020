@@ -8,6 +8,13 @@ import raidzero.robot.wrappers.LazyTalonSRX;
 
 public class Climb extends Submodule {
 
+    public static class PeriodicIO {
+        // Inputs
+
+        // Outputs
+        public double demand = 0.0; // in percent [-1.0, 1.0]
+    }
+
     private static Climb instance = null;
     public static Climb getInstance() {
         if (instance == null) {
@@ -19,16 +26,19 @@ public class Climb extends Submodule {
     private Climb() {
     }
 
+    // Hardware components
     private LazyTalonSRX climbMotor;
     private PWM servo;
 
+    // Hardware states
     private boolean unlocked = false;
-    private double outputOpenLoop = 0.0;
-    private int outputServoPosition = -1;
+
+    private PeriodicIO periodicIO = new PeriodicIO();
 
     @Override
     public void onInit() {
         servo = new PWM(9);
+
         climbMotor = new LazyTalonSRX(ClimbConstants.MOTOR_ID);
         climbMotor.configFactoryDefault();
         climbMotor.setNeutralMode(ClimbConstants.NEUTRAL_MODE);
@@ -37,28 +47,27 @@ public class Climb extends Submodule {
 
     @Override
     public void onStart(double timestamp) {
-        outputServoPosition = 1;
-        outputOpenLoop = 0.0;
+        periodicIO = new PeriodicIO();
+
+        closeServo();
     }
 
     @Override
     public void update(double timestamp) {
         if (!unlocked) {
-            outputServoPosition = 1;
-            outputOpenLoop = 0.0;
+            periodicIO.demand = 0.0;
         }
     }
 
     @Override
-    public void run() {
-        servo.setPosition(outputServoPosition);
-        climbMotor.set(ControlMode.PercentOutput, outputOpenLoop);
+    public void writePeriodicOutputs() {
+        climbMotor.set(ControlMode.PercentOutput, periodicIO.demand);
     }
 
     @Override
     public void stop() {
-        outputOpenLoop = 0.0;
-        climbMotor.set(ControlMode.PercentOutput, 0);
+        periodicIO.demand = 0.0;
+        climbMotor.set(ControlMode.PercentOutput, 0.0);
     }
 
     public boolean isUnlocked() {
@@ -83,22 +92,22 @@ public class Climb extends Submodule {
      * Opens the servo.
      */
     public void openServo() {
-        outputServoPosition = -1;
+        servo.setPosition(-1);
     }
 
     /**
      * Closes the servo.
      */
     public void closeServo() {
-        outputServoPosition = 1;
+        servo.setPosition(1);
     }
 
     /**
-     * Climbs using open-loop control..
+     * Climbs using open-loop control.
      * 
-     * @param percentOutput percent output in [-1, 1]
+     * @param percentOutput percent output in [-1.0, 1.0]
      */
     public void climb(double percentOutput) {
-        outputOpenLoop = percentOutput;
+        periodicIO.demand = percentOutput;
     }
 }

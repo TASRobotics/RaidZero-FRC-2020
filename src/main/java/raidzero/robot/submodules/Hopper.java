@@ -11,6 +11,14 @@ import raidzero.robot.Constants.HopperConstants;
 
 public class Hopper extends Submodule {
 
+    public static class PeriodicIO {
+        // Inputs
+
+        // Outputs
+        // [-1.0, 1.0] if OPEN_LOOP, [-1.0, 1.0] if VELOCITY
+        public double demand = 0.0;
+    }
+
     public static enum ControlState {
         OPEN_LOOP, VELOCITY
     }
@@ -27,12 +35,13 @@ public class Hopper extends Submodule {
     private Hopper() {
     }
 
+    // Hardware components
     private LazyTalonFX hopperMotor;
 
+    // Control state
     private ControlState controlState = ControlState.OPEN_LOOP;
 
-    private double outputOpenLoop = 0.0;
-    private double outputPercentVelocity = 0.0;
+    private PeriodicIO periodicIO = new PeriodicIO();
 
     @Override
     public void onInit() {
@@ -57,47 +66,48 @@ public class Hopper extends Submodule {
     @Override
     public void onStart(double timestamp) {
         controlState = ControlState.OPEN_LOOP;
-        outputOpenLoop = 0.0;
-        outputPercentVelocity = 0.0;
+        periodicIO = new PeriodicIO();
     }
 
     @Override
-    public void run() {
+    public void writePeriodicOutputs() {
         switch (controlState) {
             case OPEN_LOOP:
-                hopperMotor.set(ControlMode.PercentOutput, outputOpenLoop);
+                hopperMotor.set(ControlMode.PercentOutput, periodicIO.demand);
                 break;
             case VELOCITY:
                 hopperMotor.set(ControlMode.Velocity,
-                        outputPercentVelocity * HopperConstants.MAX_SPEED);
+                    periodicIO.demand * HopperConstants.MAX_SPEED);
                 break;
         }
     }
 
     @Override
     public void stop() {
-        controlState = ControlState.OPEN_LOOP;
-        outputOpenLoop = 0.0;
-        outputPercentVelocity = 0.0;
+        moveBelt(0.0);
         hopperMotor.set(ControlMode.PercentOutput, 0);
     }
 
     /**
      * Moves the conveyor belt using open-loop control.
      * 
-     * @param percentOutput the percent output in [-1, 1]
+     * @param percentOutput the percent output in [-1.0, 1.0]
      */
     public void moveBelt(double percentOutput) {
-        controlState = ControlState.OPEN_LOOP;
-        outputOpenLoop = percentOutput;
+        if (controlState != ControlState.OPEN_LOOP) {
+            controlState = ControlState.OPEN_LOOP;
+        }
+        periodicIO.demand = percentOutput;
     }
 
     public void moveAtVelocity(double percentVelocity) {
         if (Math.abs(percentVelocity) < 0.1) {
-            stop();
+            moveBelt(0.0);
             return;
         }
-        controlState = ControlState.VELOCITY;
-        outputPercentVelocity = percentVelocity;
+        if (controlState != ControlState.VELOCITY) {
+            controlState = ControlState.VELOCITY;
+        }
+        periodicIO.demand = percentVelocity;
     }
 }

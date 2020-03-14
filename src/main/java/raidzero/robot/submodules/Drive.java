@@ -5,6 +5,9 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -20,15 +23,38 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
+
 import raidzero.robot.Constants;
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.dashboard.Tab;
-import raidzero.robot.wrappers.*;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.pathing.TrajectoryFollower;
 import raidzero.robot.utils.EncoderUtils;
+import raidzero.robot.wrappers.InactiveDoubleSolenoid;
+import raidzero.robot.wrappers.LazyTalonFX;
+import raidzero.robot.wrappers.Pigeon;
 
 public class Drive extends Submodule {
+    public static class PeriodicIO {
+        // Inputs
+        public DifferentialDriveWheelSpeeds wheelSpeeds = new DifferentialDriveWheelSpeeds(0.0, 0.0);
+
+        public double leftPosition = 0; // in encoder ticks
+        public double rightPosition = 0; // in encoder ticks
+
+        public double leftVelocity = 0; // in encoder ticks per 100ms
+        public double rightVelocity = 0; // in encoder ticks per 100ms
+
+        // Outputs
+        // In percent [-1.0, 1.0] if OPEN_LOOP, in encoder ticks / 100ms if
+        // in PATH_FOLLOWING
+        public double leftDemand = 0.0;
+        public double rightDemand = 0.0;
+
+        // In volts
+        public double leftFeedforward = 0.0;
+        public double rightFeedforward = 0.0;
+    }
 
     public static enum GearShift {
         HIGH, LOW
@@ -50,38 +76,29 @@ public class Drive extends Submodule {
     private Drive() {
     }
 
-    private LazyTalonFX leftLeader;
-    private LazyTalonFX leftFollower;
-    private LazyTalonFX rightLeader;
-    private LazyTalonFX rightFollower;
+    // Hardware components
+    private LazyTalonFX leftLeader, leftFollower;
+    private LazyTalonFX rightLeader, rightFollower;
 
     private InactiveDoubleSolenoid gearShiftSolenoid;
 
     private Pigeon pigeon;
 
-    // Control states
-    private ControlState controlState;
+    // Hardware states
+    private GearShift currentGearShift = GearShift.LOW;
 
-    // Trajectory follower
+    // Controllers
     private TrajectoryFollower trajectoryFollower;
 
     private DifferentialDriveOdometry odometry;
 
-    private GearShift currentGearShift = GearShift.LOW;
-
     private double quickStopAccumulator = 0.0;
 
-    private DifferentialDriveWheelSpeeds lastWheelSpeeds;
+    private ControlState controlState = ControlState.OPEN_LOOP;
 
-    // Output
-    private double outputLeftDrive = 0.0;
-    private double outputRightDrive = 0.0;
+    private PeriodicIO periodicIO = new PeriodicIO();
 
-    private double outputLeftVelocity = 0.0; // in sensor units / 100 ms
-    private double outputLeftFeedforward = 0.0; // in volts
-    private double outputRightVelocity = 0.0; // in sensor units / 100 ms
-    private double outputRightFeedforward = 0.0; // in volts
-
+    // Dashboard entries
     private NetworkTableEntry gearShiftEntry = Shuffleboard.getTab(Tab.MAIN)
         .add("Gear Shift", "EMPTY")
         .withWidget(BuiltInWidgets.kTextView)
@@ -157,11 +174,8 @@ public class Drive extends Submodule {
             Rotation2d.fromDegrees(pigeon.getHeading()));
 
         // Gear shift
-        gearShiftSolenoid = new InactiveDoubleSolenoid(DriveConstants.GEARSHIFT_FORWARD_ID, 
-            DriveConstants.GEARSHIFT_REVERSE_ID);
-
-        // Control state
-        setOpenLoop();
+        gearShiftSolenoid = new InactiveDoubleSolenoid(DriveConstants.GEARSHIFT_FORWARD_ID,
+                DriveConstants.GEARSHIFT_REVERSE_ID);
     }
 
     /**
@@ -210,9 +224,25 @@ public class Drive extends Submodule {
      */
     @Override
     public void onStart(double timestamp) {
+        controlState = ControlState.OPEN_LOOP;
+
+        periodicIO = new PeriodicIO();
+
         stop();
         zero();
         resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)));
+    }
+
+    @Override
+    public void readPeriodicInputs() {
+        TalonFXSensorCollection left = leftLeader.getSensorCollection();
+        TalonFXSensorCollection right = rightLeader.getSensorCollection();
+
+        periodicIO.leftPosition = left.getIntegratedSensorPosition();
+        periodicIO.rightPosition = right.getIntegratedSensorPosition();
+
+        periodicIO.leftVelocity = left.getIntegratedSensorVelocity();
+        periodicIO.rightVelocity = right.getIntegratedSensorVelocity();
     }
 
     /**
@@ -226,11 +256,11 @@ public class Drive extends Submodule {
         Pose2d currentPose = odometry.update(
             Rotation2d.fromDegrees(pigeonHeading),
             EncoderUtils.ticksToMeters(
-                leftLeader.getSensorCollection().getIntegratedSensorPosition(), 
+                periodicIO.leftPosition, 
                 currentGearShift
             ),
             EncoderUtils.ticksToMeters(
-                -rightLeader.getSensorCollection().getIntegratedSensorPosition(), 
+                -periodicIO.rightPosition, 
                 currentGearShift
             )
         );
@@ -241,11 +271,11 @@ public class Drive extends Submodule {
         gearShiftEntry.setString(currentGearShift.toString());
         leftEncoderEntry.setNumber(
             EncoderUtils.ticksPer100msToMetersPerSec(
-                leftLeader.getSensorCollection().getIntegratedSensorVelocity(), currentGearShift)
+                periodicIO.leftVelocity, currentGearShift)
         );
         rightEncoderEntry.setNumber(
             EncoderUtils.ticksPer100msToMetersPerSec(
-                -rightLeader.getSensorCollection().getIntegratedSensorVelocity(), currentGearShift)
+                -periodicIO.rightVelocity, currentGearShift)
         );
         odometryXEntry.setDouble(currentPose.getTranslation().getX());
         odometryYEntry.setDouble(currentPose.getTranslation().getY());
@@ -256,18 +286,18 @@ public class Drive extends Submodule {
      * Runs the motors with different control modes depending on the state.
      */
     @Override
-    public void run() {
+    public void writePeriodicOutputs() {
         switch (controlState) {
             case OPEN_LOOP:
-                leftLeader.set(ControlMode.PercentOutput, outputLeftDrive);
-                rightLeader.set(ControlMode.PercentOutput, outputRightDrive);
+                leftLeader.set(ControlMode.PercentOutput, periodicIO.leftDemand);
+                rightLeader.set(ControlMode.PercentOutput, periodicIO.rightDemand);
                 break;
             case PATH_FOLLOWING:
                 // Divide by 12 V since its the maximum voltage
-                leftLeader.set(ControlMode.Velocity, outputLeftVelocity, 
-                    DemandType.ArbitraryFeedForward, outputLeftFeedforward / 12);
-                rightLeader.set(ControlMode.Velocity, outputRightVelocity, 
-                    DemandType.ArbitraryFeedForward, outputRightFeedforward / 12);
+                leftLeader.set(ControlMode.Velocity, periodicIO.leftDemand, 
+                    DemandType.ArbitraryFeedForward, periodicIO.leftFeedforward / 12);
+                rightLeader.set(ControlMode.Velocity, periodicIO.rightDemand, 
+                    DemandType.ArbitraryFeedForward, periodicIO.rightFeedforward / 12);
                 break;
         }
     }
@@ -277,15 +307,12 @@ public class Drive extends Submodule {
      */
     @Override
     public void stop() {
-        setOpenLoop();
+        controlState = ControlState.OPEN_LOOP;
 
-        outputLeftDrive = 0.0;
-        outputRightDrive = 0.0;
-
-        outputLeftVelocity = 0.0;
-        outputLeftFeedforward = 0.0;
-        outputRightVelocity = 0.0;
-        outputRightFeedforward = 0.0;
+        periodicIO.leftDemand = 0.0;
+        periodicIO.rightDemand = 0.0;
+        periodicIO.leftFeedforward = 0.0;
+        periodicIO.rightFeedforward = 0.0;
 
         leftLeader.set(ControlMode.Disabled, 0.0);
         rightLeader.set(ControlMode.Disabled, 0.0);
@@ -300,7 +327,7 @@ public class Drive extends Submodule {
             DriveConstants.PID_PRIMARY_SLOT, Constants.TIMEOUT_MS);
         rightLeader.setSelectedSensorPosition(0,
             DriveConstants.PID_PRIMARY_SLOT, Constants.TIMEOUT_MS);
-        pigeon.setYaw(0.0);
+        pigeon.setFusedHeading(0.0);
     }
 
     /**
@@ -312,13 +339,6 @@ public class Drive extends Submodule {
     }
 
     /**
-     * Switches the drive to open-loop control mode.
-     */
-    public void setOpenLoop() {
-        controlState = ControlState.OPEN_LOOP;
-    }
-
-    /**
      * Tank drive mode for open-loop control.
      * 
      * @param left    left percent output in [-1, 1]
@@ -326,13 +346,16 @@ public class Drive extends Submodule {
      * @param reverse whether to reverse the inputs or not
      */
     public void tank(double left, double right, boolean reverse) {
+        if (controlState != ControlState.OPEN_LOOP) {
+            controlState = ControlState.OPEN_LOOP;
+        }
         if (reverse) {
-            outputLeftDrive = -left;
-            outputRightDrive = -right;
+            periodicIO.leftDemand = -left;
+            periodicIO.rightDemand = -right;
             return;
         }
-        outputLeftDrive = left;
-        outputRightDrive = right;
+        periodicIO.leftDemand = left;
+        periodicIO.rightDemand = right;
     }
 
     /**
@@ -354,23 +377,23 @@ public class Drive extends Submodule {
         leftEncoderTargetEntry.setNumber(leftVelocity);
         rightEncoderTargetEntry.setNumber(rightVelocity);
 
-        outputLeftVelocity = EncoderUtils.metersPerSecToTicksPer100ms(leftVelocity, 
+        periodicIO.leftDemand = EncoderUtils.metersPerSecToTicksPer100ms(leftVelocity, 
             currentGearShift);
-        outputRightVelocity = EncoderUtils.metersPerSecToTicksPer100ms(rightVelocity, 
+        periodicIO.rightDemand = EncoderUtils.metersPerSecToTicksPer100ms(rightVelocity, 
             currentGearShift);
 
-        double leftAcceleration = (leftVelocity - lastWheelSpeeds.leftMetersPerSecond) 
+        double leftAcceleration = (leftVelocity - periodicIO.wheelSpeeds.leftMetersPerSecond) 
             / DriveConstants.LOOP_PERIOD_SECONDS;
-        double rightAcceleration = (rightVelocity - lastWheelSpeeds.rightMetersPerSecond)
+        double rightAcceleration = (rightVelocity - periodicIO.wheelSpeeds.rightMetersPerSecond)
             / DriveConstants.LOOP_PERIOD_SECONDS;
 
-        outputLeftFeedforward = DriveConstants.FEED_FORWARD.calculate(
+        periodicIO.leftFeedforward = DriveConstants.FEED_FORWARD.calculate(
             leftVelocity, leftAcceleration);
-        outputRightFeedforward = DriveConstants.FEED_FORWARD.calculate(
+        periodicIO.rightFeedforward = DriveConstants.FEED_FORWARD.calculate(
             rightVelocity, rightAcceleration);
 
-        lastWheelSpeeds.leftMetersPerSecond = leftVelocity;
-        lastWheelSpeeds.rightMetersPerSecond = rightVelocity;
+        periodicIO.wheelSpeeds.leftMetersPerSecond = leftVelocity;
+        periodicIO.wheelSpeeds.rightMetersPerSecond = rightVelocity;
     }
 
     /**
@@ -381,12 +404,15 @@ public class Drive extends Submodule {
      * @param reverse       whether to reverse the inputs or not
      */
     public void arcade(double leftJoystick, double rightJoystick, boolean reverse) {
+        if (controlState != ControlState.OPEN_LOOP) {
+            controlState = ControlState.OPEN_LOOP;
+        }
         if (reverse) {
             leftJoystick *= -1;
             rightJoystick *= -1;
         }
-        outputLeftDrive = leftJoystick + rightJoystick;
-        outputRightDrive = leftJoystick - rightJoystick;
+        periodicIO.leftDemand = leftJoystick + rightJoystick;
+        periodicIO.rightDemand = leftJoystick - rightJoystick;
     }
 
     /**
@@ -399,6 +425,10 @@ public class Drive extends Submodule {
      *                    turn-in-place maneuvers.
      */
     public void curvatureDrive(double xSpeed, double zRotation, boolean isQuickTurn) {
+        if (controlState != ControlState.OPEN_LOOP) {
+            controlState = ControlState.OPEN_LOOP;
+        }
+
         xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0);
         zRotation = MathUtil.clamp(zRotation, -1.0, 1.0);
 
@@ -452,8 +482,8 @@ public class Drive extends Submodule {
             leftMotorOutput /= maxMagnitude;
             rightMotorOutput /= maxMagnitude;
         }
-        outputLeftDrive = leftMotorOutput;
-        outputRightDrive = rightMotorOutput;
+        periodicIO.leftDemand = leftMotorOutput;
+        periodicIO.rightDemand = rightMotorOutput;
     }
 
     /**
@@ -518,7 +548,8 @@ public class Drive extends Submodule {
     /**
      * Makes the drive start following a Path.
      * 
-     * @param path the path to follow
+     * @param path           the path to follow
+     * @param zeroAllSensors whether to zero all sensors to the first point
      */
     public void setDrivePath(Path path) {
         if (trajectoryFollower != null) {
@@ -528,7 +559,7 @@ public class Drive extends Submodule {
             Trajectory trajectory = path.getTrajectory();
 
             State initialState = trajectory.sample(0.0);
-            lastWheelSpeeds = getKinematics().toWheelSpeeds(
+            periodicIO.wheelSpeeds = getKinematics().toWheelSpeeds(
                 new ChassisSpeeds(initialState.velocityMetersPerSecond, 0,
                     initialState.curvatureRadPerMeter * initialState.velocityMetersPerSecond));
 

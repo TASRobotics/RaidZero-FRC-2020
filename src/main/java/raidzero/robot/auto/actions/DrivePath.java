@@ -22,7 +22,17 @@ public class DrivePath implements Action {
      * @param path the path to follow
      */
     public DrivePath(Path path) {
-        this(path, null);
+        this(path, false, null);
+    }
+
+    /**
+     * Constructs a DrivePath action that follows a path.
+     * 
+     * @param path the path to follow
+     * @param isFirstPath whether this is the first path in an autonomous sequence
+     */
+    public DrivePath(Path path, boolean isFirstPath) {
+        this(path, isFirstPath, null);
     }
 
     /**
@@ -33,9 +43,7 @@ public class DrivePath implements Action {
      * @param condition alternate condition to end the action
      */
     public DrivePath(Path path, FinishConditionInterface condition) {
-        this.path = path;
-        this.isFirstPath = false;
-        this.condition = condition;
+        this(path, false, condition);
     }
 
     /**
@@ -43,11 +51,12 @@ public class DrivePath implements Action {
      * 
      * @param path the path to follow
      * @param isFirstPath whether this is the first path in an autonomous sequence
+     * @param condition alternate condition to end the action
      */
-    public DrivePath(Path path, boolean isFirstPath) {
+    public DrivePath(Path path, boolean isFirstPath, FinishConditionInterface condition) {
         this.path = path;
         this.isFirstPath = isFirstPath;
-        this.condition = null;
+        this.condition = condition;
     }
 
     @Override

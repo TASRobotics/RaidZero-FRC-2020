@@ -9,11 +9,24 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+
 import raidzero.robot.Constants;
 import raidzero.robot.Constants.ShooterConstants;
 import raidzero.robot.dashboard.Tab;
 
 public class Shooter extends Submodule {
+
+    public static class PeriodicIO {
+        // Inputs
+        public int velocity = 0; // in encoder ticks per 100ms
+
+        // Outputs
+        public double demand = 0.0; // in percent [-1.0, 1.0]
+    }
+
+    public static enum ControlState {
+        OPEN_LOOP, VELOCITY
+    };
 
     private static Shooter instance = null;
 
@@ -29,7 +42,9 @@ public class Shooter extends Submodule {
 
     private LazyTalonFX shooterMotor;
 
-    private double outputPercentSpeed = 0.0;
+    private ControlState controlState = ControlState.OPEN_LOOP;
+
+    private PeriodicIO periodicIO = new PeriodicIO();
 
     private NetworkTableEntry shooterVelocityEntry = Shuffleboard.getTab(Tab.MAIN)
         .add("Shooter Vel", 0)
@@ -63,29 +78,40 @@ public class Shooter extends Submodule {
 
     @Override
     public void onStart(double timestamp) {
-        outputPercentSpeed = 0.0;
+        controlState = ControlState.OPEN_LOOP;
+
+        periodicIO = new PeriodicIO();
         zero();
     }
 
     @Override
+    public void readPeriodicInputs() {
+        periodicIO.velocity = shooterMotor.getSelectedSensorVelocity();
+    }
+
+    @Override
     public void update(double timestamp) {
-        shooterVelocityEntry.setNumber(shooterMotor.getSelectedSensorVelocity());
+        shooterVelocityEntry.setNumber(periodicIO.velocity);
         shooterUpToSpeedEntry.setBoolean(isUpToSpeed());
     }
 
     @Override
-    public void run() {
-        if (Math.abs(outputPercentSpeed) < 0.1) {
-            stop();
-        } else {
-            shooterMotor.set(ControlMode.Velocity,
-                    outputPercentSpeed * ShooterConstants.FAKE_MAX_SPEED);
+    public void writePeriodicOutputs() {
+        switch (controlState) {
+            case OPEN_LOOP:
+                shooterMotor.set(ControlMode.PercentOutput, periodicIO.demand);
+                break;
+            case VELOCITY:
+                shooterMotor.set(ControlMode.Velocity, 
+                    periodicIO.demand * ShooterConstants.FAKE_MAX_SPEED);
+                break;
         }
     }
 
     @Override
     public void stop() {
-        outputPercentSpeed = 0.0;
+        controlState = ControlState.OPEN_LOOP;
+        periodicIO.demand = 0.0;
         shooterMotor.set(ControlMode.PercentOutput, 0);
     }
 
@@ -95,7 +121,7 @@ public class Shooter extends Submodule {
     }
 
     /**
-     * Fires up the shooter.
+     * Fires up the shooter using closed-loop velocity control.
      * 
      * @param percentSpeed speed of the shooter in [-1.0, 1.0]
      * @param freeze       whether to disregard the speed and keep the previous
@@ -105,7 +131,15 @@ public class Shooter extends Submodule {
         if (freeze) {
             return;
         }
-        outputPercentSpeed = percentSpeed;
+        if (Math.abs(percentSpeed) < 0.1) {
+            controlState = ControlState.OPEN_LOOP;
+            periodicIO.demand = 0.0;
+            return;
+        }
+        if (controlState != ControlState.VELOCITY) {
+            controlState = ControlState.VELOCITY;
+        }
+        periodicIO.demand = percentSpeed;
     }
 
     /**
@@ -114,7 +148,7 @@ public class Shooter extends Submodule {
      * @return whether the shooter is up to speed
      */
     public boolean isUpToSpeed() {
-        return Math.abs(outputPercentSpeed) > 0.1 &&
+        return controlState == ControlState.VELOCITY &&
                Math.abs(shooterMotor.getClosedLoopError()) < ShooterConstants.ERROR_TOLERANCE;
     }
 }
