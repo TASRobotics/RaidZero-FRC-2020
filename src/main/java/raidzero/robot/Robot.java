@@ -1,8 +1,15 @@
 package raidzero.robot;
 
+import java.util.Arrays;
+
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-
+import raidzero.lib.music.MusicPlayer;
+import raidzero.robot.Constants.DriveConstants;
+import raidzero.robot.Constants.HopperConstants;
+import raidzero.robot.Constants.ShooterConstants;
 import raidzero.robot.auto.AutoRunner;
 import raidzero.robot.logging.Logger;
 import raidzero.robot.teleop.Teleop;
@@ -24,6 +31,8 @@ import raidzero.robot.submodules.Intake;
  */
 public class Robot extends TimedRobot {
 
+    private static final boolean ONLY_PLAY_MUSIC = true;
+
     private static final SubmoduleManager submoduleManager = SubmoduleManager.getInstance();
 
     private static final Teleop teleop = Teleop.getInstance();
@@ -42,11 +51,24 @@ public class Robot extends TimedRobot {
 
     private AutoRunner autoRunner;
 
+    private MusicPlayer player;
+
     /**
      * Runs only once at the start of robot code execution.
      */
     @Override
     public void robotInit() {
+        if (ONLY_PLAY_MUSIC) {
+            player = new MusicPlayer(Arrays.asList(
+                new TalonFX(DriveConstants.LEFT_LEADER_ID),
+                new TalonFX(DriveConstants.LEFT_FOLLOWER_ID),
+                new TalonFX(DriveConstants.RIGHT_LEADER_ID),
+                new TalonFX(DriveConstants.RIGHT_FOLLOWER_ID),
+                new TalonFX(HopperConstants.MOTOR_ID),
+                new TalonFX(ShooterConstants.MOTOR_ID)
+            ));
+            return;
+        }
         Logger.startInitialization();
 
         // Register all submodules here
@@ -72,6 +94,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
+        if (ONLY_PLAY_MUSIC) {
+            return;
+        }
         Logger.update();
     }
 
@@ -80,6 +105,9 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
+        if (ONLY_PLAY_MUSIC) {
+            return;
+        }
         // Stop autonomous
         autoRunner.stop();
         submoduleManager.onStop(Timer.getFPGATimestamp());
@@ -92,6 +120,9 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
+        if (ONLY_PLAY_MUSIC) {
+            return;
+        }
         submoduleManager.onStart(Timer.getFPGATimestamp());
 
         autoRunner.readSendableSequence();
@@ -103,6 +134,9 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
+        if (ONLY_PLAY_MUSIC) {
+            return;
+        }
         double timestamp = Timer.getFPGATimestamp();
         autoRunner.onLoop(timestamp);
         submoduleManager.onLoop(timestamp);
@@ -113,6 +147,9 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopInit() {
+        if (ONLY_PLAY_MUSIC) {
+            return;
+        }
         // Stop the autonomous
         autoRunner.stop();
 
@@ -126,6 +163,10 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
+        if (ONLY_PLAY_MUSIC) {
+            player.update();
+            return;
+        }
         teleop.onLoop();
         submoduleManager.onLoop(Timer.getFPGATimestamp());
     }
