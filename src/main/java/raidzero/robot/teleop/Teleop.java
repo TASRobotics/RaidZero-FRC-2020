@@ -20,8 +20,8 @@ import raidzero.robot.submodules.Hopper;
 import raidzero.robot.submodules.Turret;
 import raidzero.robot.submodules.WheelOfFortune;
 import raidzero.robot.submodules.Drive.GearShift;
-import raidzero.robot.utils.JoystickUtils;
-import raidzero.robot.wrappers.InactiveCompressor;
+import raidzero.robot.util.JoystickUtils;
+import raidzero.lib.wrapper.InactiveCompressor;
 
 /**
  * TODO: Rewrite to make button assignments easier

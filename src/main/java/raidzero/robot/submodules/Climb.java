@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.PWM;
 import raidzero.robot.Constants.ClimbConstants;
-import raidzero.robot.wrappers.LazyTalonSRX;
+import raidzero.lib.wrapper.LazyTalonSRX;
 
 public class Climb extends Submodule {
 

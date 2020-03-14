@@ -6,8 +6,8 @@ import static org.mockito.Mockito.*;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import raidzero.robot.utils.InterpolatingTreeMap;
-import raidzero.robot.utils.InterpolatingDouble;
+import raidzero.lib.util.InterpolatingTreeMap;
+import raidzero.lib.util.InterpolatingDouble;
 
 public class InterpolatingTreeMapTester {
 

@@ -1,8 +1,8 @@
 package raidzero.robot.submodules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import raidzero.robot.wrappers.LazyTalonSRX;
-import raidzero.robot.wrappers.InactiveDoubleSolenoid;
+import raidzero.lib.wrapper.LazyTalonSRX;
+import raidzero.lib.wrapper.InactiveDoubleSolenoid;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;

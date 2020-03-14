@@ -29,10 +29,10 @@ import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.dashboard.Tab;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.pathing.TrajectoryFollower;
-import raidzero.robot.utils.EncoderUtils;
-import raidzero.robot.wrappers.InactiveDoubleSolenoid;
-import raidzero.robot.wrappers.LazyTalonFX;
-import raidzero.robot.wrappers.Pigeon;
+import raidzero.robot.util.EncoderUtils;
+import raidzero.lib.wrapper.InactiveDoubleSolenoid;
+import raidzero.lib.wrapper.LazyTalonFX;
+import raidzero.lib.wrapper.Pigeon;
 
 public class Drive extends Submodule {
     public static class PeriodicIO {

@@ -6,7 +6,7 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 
-import raidzero.robot.wrappers.LazyTalonSRX;
+import raidzero.lib.wrapper.LazyTalonSRX;
 
 import raidzero.robot.Constants.TurretConstants;
 

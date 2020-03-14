@@ -1,4 +1,4 @@
-package raidzero.robot.wrappers;
+package raidzero.lib.wrapper;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 
