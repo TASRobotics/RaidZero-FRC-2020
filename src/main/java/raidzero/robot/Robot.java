@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
-        Logger.startInitialization();
+        // Logger.startInitialization();
 
         // Register all submodules here
         submoduleManager.setSubmodules(
@@ -67,12 +67,12 @@ public class Robot extends TimedRobot {
 
         autoRunner = new AutoRunner();
 
-        Logger.finishInitialization();
+        // Logger.finishInitialization();
     }
 
     @Override
     public void robotPeriodic() {
-        Logger.update();
+        // Logger.update();
     }
 
     /**
