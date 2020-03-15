@@ -1,4 +1,4 @@
-package raidzero.robot.utils;
+package raidzero.robot.util;
 
 import org.junit.*;
 import static org.junit.Assert.*;
