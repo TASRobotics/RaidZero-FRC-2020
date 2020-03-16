@@ -12,10 +12,14 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTablesJNI;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import raidzero.robot.Constants;
 import raidzero.robot.Constants.DriveConstants;
@@ -58,7 +62,8 @@ public class Drive extends Submodule {
 
     private InactiveDoubleSolenoid gearShiftSolenoid;
 
-    private PigeonIMU pigeon;
+    private PigeonIMU pidgey;
+    private double[] direction = new double[3];
 
     // Control states
     private ControlState controlState;
@@ -74,6 +79,7 @@ public class Drive extends Submodule {
     private double outputLeftDrive = 0.0;
     private double outputRightDrive = 0.0;
     private int outputClosedLoop = 0;
+
 
     private NetworkTableEntry gearShiftEntry = Shuffleboard.getTab(Tab.MAIN)
         .add("Gear Shift", "EMPTY")
@@ -94,6 +100,17 @@ public class Drive extends Submodule {
         .withPosition(1, 0)
         .getEntry();
 
+    private NetworkTableEntry time;
+    private NetworkTableEntry angle;
+    private NetworkTableEntry posR;
+    private NetworkTableEntry posL;
+    private NetworkTableEntry velR;
+    private NetworkTableEntry velL;
+    private NetworkTableEntry voutR;
+    private NetworkTableEntry voutL;
+    private NetworkTableEntry inputR;
+    private NetworkTableEntry inputL;
+
     @Override
     public void onInit() {
         // Motors
@@ -112,8 +129,8 @@ public class Drive extends Submodule {
         rightFollower.follow(rightLeader);
 
         // Pigeon IMU
-        pigeon = new PigeonIMU(DriveConstants.PIGEON_ID);
-        pigeon.configFactoryDefault();
+        pidgey = new PigeonIMU(DriveConstants.PIGEON_ID);
+        pidgey.configFactoryDefault();
 
         /*
          * Setup the profiling leader & follower
@@ -124,7 +141,7 @@ public class Drive extends Submodule {
         profilingLeader = rightLeader;
         profilingFollower = leftLeader;
 
-        // Must be called after the pigeon is initialized
+        // Must be called after the pidgey is initialized
         configureMotorClosedLoop(DriveConstants.RIGHT_INVERSION);
 
         // Gear shift
@@ -133,6 +150,16 @@ public class Drive extends Submodule {
 
         // Control state
         controlState = ControlState.OPEN_LOOP;
+
+        NetworkTable table = NetworkTableInstance.getDefault().getTable("simulator");
+        time = table.getEntry("time");
+        angle = table.getEntry("angle");
+        posR = table.getEntry("posR");
+        posL = table.getEntry("posL");
+        voutR = table.getEntry("voutR");
+        voutL = table.getEntry("voutL");
+        inputR = table.getEntry("inputR");
+        inputL = table.getEntry("inputL");
     }
 
     /**
@@ -167,7 +194,7 @@ public class Drive extends Submodule {
         setRobotDistanceConfigs(leaderInversion, leaderConfig);
 
         // Configure the Pigeon as the other Remote Slot on the leader
-        leaderConfig.remoteFilter1.remoteSensorDeviceID = pigeon.getDeviceID();
+        leaderConfig.remoteFilter1.remoteSensorDeviceID = pidgey.getDeviceID();
         leaderConfig.remoteFilter1.remoteSensorSource = RemoteSensorSource.Pigeon_Yaw;
         leaderConfig.auxiliaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor1;
         leaderConfig.auxiliaryPID.selectedFeedbackCoefficient = DriveConstants.PIGEON_SCALE;
@@ -208,7 +235,7 @@ public class Drive extends Submodule {
                 Constants.TIMEOUT_MS);
         profilingFollower.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5,
                 Constants.TIMEOUT_MS);
-        pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 5,
+        pidgey.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 5,
                 Constants.TIMEOUT_MS);
 
         profilingLeader.changeMotionControlFramePeriod(DriveConstants.TRANSMIT_PERIOD_MS);
@@ -291,6 +318,20 @@ public class Drive extends Submodule {
      */
     @Override
     public void run() {
+        pidgey.getYawPitchRoll(direction);
+
+        time.setDouble(Timer.getFPGATimestamp());
+        angle.setDouble(direction[0]);
+        posR.setDouble(rightLeader.getSensorCollection().getIntegratedSensorPosition());
+        posL.setDouble(leftLeader.getSensorCollection().getIntegratedSensorPosition());
+        posR.setDouble(rightLeader.getSensorCollection().getIntegratedSensorVelocity());
+        posL.setDouble(leftLeader.getSensorCollection().getIntegratedSensorVelocity());
+        voutR.setDouble(rightLeader.getMotorOutputVoltage());
+        voutL.setDouble(leftLeader.getMotorOutputVoltage());
+        inputR.setDouble(outputRightDrive);
+        inputL.setDouble(outputLeftDrive);
+
+
         switch (controlState) {
             case OPEN_LOOP:
                 leftLeader.set(ControlMode.PercentOutput, outputLeftDrive);
@@ -319,7 +360,7 @@ public class Drive extends Submodule {
     }
 
     /**
-     * Zeros all encoders & the pigeon to 0.
+     * Zeros all encoders & the pidgey to 0.
      */
     @Override
     public void zero() {
@@ -329,7 +370,7 @@ public class Drive extends Submodule {
          */
         leftLeader.getSensorCollection().setIntegratedSensorPosition(0.0, Constants.TIMEOUT_MS);
         rightLeader.getSensorCollection().setIntegratedSensorPosition(0.0, Constants.TIMEOUT_MS);
-        pigeon.setYaw(0.0);
+        pidgey.setYaw(0.0);
     }
 
     /**
@@ -493,7 +534,7 @@ public class Drive extends Submodule {
             stop();
             zero();
             // The path may start at a different angle at times
-            pigeon.setYaw(path.getFirstPoint().angle.orElse(0.0));
+            pidgey.setYaw(path.getFirstPoint().angle.orElse(0.0));
             mpFollower.reset();
 
             mpFollower.setGearShift(currentGearShift);
