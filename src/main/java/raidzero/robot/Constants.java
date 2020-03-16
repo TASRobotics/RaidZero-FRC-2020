@@ -47,7 +47,7 @@ public class Constants {
         public static final double HIGH_GEAR_RATIO = 9.98;
         public static final double LOW_GEAR_RATIO = 18.43;
 
-        public static final double WHEEL_DIAMETER_INCHES = 6.0;
+        public static final double WHEEL_DIAMETER_INCHES = 5.54; //6.0
 
         // Closed-loop constants
         public static final double DRIVE_NEUTRAL_DEADBAND = 0.06;
@@ -55,12 +55,13 @@ public class Constants {
         public static final double PIGEON_SCALE = 3600.0 / 8192.0;
 
         // kF should stay at 0 since the drive is using an arbitrary feedforward term
-        public static final double PRIMARY_P = 0.03; // 0.188 0.015 0.05
+        public static final double PRIMARY_P = 0.025; // 0.188 0.015 0.05
 
         public static final double METERS_PER_INCH = 0.0254;
         public static final double INCHES_PER_METER = 1.0 / 0.0254;
         public static final int SENSOR_UNITS_PER_ROTATION = 2048;
-        public static final double SENSOR_UNITS_PER_INCH_LOW_GEAR =
+        // 1/(((85435/39.3701)/(2048*18.43))*pi)
+        public static final double SENSOR_UNITS_PER_INCH_LOW_GEAR = // 1m = 85435 ticks
             SENSOR_UNITS_PER_ROTATION * LOW_GEAR_RATIO / (WHEEL_DIAMETER_INCHES * Math.PI);
         public static final double SENSOR_UNITS_PER_INCH_HIGH_GEAR =
             SENSOR_UNITS_PER_ROTATION * HIGH_GEAR_RATIO / (WHEEL_DIAMETER_INCHES * Math.PI);
@@ -79,7 +80,7 @@ public class Constants {
         public static final double kV = 4.34;
 
         // Voltage needed to induce a given acceleration in the motor shaft.
-        public static final double kA = 0.417; // 0.417
+        public static final double kA = 0.0; // 0.417
 
         public static final SimpleMotorFeedforward FEED_FORWARD = 
             new SimpleMotorFeedforward(kS, kV, kA);

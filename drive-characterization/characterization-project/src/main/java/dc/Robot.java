@@ -38,7 +38,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
 
   static private double WHEEL_DIAMETER = 0.15239999999999998;
-  static private double TICKS_PER_INCH = 2002.4153437413588;
+  static private double TICKS_PER_INCH = 2168.681;
   static private int PIDIDX = 0;
 
   XboxController stick;

@@ -25,6 +25,7 @@ public class TestSequence extends AutoSequence {
         ),
         false, DriveConstants.DEFAULT_VELOCITY, DriveConstants.DEFAULT_ACCELERATION
     );
+    private static final Drive drive = Drive.getInstance();
 
     public TestSequence() {
         System.out.println(DriverStation.getInstance().getAlliance().name());
@@ -40,7 +41,9 @@ public class TestSequence extends AutoSequence {
             new LambdaAction(() -> intake.stop())
         )));*/
         addAction(new SeriesAction(Arrays.asList(
-            new DrivePath(PATH, true)
+            new LambdaAction(() -> drive.setBrakeMode(true)),
+            new DrivePath(PATH, true),
+            new LambdaAction(() -> drive.setBrakeMode(false))
         )));
         System.out.println("Added actions.");
     }
