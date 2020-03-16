@@ -156,6 +156,8 @@ public class Drive extends Submodule {
         angle = table.getEntry("angle");
         posR = table.getEntry("posR");
         posL = table.getEntry("posL");
+        velR = table.getEntry("velR");
+        velL = table.getEntry("velL");
         voutR = table.getEntry("voutR");
         voutL = table.getEntry("voutL");
         inputR = table.getEntry("inputR");
