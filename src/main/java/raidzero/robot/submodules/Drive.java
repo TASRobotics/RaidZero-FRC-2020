@@ -324,8 +324,8 @@ public class Drive extends Submodule {
         angle.setDouble(direction[0]);
         posR.setDouble(rightLeader.getSensorCollection().getIntegratedSensorPosition());
         posL.setDouble(leftLeader.getSensorCollection().getIntegratedSensorPosition());
-        posR.setDouble(rightLeader.getSensorCollection().getIntegratedSensorVelocity());
-        posL.setDouble(leftLeader.getSensorCollection().getIntegratedSensorVelocity());
+        velR.setDouble(rightLeader.getSensorCollection().getIntegratedSensorVelocity());
+        velL.setDouble(leftLeader.getSensorCollection().getIntegratedSensorVelocity());
         voutR.setDouble(rightLeader.getMotorOutputVoltage());
         voutL.setDouble(leftLeader.getMotorOutputVoltage());
         inputR.setDouble(outputRightDrive);
