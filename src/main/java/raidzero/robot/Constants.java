@@ -74,7 +74,7 @@ public class Constants {
          * https://docs.wpilib.org/en/latest/docs/software/wpilib-tools/robot-characterization/index.html
          */
         // Voltage needed to overcome the motor's static friction.
-        public static final double kS = 0.0187; //0.0317
+        public static final double kS = 0.0816; //0.0317 0.0187
 
         // Voltage needed to hold (or "cruise") at a given constant velocity.
         public static final double kV = 4.71; //4.34
