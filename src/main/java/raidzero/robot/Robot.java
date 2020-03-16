@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import raidzero.lib.music.MusicPlayer;
+import raidzero.lib.wrapper.InactiveCompressor;
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.Constants.HopperConstants;
 import raidzero.robot.Constants.ShooterConstants;
@@ -59,6 +60,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         if (ONLY_PLAY_MUSIC) {
+            InactiveCompressor.getInstance().stop();
             player = new MusicPlayer(Arrays.asList(
                 new TalonFX(DriveConstants.LEFT_LEADER_ID),
                 new TalonFX(DriveConstants.LEFT_FOLLOWER_ID),

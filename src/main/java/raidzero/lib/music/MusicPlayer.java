@@ -2,7 +2,6 @@ package raidzero.lib.music;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -11,6 +10,7 @@ import com.ctre.phoenix.music.Orchestra;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
@@ -22,7 +22,6 @@ public class MusicPlayer {
 
     private static final double LOAD_PLAY_WAIT = 0.5; // in seconds
 
-    private List<TalonFX> instruments;
     private Orchestra orchestra;
 
     private String[] songs;
@@ -37,7 +36,6 @@ public class MusicPlayer {
     private Timer timer = new Timer();
 
     public MusicPlayer(List<TalonFX> instruments) {
-        this.instruments = instruments;
         orchestra = new Orchestra(instruments);
 
         scanSongs();
@@ -53,11 +51,13 @@ public class MusicPlayer {
             .withPosition(0, 0);
         pausePlayButton = Shuffleboard.getTab("Music")
             .add("Play | Pause", false)
+            .withWidget(BuiltInWidgets.kToggleButton)
             .withSize(1, 1)
             .withPosition(3, 0)
             .getEntry();
         stopButton = Shuffleboard.getTab("Music")
             .add("Stop", false)
+            .withWidget(BuiltInWidgets.kToggleButton)
             .withSize(1, 1)
             .withPosition(4, 0)
             .getEntry();
