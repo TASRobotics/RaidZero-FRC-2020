@@ -3,7 +3,6 @@ package raidzero.robot.pathing;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
@@ -22,19 +21,26 @@ public class TrajectoryFollower {
     private Timer timer = new Timer();
 
     /**
-     * Creates the trajectory follower.
+     * Constructs a trajectory follower with default ramsete constants.
      * 
      * @param kinematics kinematics for the drive
      */
     public TrajectoryFollower(DifferentialDriveKinematics kinematics) {
-        controller = new RamseteController();
-        /*controller = new RamseteController() {
-            @Override
-            public ChassisSpeeds calculate(Pose2d currentPose, Pose2d poseRef, double linearVelocityRefMeters,
-                    double angularVelocityRefRadiansPerSecond) {
-                return new ChassisSpeeds(linearVelocityRefMeters, 0.0, angularVelocityRefRadiansPerSecond);
-            }
-        };*/
+        this(kinematics, 2.0, 0.7);
+    }
+
+    /**
+     * Constructs a trajectory follower with custom ramsete constants.
+     * 
+     * @param kinematics kinematics for the drive
+     * @param b          Tuning parameter (b > 0) for which larger values 
+     *                   make convergence more aggressive like a kP term.
+     * @param zeta       Tuning parameter (0 < zeta < 1) for which larger 
+     *                   values provide more damping in response.
+     */
+    public TrajectoryFollower(DifferentialDriveKinematics kinematics, double b, double zeta) {
+        controller = new RamseteController(b, zeta);
+        controller.setEnabled(true);
         this.kinematics = kinematics;
     }
 
@@ -46,6 +52,7 @@ public class TrajectoryFollower {
      */
     public DifferentialDriveWheelSpeeds update(Pose2d currentPose) {
         var sampled = currentTrajectory.sample(timer.get());
+        System.out.println("Sampled: " + sampled.toString() + " | Actual: " + currentPose.toString());
         var targetWheelSpeeds = kinematics.toWheelSpeeds(
             controller.calculate(currentPose, sampled)
         );

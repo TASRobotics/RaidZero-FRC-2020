@@ -4,7 +4,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 
 public class Pigeon extends PigeonIMU {
 
-    private double[] yawPitchRoll = new double[3];
+    // private double[] yawPitchRoll = new double[3];
 
     public Pigeon(int deviceNumber) {
         super(deviceNumber);
@@ -17,7 +17,7 @@ public class Pigeon extends PigeonIMU {
      *         positive value for left turn (counter-clockwise).
      */
     public double getHeading() {
-        getYawPitchRoll(yawPitchRoll);
-        return Math.IEEEremainder(yawPitchRoll[0], 360.0);
+        // getYawPitchRoll(yawPitchRoll);
+        return Math.IEEEremainder(getFusedHeading(), 360.0);
     }
 }

@@ -74,13 +74,13 @@ public class Constants {
          * https://docs.wpilib.org/en/latest/docs/software/wpilib-tools/robot-characterization/index.html
          */
         // Voltage needed to overcome the motor's static friction.
-        public static final double kS = 0.0317;
+        public static final double kS = 0.0187; //0.0317
 
         // Voltage needed to hold (or "cruise") at a given constant velocity.
-        public static final double kV = 4.34;
+        public static final double kV = 4.71; //4.34
 
         // Voltage needed to induce a given acceleration in the motor shaft.
-        public static final double kA = 0.0; // 0.417
+        public static final double kA = 0.339; // 0.417
 
         public static final SimpleMotorFeedforward FEED_FORWARD = 
             new SimpleMotorFeedforward(kS, kV, kA);
@@ -88,7 +88,7 @@ public class Constants {
         public static final double DEFAULT_VELOCITY = 1.5; // in m/s real: 2.5
         public static final double DEFAULT_ACCELERATION = 1.2; // in m/s real: 2.0
 
-        public static final double TRACK_WIDTH_METERS = 0.989;
+        public static final double TRACK_WIDTH_METERS = 0.9; // 0.989
         public static final DifferentialDriveKinematics DRIVE_KINEMATICS = 
             new DifferentialDriveKinematics(TRACK_WIDTH_METERS);
 

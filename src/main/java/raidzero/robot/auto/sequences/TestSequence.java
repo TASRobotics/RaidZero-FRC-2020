@@ -15,13 +15,15 @@ import raidzero.robot.submodules.*;
 public class TestSequence extends AutoSequence {
 
     private static final Path PATH = Path.fromWaypoints(
-        new Pose2d(
-            Units.inchesToMeters(0), Units.inchesToMeters(0),
-            Rotation2d.fromDegrees(0)
-        ),
-        new Pose2d(
-            1.5, 0.8,//Units.inchesToMeters(60), Units.inchesToMeters(30),
-            Rotation2d.fromDegrees(0)
+        Arrays.asList(
+            new Pose2d(
+                Units.inchesToMeters(0), Units.inchesToMeters(0),
+                Rotation2d.fromDegrees(0)
+            ),
+            new Pose2d(
+                1.5, 0.8,//Units.inchesToMeters(60), Units.inchesToMeters(30),
+                Rotation2d.fromDegrees(0)
+            )
         ),
         false, DriveConstants.DEFAULT_VELOCITY, DriveConstants.DEFAULT_ACCELERATION
     );
@@ -41,9 +43,7 @@ public class TestSequence extends AutoSequence {
             new LambdaAction(() -> intake.stop())
         )));*/
         addAction(new SeriesAction(Arrays.asList(
-            new LambdaAction(() -> drive.setBrakeMode(true)),
-            new DrivePath(PATH, true),
-            new LambdaAction(() -> drive.setBrakeMode(false))
+            new DrivePath(PATH, true)
         )));
         System.out.println("Added actions.");
     }
