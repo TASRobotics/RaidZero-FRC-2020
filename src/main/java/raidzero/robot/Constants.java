@@ -40,8 +40,8 @@ public class Constants {
         public static final InvertType LEFT_INVERSION = InvertType.None;
         public static final InvertType RIGHT_INVERSION = InvertType.InvertMotorOutput;
 
-        public static final double HIGH_GEAR_RATIO = 9.98;
-        public static final double LOW_GEAR_RATIO = 18.43;
+        public static final double HIGH_GEAR_RATIO = 10.42;
+        public static final double LOW_GEAR_RATIO = 13.28;
     
         public static final double WHEEL_DIAMETER_INCHES = 6.0;
 
