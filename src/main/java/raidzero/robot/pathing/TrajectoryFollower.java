@@ -51,7 +51,8 @@ public class TrajectoryFollower {
      * @return adjusted wheel velocities in m/s
      */
     public DifferentialDriveWheelSpeeds update(Pose2d currentPose) {
-        var sampled = currentTrajectory.sample(timer.get());
+        double time = timer.get();
+        var sampled = currentTrajectory.sample(time);
         System.out.println("Sampled: " + sampled.toString() + " | Actual: " + currentPose.toString());
         var targetWheelSpeeds = kinematics.toWheelSpeeds(
             controller.calculate(currentPose, sampled)

@@ -55,7 +55,7 @@ public class Constants {
         public static final double PIGEON_SCALE = 3600.0 / 8192.0;
 
         // kF should stay at 0 since the drive is using an arbitrary feedforward term
-        public static final double PRIMARY_P = 0.025; // 0.188 0.015 0.05
+        public static final double PRIMARY_P = 0.03; //0.025; // 0.188 0.015 0.05
 
         public static final double METERS_PER_INCH = 0.0254;
         public static final double INCHES_PER_METER = 1.0 / 0.0254;
@@ -74,7 +74,7 @@ public class Constants {
          * https://docs.wpilib.org/en/latest/docs/software/wpilib-tools/robot-characterization/index.html
          */
         // Voltage needed to overcome the motor's static friction.
-        public static final double kS = 0.0816; //0.0317 0.0187
+        public static final double kS = 0.09; //0.0317 0.0187
 
         // Voltage needed to hold (or "cruise") at a given constant velocity.
         public static final double kV = 4.71; //4.34
@@ -85,8 +85,8 @@ public class Constants {
         public static final SimpleMotorFeedforward FEED_FORWARD = 
             new SimpleMotorFeedforward(kS, kV, kA);
 
-        public static final double DEFAULT_VELOCITY = 1.5; // in m/s real: 2.5
-        public static final double DEFAULT_ACCELERATION = 1.2; // in m/s real: 2.0
+        public static final double DEFAULT_VELOCITY = 1.0; // in m/s real: 2.5
+        public static final double DEFAULT_ACCELERATION = 1.5; // in m/s real: 2.0
 
         public static final double TRACK_WIDTH_METERS = 0.9; // 0.989
         public static final DifferentialDriveKinematics DRIVE_KINEMATICS = 
