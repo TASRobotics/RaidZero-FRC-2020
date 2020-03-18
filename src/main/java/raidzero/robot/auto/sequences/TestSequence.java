@@ -21,7 +21,7 @@ public class TestSequence extends AutoSequence {
                 Rotation2d.fromDegrees(0)
             ),
             new Pose2d(
-                1.5, 0.8,//Units.inchesToMeters(60), Units.inchesToMeters(30),
+                1.5, 0.0,//Units.inchesToMeters(60), Units.inchesToMeters(30),
                 Rotation2d.fromDegrees(0)
             )
         ),

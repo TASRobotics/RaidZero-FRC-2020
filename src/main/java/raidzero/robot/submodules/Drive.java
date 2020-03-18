@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -372,6 +373,8 @@ public class Drive extends Submodule {
      * @param rightVelocity velocity in m/s
      */
     public void tankVelocity(double leftVelocity, double rightVelocity) {
+        System.out.println("left: " + leftVelocity + " | right: " + rightVelocity);
+
         leftEncoderTargetEntry.setNumber(leftVelocity);
         rightEncoderTargetEntry.setNumber(rightVelocity);
 
@@ -389,6 +392,7 @@ public class Drive extends Submodule {
             leftVelocity, leftAcceleration);
         periodicIO.rightFeedforward = DriveConstants.FEED_FORWARD.calculate(
             rightVelocity, rightAcceleration);
+        System.out.println("left ff: " + periodicIO.leftFeedforward + " | right ff: " + periodicIO.rightFeedforward);
 
         periodicIO.wheelSpeeds.leftMetersPerSecond = leftVelocity;
         periodicIO.wheelSpeeds.rightMetersPerSecond = rightVelocity;
