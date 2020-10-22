@@ -155,7 +155,7 @@ public class Constants {
         public static final int MOTOR_ID = 6;
 
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
-        public static final InvertType INVERSION = InvertType.InvertMotorOutput;
+        public static final InvertType INVERSION = InvertType.None;
         public static final boolean INVERT_PHASE = false;
 
         public static final double TICKS_PER_DEGREE = 10732 / 90;

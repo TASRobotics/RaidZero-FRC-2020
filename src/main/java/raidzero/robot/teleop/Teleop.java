@@ -26,9 +26,9 @@ import raidzero.robot.wrappers.InactiveCompressor;
 public class Teleop {
 
     private enum DriveMode {
-        TANK(0), ARCADE(1), CURVATURE(2);
+        ARCADE(0), CURVATURE(1), TANK(2);
 
-        private static final DriveMode[] modes = {TANK, ARCADE, CURVATURE};
+        private static final DriveMode[] modes = {ARCADE, CURVATURE, TANK};
         public final int index;
 
         private DriveMode(int index) {
@@ -71,7 +71,7 @@ public class Teleop {
 
     private DebugLimelightDistance debugDistance = new DebugLimelightDistance();
 
-    private DriveMode driveMode = DriveMode.TANK;
+    private DriveMode driveMode = DriveMode.ARCADE;
 
     private NetworkTableEntry driveModeEntry = Shuffleboard.getTab(Tab.MAIN)
         .add("Drive Mode", driveMode.toString())

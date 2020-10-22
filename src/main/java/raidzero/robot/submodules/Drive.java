@@ -370,7 +370,7 @@ public class Drive extends Submodule {
     public void arcade(double leftJoystick, double rightJoystick, boolean reverse) {
         if (reverse) {
             leftJoystick *= -1;
-            rightJoystick *= -1;
+            rightJoystick *= 1;
         }
         outputLeftDrive = leftJoystick + rightJoystick;
         outputRightDrive = leftJoystick - rightJoystick;
