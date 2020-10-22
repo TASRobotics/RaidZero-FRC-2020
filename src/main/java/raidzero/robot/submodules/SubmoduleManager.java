@@ -59,13 +59,14 @@ public class SubmoduleManager {
     }
 
     /**
-     * Calls the {@link Submodule#update(double)} and {@link Submodule#run()}
-     * method for all submodules.
+     * Calls the {@link Submodule#readPeriodicInputs()}, {@link Submodule#update(double)}, 
+     * & {@link Submodule#writePeriodicOutputs()} methods for all submodules.
      * 
      * @param timestamp
      */
     public void onLoop(double timestamp) {
+        submodules.forEach(Submodule::readPeriodicInputs);
         submodules.forEach(o -> o.update(timestamp));
-        submodules.forEach(Submodule::run);
+        submodules.forEach(Submodule::writePeriodicOutputs);
     }
 }

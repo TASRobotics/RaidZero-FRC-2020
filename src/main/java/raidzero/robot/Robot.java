@@ -2,13 +2,14 @@ package raidzero.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+
 import raidzero.robot.auto.AutoRunner;
-import raidzero.robot.dashboard.Tab;
+import raidzero.robot.logging.Logger;
 import raidzero.robot.teleop.Teleop;
 import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.Limelight;
 import raidzero.robot.submodules.AdjustableHood;
+import raidzero.robot.submodules.CameraManager;
 import raidzero.robot.submodules.Climb;
 import raidzero.robot.submodules.Shooter;
 import raidzero.robot.submodules.Turret;
@@ -37,6 +38,7 @@ public class Robot extends TimedRobot {
     private static final WheelOfFortune moduleWheelOfFortune = WheelOfFortune.getInstance();
     private static final Climb moduleClimb = Climb.getInstance();
     private static final Superstructure moduleSuperstructure = Superstructure.getInstance();
+    private static final CameraManager moduleCameraManager = CameraManager.getInstance();
 
     private AutoRunner autoRunner;
 
@@ -45,6 +47,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
+        // Logger.startInitialization();
+
         // Register all submodules here
         submoduleManager.setSubmodules(
             moduleDrive,
@@ -56,11 +60,19 @@ public class Robot extends TimedRobot {
             moduleWheelOfFortune,
             moduleClimb,
             moduleLimelight,
-            moduleSuperstructure
+            moduleSuperstructure,
+            moduleCameraManager
         );
         submoduleManager.onInit();
 
         autoRunner = new AutoRunner();
+
+        // Logger.finishInitialization();
+    }
+
+    @Override
+    public void robotPeriodic() {
+        // Logger.update();
     }
 
     /**
@@ -71,6 +83,8 @@ public class Robot extends TimedRobot {
         // Stop autonomous
         autoRunner.stop();
         submoduleManager.onStop(Timer.getFPGATimestamp());
+
+        moduleDrive.setBrakeMode(false);
     }
 
     /**
@@ -115,5 +129,4 @@ public class Robot extends TimedRobot {
         teleop.onLoop();
         submoduleManager.onLoop(Timer.getFPGATimestamp());
     }
-
 }

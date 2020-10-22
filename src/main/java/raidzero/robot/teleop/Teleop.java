@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import raidzero.robot.Constants.DriveConstants;
+
 import raidzero.robot.Constants.IntakeConstants;
 import raidzero.robot.Constants.HoodConstants.HoodAngle;
 import raidzero.robot.auto.actions.DebugLimelightDistance;
@@ -20,9 +20,12 @@ import raidzero.robot.submodules.Hopper;
 import raidzero.robot.submodules.Turret;
 import raidzero.robot.submodules.WheelOfFortune;
 import raidzero.robot.submodules.Drive.GearShift;
-import raidzero.robot.utils.JoystickUtils;
-import raidzero.robot.wrappers.InactiveCompressor;
+import raidzero.robot.util.JoystickUtils;
+import raidzero.lib.wrapper.InactiveCompressor;
 
+/**
+ * TODO: Rewrite to make button assignments easier
+ */
 public class Teleop {
 
     private enum DriveMode {
@@ -87,6 +90,8 @@ public class Teleop {
         drive.stop();
         drive.setGearShift(GearShift.LOW);
 
+        climb.lock();
+
         debugDistance.start();
     }
 
@@ -124,23 +129,29 @@ public class Teleop {
         }
         driveModeEntry.setString(driveMode.toString());
         if (!superstructure.isCloseAligning()) {
+            double speedMultiplier = 1.0;
+            if (climb.isUnlocked()) {
+                speedMultiplier = 0.5;
+            }
             switch (driveMode) {
                 case TANK:
-                    drive.tank(JoystickUtils.monomialScale(JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
-                            DriveConstants.JOYSTICK_EXPONENT, DriveConstants.JOYSTICK_COEFFICIENT),
-                            JoystickUtils.monomialScale(JoystickUtils.deadband(-p1.getY(Hand.kRight)),
-                                    DriveConstants.JOYSTICK_EXPONENT,
-                                    DriveConstants.JOYSTICK_COEFFICIENT),
-                            reverse);
+                    drive.tank(
+                        JoystickUtils.deadband(-p1.getY(Hand.kLeft)) * speedMultiplier,
+                        JoystickUtils.deadband(-p1.getY(Hand.kRight)) * speedMultiplier,
+                        reverse
+                    );
                     break;
                 case ARCADE:
-                    drive.arcade(JoystickUtils.deadband(-p1.getY(Hand.kLeft)),
-                            JoystickUtils.deadband(p1.getX(Hand.kRight)), reverse);
+                    drive.arcade(
+                        JoystickUtils.deadband(-p1.getY(Hand.kLeft)) * speedMultiplier,
+                        JoystickUtils.deadband(p1.getX(Hand.kRight)) * speedMultiplier, 
+                        reverse
+                    );
                     break;
                 case CURVATURE:
-                    double xSpeed = JoystickUtils.deadband(-p1.getY(Hand.kLeft));
+                    double xSpeed = JoystickUtils.deadband(-p1.getY(Hand.kLeft)) * speedMultiplier;
                     drive.curvatureDrive(xSpeed, JoystickUtils.deadband(p1.getX(Hand.kRight)),
-                            Math.abs(xSpeed) < 0.1 // TODO: Change quick turn
+                        Math.abs(xSpeed) < 0.1
                     );
                     break;
             }
@@ -158,13 +169,13 @@ public class Teleop {
          */
         int p1Pov = p1.getPOV();
         if (p1Pov == -1) {
-            hopper.moveBelt(0);
+            hopper.stop();
         } else if (p1Pov >= 315 || p1Pov <= 45) {
-            hopper.moveBelt(-1.0);
+            hopper.moveAtVelocity(0.75);
         } else if (p1Pov <= 225 && p1Pov >= 135) {
-            hopper.moveBelt(1.0);
+            hopper.moveAtVelocity(-0.75);
         } else {
-            hopper.moveBelt(0);
+            hopper.stop();
         }
 
         //
@@ -215,6 +226,20 @@ public class Teleop {
 
     private void p2Loop() {
         /**
+         * Hopper
+         */
+        if (p1.getPOV() == -1) {
+            double p2LeftJoystick = JoystickUtils.deadband(-p2.getY(Hand.kLeft));
+            if (p2LeftJoystick > 0) {
+                hopper.moveAtVelocity(0.75);
+            } else if (p2LeftJoystick < 0) {
+                hopper.moveAtVelocity(-0.75);
+            } else {
+                hopper.stop();
+            }
+        }
+
+        /**
          * Override
          */
         if (p2.getBumper(Hand.kLeft)) {            
@@ -227,10 +252,19 @@ public class Teleop {
              * Shooter Override
              */
             // If left bumper held shooter override
-            shooter.shoot(JoystickUtils.deadband(p2.getTriggerAxis(Hand.kRight)), false);
+            double rightTrigger = JoystickUtils.deadband(p2.getTriggerAxis(Hand.kRight));
+            if (Math.abs(rightTrigger) > 0) {
+                shooter.shoot(rightTrigger, false);
+            } else {
+                if (p2.getBumper(Hand.kRight)) {
+                    shooter.shoot(0.8125, false);
+                } else {
+                    shooter.stop();
+                }
+            }
+            
 
             if (p2.getAButtonPressed()) {
-                // TODO: PID turret 90 degrees
                 superstructure.setTurretPIDing(true);
             } else if (p2.getAButtonReleased()) {
                 superstructure.setTurretPIDing(false);
@@ -254,20 +288,6 @@ public class Teleop {
             climb.openServo();
         } else {
             climb.closeServo();
-        }
-
-        /**
-         * Hopper
-         */
-        if (p1.getPOV() == -1) {
-            double p2LeftJoystick = JoystickUtils.deadband(p2.getY(Hand.kLeft));
-            if (p2LeftJoystick > 0) {
-                hopper.moveAtVelocity(0.75);
-            } else if (p2LeftJoystick < 0) {
-                hopper.moveAtVelocity(-0.75);
-            } else {
-                hopper.stop();
-            }
         }
 
         /**

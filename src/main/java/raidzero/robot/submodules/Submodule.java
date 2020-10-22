@@ -18,15 +18,21 @@ public abstract class Submodule {
     public void onInit() {}
 
     /**
-     * Reads cached inputs & calculate outputs.
+     * Design pattern for caching periodic reads to avoid hammering the 
+     * CAN bus.
+     */
+    public void readPeriodicInputs() {}
+
+    /**
+     * Should do any logic needed to for the submodule.
      */
     public void update(double timestamp) {}
-    
+
     /**
-     * Runs components in the submodule that have continuously changing 
-     * inputs.
+     * Design pattern for caching periodic writes to avoid hammering the 
+     * CAN bus.
      */
-    public void run() {}
+    public void writePeriodicOutputs() {}
 
     /**
      * Stops the submodule.

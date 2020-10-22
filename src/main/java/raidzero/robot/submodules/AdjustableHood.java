@@ -11,13 +11,22 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import raidzero.robot.wrappers.LazyTalonSRX;
+
+import raidzero.lib.wrapper.LazyTalonSRX;
 import raidzero.robot.Constants.HoodConstants;
 import raidzero.robot.Constants.HoodConstants.HoodAngle;
 import raidzero.robot.dashboard.Tab;
 
 public class AdjustableHood extends Submodule {
+
+    public static class PeriodicIO {
+        // Inputs
+        public int position = 0; // in encoder ticks
+
+        // Outputs
+        // [-1.0, 1.0] if OPEN_LOOP, encoder ticks if POSITION
+        public double demand = 0.0;
+    }
 
     public static enum ControlState {
         OPEN_LOOP, POSITION
@@ -35,12 +44,13 @@ public class AdjustableHood extends Submodule {
     private AdjustableHood() {
     }
 
+    // Hardware components
     private LazyTalonSRX hoodMotor;
 
-    private double outputOpenLoop = 0.0;
-    private double outputPosition = 0.0;
-
+    // Control state
     private ControlState controlState = ControlState.OPEN_LOOP;
+
+    private PeriodicIO periodicIO = new PeriodicIO();
 
     private NetworkTableEntry hoodPositionEntry = Shuffleboard.getTab(Tab.MAIN)
         .add("Hood Position", 0)
@@ -79,8 +89,12 @@ public class AdjustableHood extends Submodule {
     public void onStart(double timestamp) {
         controlState = ControlState.OPEN_LOOP;
 
-        outputOpenLoop = 0.0;
-        outputPosition = 0.0;
+        periodicIO = new PeriodicIO();
+    }
+
+    @Override
+    public void readPeriodicInputs() {
+        periodicIO.position = hoodMotor.getSelectedSensorPosition();
     }
 
     @Override
@@ -88,27 +102,25 @@ public class AdjustableHood extends Submodule {
         if (hoodMotor.isRevLimitSwitchClosed() == 1) {
             zero();
         }
-        SmartDashboard.putNumber("Hood Angle", hoodMotor.getSelectedSensorPosition());
-        hoodPositionEntry.setNumber(hoodMotor.getSelectedSensorPosition());
+        hoodPositionEntry.setNumber(periodicIO.position);
     }
 
     @Override
-    public void run() {
+    public void writePeriodicOutputs() {
         switch (controlState) {
             case OPEN_LOOP:
-                hoodMotor.set(ControlMode.PercentOutput, outputOpenLoop);
+                hoodMotor.set(ControlMode.PercentOutput, periodicIO.demand);
                 break;
             case POSITION:
-                hoodMotor.set(ControlMode.Position, outputPosition);
+                hoodMotor.set(ControlMode.Position, periodicIO.demand);
                 break;
         }
     }
 
     @Override
     public void stop() {
-        controlState = ControlState.OPEN_LOOP;
-        outputOpenLoop = 0.0;
-        outputPosition = 0.0;
+        adjust(0.0);
+
         hoodMotor.set(ControlMode.PercentOutput, 0);
     }
 
@@ -118,22 +130,15 @@ public class AdjustableHood extends Submodule {
     }
 
     /**
-     * Returns the position of the hood.
-     * 
-     * @return position in encoder ticks
-     */
-    public int getPosition() {
-        return hoodMotor.getSelectedSensorPosition();
-    }
-
-    /**
      * Adjusts the hood using open-loop control.
      * 
-     * @param percentOutput the percent output in [-1, 1]
+     * @param percentOutput the percent output in [-1.0, 1.0]
      */
     public void adjust(double percentOutput) {
-        controlState = ControlState.OPEN_LOOP;
-        outputOpenLoop = percentOutput;
+        if (controlState != ControlState.OPEN_LOOP) {
+            controlState = ControlState.OPEN_LOOP;
+        }
+        periodicIO.demand = percentOutput;
     }
 
     /**
@@ -142,8 +147,10 @@ public class AdjustableHood extends Submodule {
      * @param position position in encoder units
      */
     public void moveToTick(double position) {
-        controlState = ControlState.POSITION;
-        outputPosition = position;
+        if (controlState != ControlState.POSITION) {
+            controlState = ControlState.POSITION;
+        }
+        periodicIO.demand = position;
     }
 
     /**
@@ -156,7 +163,7 @@ public class AdjustableHood extends Submodule {
     }
 
     public boolean isAtPosition() {
-        return controlState == ControlState.POSITION &&
-               Math.abs(hoodMotor.getClosedLoopError()) < HoodConstants.TOLERANCE;
+        double error = Math.abs(Math.abs(periodicIO.demand) - Math.abs(periodicIO.position));
+        return controlState == ControlState.POSITION && error < HoodConstants.TOLERANCE;
     }
 }

@@ -2,7 +2,7 @@ package raidzero.robot.auto.actions;
 
 import raidzero.robot.Constants.HoodConstants;
 import raidzero.robot.submodules.AdjustableHood;
-import raidzero.robot.utils.TimerBoolean;
+import raidzero.lib.util.TimedBoolean;
 
 /**
  * Action for setting the hood to a certain position.
@@ -12,7 +12,7 @@ public class SetHoodPosition implements Action {
     private static final AdjustableHood hood = AdjustableHood.getInstance();
 
     private double position;
-    private TimerBoolean atSetpoint = new TimerBoolean(HoodConstants.AT_SETPOINT_DURATION);
+    private TimedBoolean atSetpoint = new TimedBoolean(HoodConstants.AT_SETPOINT_DURATION);
 
     public SetHoodPosition(double position) {
         this.position = position;
@@ -32,7 +32,7 @@ public class SetHoodPosition implements Action {
 
     @Override
     public void update() {
-        atSetpoint.update(hood.isAtPosition());   
+        atSetpoint.update(hood.isAtPosition());
     }
 
     @Override

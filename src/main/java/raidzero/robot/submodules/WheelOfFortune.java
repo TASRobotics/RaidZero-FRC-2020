@@ -6,11 +6,20 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-import raidzero.robot.wrappers.LazyTalonSRX;
-import raidzero.robot.wrappers.InactiveDoubleSolenoid;
+import raidzero.lib.wrapper.LazyTalonSRX;
+import raidzero.lib.wrapper.InactiveDoubleSolenoid;
 import raidzero.robot.Constants.WheelOfFortuneConstants;
 
 public class WheelOfFortune extends Submodule {
+
+    public static class PeriodicIO {
+        // Inputs
+        public int position = 0; // in encoder ticks
+
+        // Outputs
+        // [-1.0, 1.0] if OPEN_LOOP, encoder ticks if POSITION
+        public double demand = 0.0;
+    }
 
     public static enum ControlState {
         OPEN_LOOP, POSITION
@@ -28,14 +37,17 @@ public class WheelOfFortune extends Submodule {
     private WheelOfFortune() {
     }
 
+    // Hardware components
     private LazyTalonSRX wofMotor;
     private InactiveDoubleSolenoid solenoid;
 
-    private double outputOpenLoop = 0.0;
-    private double outputPosition = 0.0;
+    // Hardware states
     private boolean engaged = false;
 
+    // Control state
     private ControlState controlState = ControlState.OPEN_LOOP;
+
+    private PeriodicIO periodicIO = new PeriodicIO();
 
     @Override
     public void onInit() {
@@ -62,47 +74,49 @@ public class WheelOfFortune extends Submodule {
     @Override
     public void onStart(double timestamp) {
         controlState = ControlState.OPEN_LOOP;
-        outputOpenLoop = 0.0;
-        outputPosition = 0.0;
+        periodicIO = new PeriodicIO();
     }
 
     @Override
-    public void run() {
+    public void writePeriodicOutputs() {
         switch (controlState) {
             case OPEN_LOOP:
-                wofMotor.set(ControlMode.PercentOutput, outputOpenLoop);
+                wofMotor.set(ControlMode.PercentOutput, periodicIO.demand);
                 break;
             case POSITION:
-                wofMotor.set(ControlMode.MotionMagic, outputPosition);
+                wofMotor.set(ControlMode.MotionMagic, periodicIO.demand);
                 break;
         }
     }
 
     @Override
     public void stop() {
-        outputOpenLoop = 0.0;
-        outputPosition = 0.0;
+        spin(0.0);
         wofMotor.set(ControlMode.PercentOutput, 0);
     }
 
     /**
      * Spins the manipulator using open-loop control.
      * 
-     * @param percentOutput the percent output in [-1, 1]
+     * @param percentOutput the percent output in [-1.0, 1.0]
      */
     public void spin(double percentOutput) {
-        controlState = ControlState.OPEN_LOOP;
-        outputOpenLoop = percentOutput;
+        if (controlState != ControlState.OPEN_LOOP) {
+            controlState = ControlState.OPEN_LOOP;
+        }
+        periodicIO.demand = percentOutput;
     }
 
     /**
      * Spins the manipulator to a position using closed-loop control.
      * 
-     * @param position target position in encoder units
+     * @param position target position in encoder ticks
      */
     public void spinToPosition(double position) {
-        controlState = ControlState.POSITION;
-        outputPosition = position;
+        if (controlState != ControlState.POSITION) {
+            controlState = ControlState.POSITION;
+        }
+        periodicIO.demand = position;
     }
 
     /**

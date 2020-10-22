@@ -3,8 +3,8 @@ package raidzero.robot;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import raidzero.robot.utils.InterpolatingDouble;
-import raidzero.robot.utils.InterpolatingTreeMap;
+import raidzero.lib.util.InterpolatingDouble;
+import raidzero.lib.util.InterpolatingTreeMap;
 
 public class Constants {
     /**
@@ -40,20 +40,20 @@ public class Constants {
         public static final InvertType LEFT_INVERSION = InvertType.None;
         public static final InvertType RIGHT_INVERSION = InvertType.InvertMotorOutput;
 
-        public static final double HIGH_GEAR_RATIO = 9.98;
-        public static final double LOW_GEAR_RATIO = 18.43;
+        public static final double HIGH_GEAR_RATIO = 10.42;
+        public static final double LOW_GEAR_RATIO = 13.28;
     
         public static final double WHEEL_DIAMETER_INCHES = 6.0;
 
         // Closed-loop constants
-        public static final double DRIVE_NEUTRAL_DEADBAND = 0.01;
+        public static final double DRIVE_NEUTRAL_DEADBAND = 0.06;
         public static final int PID_PRIMARY_SLOT = 0;
         public static final int PID_AUX_SLOT = 1;
         public static final double PIGEON_SCALE = 3600.0 / 8192.0;
 
         public static final double PRIMARY_F = 0.8 * 1023.0 / 20348;
         public static final double PRIMARY_P = 0.03; // 1023 / (30 * 2000)
-        public static final double PRIMARY_I = 0;
+        public static final double PRIMARY_I = 0.02;
         public static final double PRIMARY_D = 0;
         public static final int PRIMARY_INT_ZONE = 100;
 
@@ -94,14 +94,14 @@ public class Constants {
         public static final InvertType INVERSION = InvertType.None;
 
         public static final double MAX_SPEED = 20000; // in ticks per 100ms
-        public static final double FAKE_MAX_SPEED = 17000; // in ticks per 100ms
+        public static final double FAKE_MAX_SPEED = 16000; // in ticks per 100ms
         public static final double ERROR_TOLERANCE = 250;
         public static final double UP_TO_SPEED_DURATION = 0.5; // in seconds
 
         public static final double K_F = 1023.0 / MAX_SPEED;
-        public static final double K_P = 0.6;
+        public static final double K_P = 1;
         public static final double K_I = 0; // Shouldn't be touched
-        public static final double K_D = 5.0; // Shouldn't be touched
+        public static final double K_D = 4.0; // Shouldn't be touched
         public static final int K_INTEGRAL_ZONE = 0; // Shouldn't be touched
     }
     /**
@@ -169,7 +169,7 @@ public class Constants {
         public static final int K_INTEGRAL_ZONE = 0;
 
         public static final int TOLERANCE = 1000;
-        public static final double AT_SETPOINT_DURATION = 0.05;
+        public static final double AT_SETPOINT_DURATION = 0.1;
     }
 
     /**
@@ -193,8 +193,8 @@ public class Constants {
     public static final class HopperConstants {
         public static final int MOTOR_ID = 5;
 
-        public static final InvertType INVERSION = InvertType.InvertMotorOutput;
-        public static final boolean FLIP_SENSOR_PHASE = true;
+        public static final InvertType INVERSION = InvertType.None;
+        public static final boolean FLIP_SENSOR_PHASE = false;
 
         public static final int MAX_SPEED = 19000;
 
@@ -244,12 +244,15 @@ public class Constants {
         public static final double MOUNTING_HEIGHT = 0.56; // in meters
 
         // TODO: Improve the constants
-        public static final double AIM_KP = 0.035;
-        public static final double AIM_KI = 0.004;
-        public static final double AIM_KD = 0.001;
-        public static final double ANGLE_ADJUST_THRESHOLD = 2.0;
+        public static final double AIM_KP = 0.04;
+        public static final double AIM_KI = 0.03;
+        public static final double AIM_KD = 0.00198;
+        public static final double MIN_I = -0.08;
+        public static final double MAX_I = 0.08;
 
-        public static final double AIM_ON_TARGET_DURATION = 0.2;
+        public static final double ANGLE_ADJUST_THRESHOLD = 2;
+
+        public static final double AIM_ON_TARGET_DURATION = 0.12;
     }
 
     /**
@@ -263,7 +266,6 @@ public class Constants {
     public static final InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> 
         DISTANCE_TO_HOOD_TICKS = new InterpolatingTreeMap<>(20);
     static {
-        // TODO: Perhaps load this from a file?
         /*DISTANCE_TO_HOOD_TICKS.put(new InterpolatingDouble(2.94), new InterpolatingDouble(4683.0));
         DISTANCE_TO_HOOD_TICKS.put(new InterpolatingDouble(4.55), new InterpolatingDouble(6000.0));
         DISTANCE_TO_HOOD_TICKS.put(new InterpolatingDouble(1.38), new InterpolatingDouble(2000.0));
@@ -281,7 +283,7 @@ public class Constants {
     /**
      * Joystick Constants
      */
-    public static final double JOYSTICK_DEADBAND = 0.08;
+    public static final double JOYSTICK_DEADBAND = 0.06;
 
     public static final int TIMEOUT_MS = 10;
 }

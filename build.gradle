@@ -44,6 +44,9 @@ def includeDesktopSupport = false
 allprojects {
     repositories {
         mavenCentral()
+        maven { 
+            url "https://jitpack.io"
+        }
     }
 }
 
@@ -59,6 +62,8 @@ dependencies {
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
 
     compile project(':pathgen')
+    compile "com.github.dominikWin:badlog:v0.1.1"
+    
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:3.2.4'
 
