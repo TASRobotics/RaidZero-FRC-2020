@@ -50,6 +50,10 @@ public class Path {
                 + "s to generate a path!");
     }
 
+    public double getInitialAngle() {
+        return (getFirstPoint().angle.orElse(0.0) + (isReversed() ? 180.0 : 0.0)) % 360.0;
+    }
+
     /**
      * Returns the waypoints of the path.
      * 

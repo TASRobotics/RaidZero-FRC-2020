@@ -18,7 +18,7 @@ public class AutoRunner {
         new SixCellTrenchSequence(),
         new StealCellSequence(),
         
-        //tests
+        // Tests
         new TestSequence(),
         new TestShooterVelocitySequence(),
         new TestTurretAngleSequence(),
@@ -35,7 +35,6 @@ public class AutoRunner {
                 .add("Auton Selection", chooser)
                 .withSize(3, 1)
                 .withPosition(2, 1);
-        // SmartDashboard.putData("Auton Selection", chooser);
     }
 
     /**

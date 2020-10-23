@@ -120,6 +120,9 @@ public class Turret extends Submodule {
     /**
      * Rotates the turret to the specified angle using closed-loop control.
      * 
+     * Note: Negative (-) is counter-clockwise
+     * TODO: Standarize convention
+     * 
      * @param angle the angle to rotate to
      */
     public void rotateToAngle(double angle) {

@@ -94,7 +94,8 @@ public class AdjustableHood extends Submodule {
 
     @Override
     public void readPeriodicInputs() {
-        periodicIO.position = hoodMotor.getSelectedSensorPosition();
+        // TODO: Same reason as below
+        periodicIO.position = -hoodMotor.getSelectedSensorPosition();
     }
 
     @Override

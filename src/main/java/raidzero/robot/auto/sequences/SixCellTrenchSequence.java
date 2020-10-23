@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import raidzero.pathgen.Point;
 import raidzero.robot.Constants.DriveConstants;
 import raidzero.robot.auto.actions.*;
+import raidzero.robot.auto.actions.TurnToGoal.DefaultMode;
 import raidzero.robot.pathing.Path;
 import raidzero.robot.submodules.*;
 import raidzero.robot.submodules.Intake.Position;
@@ -14,21 +15,21 @@ import raidzero.robot.submodules.Intake.Position;
 public class SixCellTrenchSequence extends AutoSequence {
 
     private static final Point[] TRENCH_FORWARD_WAYPOINTS = {
-        new Point(120, -24, 0),
-        new Point(222, -24, 0),
-        new Point(300, -24, 0),
-        new Point(330, -24, 0)
+        new Point(-120, -24, 180),
+        new Point(-222, -24, 180),
+        new Point(-300, -24, 180),
+        new Point(-330, -24, 180)
     };
-    private static final Path TRENCH_FORWARD_PATH = new Path(TRENCH_FORWARD_WAYPOINTS, false, 
-        7.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+    private static final Path TRENCH_FORWARD_PATH = new Path(TRENCH_FORWARD_WAYPOINTS, true, 
+        5.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] TRENCH_BACKWARD_WAYPOINTS = {
-        new Point(330, -24, 180),
-        new Point(200, -24, 180),
-        new Point(180, -24, 180)
+        new Point(-330, -24, 0),
+        new Point(-200, -24, 0),
+        new Point(-180, -24, 0)
     };
-    private static final Path TRENCH_BACKWARD_PATH = new Path(TRENCH_BACKWARD_WAYPOINTS, true,
-        14, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+    private static final Path TRENCH_BACKWARD_PATH = new Path(TRENCH_BACKWARD_WAYPOINTS, false,
+        5.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Intake intake = Intake.getInstance();
     private static final Shooter shooter = Shooter.getInstance();
@@ -42,41 +43,44 @@ public class SixCellTrenchSequence extends AutoSequence {
         addAction(new SeriesAction(
             Arrays.asList(
                 //new LambdaAction(() -> drive.setBrakeMode(true)),
-                new ParallelAction(
-                    Arrays.asList(
-                        new LambdaAction(() -> shooter.shoot(2.0, false)),
-                        new WaitAction(2.0),
-                        new SetShooterVelocity(1.0),
-                        new LambdaAction(() -> intake.setPosition(Position.DOWN)),
-                        new SeriesAction(Arrays.asList(
-                            new TurnTurretToAngle(100),
-                            new TurnToGoal()
-                        )),
-                        new SetHoodPosition(6180)
-                    )
-                ),
-                new FeedBalls(1.5),
-                //new LambdaAction(() -> shooter.stop()),
-                new LambdaAction(() -> intake.intakeBalls(1.0)),
-                new DrivePath(TRENCH_FORWARD_PATH, true)
+                // new ParallelAction(
+                //     Arrays.asList(
+                //         new LambdaAction(() -> shooter.shoot(1.0, false)),
+                //         new WaitAction(2.0),
+                //         new SetShooterVelocity(1.0),
+                //         new LambdaAction(() -> intake.setPosition(Position.DOWN)),
+                //         // new SeriesAction(Arrays.asList(
+                //         //     new TurnTurretToAngle(100),
+                //         //     new TurnToGoal()
+                //         // )),
+                //         new TurnToGoal(DefaultMode.COUNTER_CLOCKWISE),
+                //         new SetHoodPosition(6180)
+                //     )
+                // ),
+                // new FeedBalls(1.5),
+                // //new LambdaAction(() -> shooter.stop()),
+                // new LambdaAction(() -> System.out.println("Fook")),
+                // new LambdaAction(() -> intake.intakeBalls(1.0)),
+                new DrivePath(TRENCH_FORWARD_PATH, true),
+                new DrivePath(TRENCH_BACKWARD_PATH)
             )
         ));
-        addAction(new SeriesAction(
-            Arrays.asList(
-                new ParallelAction(Arrays.asList(
-                    new DrivePath(TRENCH_BACKWARD_PATH),
-                    new SetHoodPosition(6400),
-                    new TurnToGoal()
-                    //new FeedBalls(0.6, true)
-                    //new SetShooterVelocity(1.0)                 
-                )),
-                //new LambdaAction(() -> drive.setBrakeMode(true)),
-                new FeedBalls(5.0),
-                //new LambdaAction(() -> drive.setBrakeMode(false)),
-                new LambdaAction(() -> shooter.stop()),
-                new LambdaAction(() -> intake.stop())
-            )
-        ));
+        // addAction(new SeriesAction(
+        //     Arrays.asList(
+        //         new ParallelAction(Arrays.asList(
+        //             new DrivePath(TRENCH_BACKWARD_PATH),
+        //             new SetHoodPosition(6400),
+        //             new TurnToGoal()
+        //             //new FeedBalls(0.6, true)
+        //             //new SetShooterVelocity(1.0)                 
+        //         )),
+        //         //new LambdaAction(() -> drive.setBrakeMode(true)),
+        //         new FeedBalls(5.0),
+        //         //new LambdaAction(() -> drive.setBrakeMode(false)),
+        //         new LambdaAction(() -> shooter.stop()),
+        //         new LambdaAction(() -> intake.stop())
+        //     )
+        // ));
         System.out.println("Added actions.");
     }
 

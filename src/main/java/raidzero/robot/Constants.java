@@ -156,11 +156,11 @@ public class Constants {
 
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
         public static final InvertType INVERSION = InvertType.None;
-        public static final boolean INVERT_PHASE = false;
+        public static final boolean INVERT_PHASE = true;
 
-        public static final double TICKS_PER_DEGREE = 10732 / 90;
+        public static final double TICKS_PER_DEGREE = 10877 / 90;
 
-        public static final double MAX_INPUT_PERCENTAGE = 0.4;
+        public static final double MAX_INPUT_PERCENTAGE = 0.3;
 
         public static final double K_F = 0.0;
         public static final double K_P = 0.07;
@@ -241,16 +241,15 @@ public class Constants {
         public static final String NAME = "limelight";
 
         public static final double MOUNTING_ANGLE = 31.4; // in degrees
-        public static final double MOUNTING_HEIGHT = 0.56; // in meters
+        public static final double MOUNTING_HEIGHT = 0.584; // in meters
 
-        // TODO: Improve the constants
-        public static final double AIM_KP = 0.0175;
+        public static final double AIM_KP = 0.018;
         public static final double AIM_KI = 0.00;
         public static final double AIM_KD = 0.001;
         public static final double MIN_I = -0.08;
         public static final double MAX_I = 0.08;
 
-        public static final double ANGLE_ADJUST_THRESHOLD = 2;
+        public static final double ANGLE_ADJUST_THRESHOLD = 1.5;
 
         public static final double AIM_ON_TARGET_DURATION = 0.12;
     }

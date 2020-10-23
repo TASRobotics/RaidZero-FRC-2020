@@ -16,20 +16,30 @@ import raidzero.lib.util.TimedBoolean;
  */
 public class TurnToGoal implements Action {
 
+    public static enum DefaultMode {
+        STOP, CLOCKWISE, COUNTER_CLOCKWISE
+    }
+
     private static final Turret turret = Turret.getInstance();
     private static final Limelight limelight = Limelight.getInstance();
 
     private PIDController pidController;
     private double headingError;
+    private DefaultMode defaultMode = DefaultMode.STOP;
 
     private TimedBoolean onTarget = new TimedBoolean(LimelightConstants.AIM_ON_TARGET_DURATION);
 
     public TurnToGoal() {
+        this(DefaultMode.STOP);
+    }
+
+    public TurnToGoal(DefaultMode defaultMode) {
         pidController = new PIDController(
             LimelightConstants.AIM_KP, 
             LimelightConstants.AIM_KI, 
             LimelightConstants.AIM_KD
         );
+        this.defaultMode = defaultMode;
         pidController.setIntegratorRange(LimelightConstants.MAX_I, LimelightConstants.MIN_I);
         pidController.setTolerance(LimelightConstants.ANGLE_ADJUST_THRESHOLD);
     }
@@ -56,8 +66,14 @@ public class TurnToGoal implements Action {
     public void update() {
         if (!limelight.hasTarget()) {
             onTarget.update(false);
-            if (turret.isInOpenLoop()) {
-                turret.stop();
+            if (defaultMode == DefaultMode.STOP) {
+                if (turret.isInOpenLoop()) {
+                    turret.stop();
+                }
+            } else {
+                double output = TurretConstants.MAX_INPUT_PERCENTAGE;
+                output *= defaultMode == DefaultMode.CLOCKWISE ? 1 : -1;
+                turret.rotateManual(output);
             }
             return;
 		}

@@ -3,6 +3,7 @@ package raidzero.robot.auto.sequences;
 import java.util.Arrays;
 
 import raidzero.robot.auto.actions.*;
+import raidzero.robot.auto.actions.TurnToGoal.DefaultMode;
 
 public class TestTurretAngleSequence extends AutoSequence {
 
@@ -14,9 +15,8 @@ public class TestTurretAngleSequence extends AutoSequence {
     public void sequence() {
         addAction(new SeriesAction(
             Arrays.asList(
-                new TurnTurretToAngle(90),
-                new TurnToGoal(),
-                new FeedBalls(2.0)
+                // new TurnTurretToAngle(90)
+                new TurnToGoal(DefaultMode.COUNTER_CLOCKWISE)
             )
         ));
         System.out.println("Added actions.");

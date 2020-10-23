@@ -179,11 +179,13 @@ public class ProfileFollower {
         for (int i = 0; i < waypoints.length; i++) {
             TrajectoryPoint tp = new TrajectoryPoint();
             tp.position = reverse * EncoderUtils.inchesToTicks(waypoints[i].position, gearShift);
+            System.out.println("TP POS: " + tp.position);
+            System.out.println(leaderTalon.getSelectedSensorPosition());
             tp.velocity = reverse * EncoderUtils.inchesToTicks(waypoints[i].velocity, gearShift);
             // timeDur takes ms, but Pathpoint::time is in 100 ms
             tp.timeDur = (int) (waypoints[i].time * 100);
             // auxiliaryPos takes in units of 3600 ticks, but angle is in 360 degress
-            tp.auxiliaryPos = waypoints[i].angle * 10;
+            tp.auxiliaryPos = ((waypoints[i].angle + (reversed ? 180 : 0)) % 360.0) * 10;
             tp.useAuxPID = true;
             tp.profileSlotSelect0 = DriveConstants.PID_PRIMARY_SLOT;
             tp.profileSlotSelect1 = DriveConstants.PID_AUX_SLOT;

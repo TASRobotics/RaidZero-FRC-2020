@@ -351,6 +351,7 @@ public class Drive extends Submodule {
         leftLeader.getSensorCollection().setIntegratedSensorPosition(0.0, Constants.TIMEOUT_MS);
         rightLeader.getSensorCollection().setIntegratedSensorPosition(0.0, Constants.TIMEOUT_MS);
         pigeon.setFusedHeading(0.0);
+        pigeon.setYaw(0.0);
     }
 
     /**
@@ -514,18 +515,24 @@ public class Drive extends Submodule {
         if (mpFollower != null) {
             // Stop the drivetrain first
             stop();
-
+            double angle = path.getInitialAngle();
             if (zeroAllSensors) {
                 zero();
 
-                double angle = path.getFirstPoint().angle.orElse(0.0);
+                System.out.println("Starting angle: " + angle);
 
                 // The path may start at a different angle at times
+                pigeon.setYaw(angle);
                 pigeon.setFusedHeading(angle);
-            } else if (path.isReversed()) {
-                // TODO: Check to see if this is correct
-                pigeon.setFusedHeading(pigeon.getFusedHeading() + 180);
             }
+            double[] ypr = {0.0, 0.0, 0.0};
+            pigeon.getYawPitchRoll(ypr);
+            System.out.println("Current angle: " + ypr[0]);
+            // if (path.isReversed()) {
+            //     // TODO: Check to see if this is correct
+            //     pigeon.setYaw(angle + 180);
+            //     pigeon.setFusedHeading(angle + 180);
+            // }
 
             mpFollower.reset();
 

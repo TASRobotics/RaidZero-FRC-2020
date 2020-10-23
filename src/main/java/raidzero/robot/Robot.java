@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 
 import raidzero.robot.auto.AutoRunner;
-import raidzero.robot.logging.Logger;
+//import raidzero.robot.logging.Logger;
 import raidzero.robot.teleop.Teleop;
 import raidzero.robot.submodules.Drive;
 import raidzero.robot.submodules.Limelight;
@@ -19,9 +19,6 @@ import raidzero.robot.submodules.SubmoduleManager;
 import raidzero.robot.submodules.Superstructure;
 import raidzero.robot.submodules.Intake;
 
-/**
- * The main robot class.
- */
 public class Robot extends TimedRobot {
 
     private static final SubmoduleManager submoduleManager = SubmoduleManager.getInstance();
