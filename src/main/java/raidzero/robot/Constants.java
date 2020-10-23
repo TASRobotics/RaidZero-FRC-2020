@@ -112,19 +112,19 @@ public class Constants {
 
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
         public static final InvertType INVERSION = InvertType.None;
-        public static final boolean INVERT_SENSOR_PHASE = true;
+        public static final boolean INVERT_SENSOR_PHASE = false;
 
         public static final double GEAR_RATIO = 45.0;
 
-        public static final int FULLY_EXTENDED_TICKS = 6200;
+        public static final int FULLY_EXTENDED_TICKS = 7000;
 
         // The names refer to the angle of ball release
         public static enum HoodAngle {
             // +-500 for extra tolerance, limit switches should do its thing
-            RETRACTED(-500),
+            RETRACTED(-200),
             HIGH(FULLY_EXTENDED_TICKS / 3), 
             MEDIUM(2 * FULLY_EXTENDED_TICKS / 3), 
-            LOW(FULLY_EXTENDED_TICKS + 500);
+            LOW(FULLY_EXTENDED_TICKS + 200);
 
             public final int ticks;
 
@@ -244,9 +244,9 @@ public class Constants {
         public static final double MOUNTING_HEIGHT = 0.56; // in meters
 
         // TODO: Improve the constants
-        public static final double AIM_KP = 0.04;
-        public static final double AIM_KI = 0.03;
-        public static final double AIM_KD = 0.00198;
+        public static final double AIM_KP = 0.0175;
+        public static final double AIM_KI = 0.00;
+        public static final double AIM_KD = 0.001;
         public static final double MIN_I = -0.08;
         public static final double MAX_I = 0.08;
 

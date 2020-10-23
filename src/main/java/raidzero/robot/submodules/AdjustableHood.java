@@ -99,7 +99,7 @@ public class AdjustableHood extends Submodule {
 
     @Override
     public void update(double timestamp) {
-        if (hoodMotor.isRevLimitSwitchClosed() == 1) {
+        if (hoodMotor.isFwdLimitSwitchClosed() == 0) {
             zero();
         }
         hoodPositionEntry.setNumber(periodicIO.position);
@@ -150,7 +150,8 @@ public class AdjustableHood extends Submodule {
         if (controlState != ControlState.POSITION) {
             controlState = ControlState.POSITION;
         }
-        periodicIO.demand = position;
+        // TODO: right now, fully down is 0, and fully up is -X, so negate it.
+        periodicIO.demand = -position;
     }
 
     /**
