@@ -40,7 +40,7 @@ public class Superstructure extends Submodule {
         new Point(0, 0, 0),
         new Point(34, 0, 0)
     };
-    private static final Path CLOSE_ALIGN_PATH = new Path(CLOSE_ALIGN_POINTS, false, 8.5, 8);
+    private static final Path CLOSE_ALIGN_PATH = new Path(CLOSE_ALIGN_POINTS, true, 12, 10);
 
     @Override
     public void onStart(double timestamp) {
@@ -50,7 +50,7 @@ public class Superstructure extends Submodule {
             new VisionAssistedTargeting()
         ));
         turretPIDAction = new TurnTurretToAngle(90);
-        closeAlignAction = new DrivePath(CLOSE_ALIGN_PATH);
+        closeAlignAction = new DrivePath(CLOSE_ALIGN_PATH, true);
     }
 
     @Override

@@ -38,7 +38,7 @@ public class Climb extends Submodule {
 
     @Override
     public void onInit() {
-        servo = new PWM(9);
+        servo = new PWM(ClimbConstants.SERVO_ID);
 
         climbMotor = new LazyTalonSRX(ClimbConstants.MOTOR_ID);
         climbMotor.configFactoryDefault();

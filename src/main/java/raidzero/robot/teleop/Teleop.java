@@ -91,6 +91,7 @@ public class Teleop {
         drive.setGearShift(GearShift.LOW);
 
         climb.lock();
+        System.out.println("driveMode: " + driveMode.toString());
 
         debugDistance.start();
     }
@@ -105,6 +106,7 @@ public class Teleop {
         // Climb safety
         if (p1.getStartButton() && p2.getStartButton()) {
             climb.unlock();
+            System.out.println("unlocked climb");
         }
 
         p1Loop();
@@ -126,6 +128,7 @@ public class Teleop {
         // Cycle through drive modes
         if (p1.getBackButtonPressed()) {
             driveMode = driveMode.next();
+            System.out.println("driveMode: " + driveMode.toString());
         }
         driveModeEntry.setString(driveMode.toString());
         if (!superstructure.isCloseAligning()) {
@@ -284,7 +287,7 @@ public class Teleop {
          * Climb
          */
         climb.climb(p2.getTriggerAxis(Hand.kRight) - p2.getTriggerAxis(Hand.kLeft));
-        if (p2.getStartButton()) {
+        if (p2.getStartButton() && climb.isUnlocked()) {
             climb.openServo();
         } else {
             climb.closeServo();

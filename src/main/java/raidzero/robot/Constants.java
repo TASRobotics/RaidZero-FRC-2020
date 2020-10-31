@@ -52,9 +52,9 @@ public class Constants {
         public static final double PIGEON_SCALE = 3600.0 / 8192.0;
 
         public static final double PRIMARY_F = 0.8 * 1023.0 / 20348;
-        public static final double PRIMARY_P = 0.03; // 1023 / (30 * 2000)
+        public static final double PRIMARY_P = 0.05;
         public static final double PRIMARY_I = 0.02;
-        public static final double PRIMARY_D = 0;
+        public static final double PRIMARY_D = 0.8;
         public static final int PRIMARY_INT_ZONE = 100;
 
         public static final double AUX_F = 0;
@@ -158,7 +158,7 @@ public class Constants {
         public static final InvertType INVERSION = InvertType.None;
         public static final boolean INVERT_PHASE = true;
 
-        public static final double TICKS_PER_DEGREE = 10877 / 90;
+        public static final double TICKS_PER_DEGREE = 8800 / 90;
 
         public static final double MAX_INPUT_PERCENTAGE = 0.3;
 
@@ -229,6 +229,7 @@ public class Constants {
      */
     public static final class ClimbConstants {
         public static final int MOTOR_ID = 12;
+        public static final int SERVO_ID = 9;
 
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
         public static final InvertType INVERSION = InvertType.InvertMotorOutput;
