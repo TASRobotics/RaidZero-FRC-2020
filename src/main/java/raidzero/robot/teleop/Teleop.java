@@ -29,9 +29,9 @@ import raidzero.lib.wrapper.InactiveCompressor;
 public class Teleop {
 
     private enum DriveMode {
-        ARCADE(0), CURVATURE(1), TANK(2);
+        CURVATURE(0), ARCADE(1), TANK(2);
 
-        private static final DriveMode[] modes = {ARCADE, CURVATURE, TANK};
+        private static final DriveMode[] modes = {CURVATURE, ARCADE, TANK};
         public final int index;
 
         private DriveMode(int index) {
