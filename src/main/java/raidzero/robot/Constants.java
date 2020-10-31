@@ -134,7 +134,7 @@ public class Constants {
         }
 
         public static final double K_F = 0;
-        public static final double K_P = 0.6;
+        public static final double K_P = 0.8;
         public static final double K_I = 0;
         public static final double K_D = 0.001;
         public static final int K_INTEGRAL_ZONE = 0;
@@ -165,7 +165,7 @@ public class Constants {
         public static final double K_F = 0.0;
         public static final double K_P = 0.07;
         public static final double K_I = 0.0;
-        public static final double K_D = 0.001;
+        public static final double K_D = 0.002;
         public static final int K_INTEGRAL_ZONE = 0;
 
         public static final int TOLERANCE = 1000;
