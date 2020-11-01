@@ -244,9 +244,9 @@ public class Constants {
         public static final double MOUNTING_ANGLE = 31.4; // in degrees
         public static final double MOUNTING_HEIGHT = 0.584; // in meters
 
-        public static final double AIM_KP = 0.018;
+        public static final double AIM_KP = 0.020;
         public static final double AIM_KI = 0.00;
-        public static final double AIM_KD = 0.001;
+        public static final double AIM_KD = 0.0013;
         public static final double MIN_I = -0.08;
         public static final double MAX_I = 0.08;
 

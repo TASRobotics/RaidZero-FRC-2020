@@ -93,6 +93,7 @@ public class TurnToGoal implements Action {
     public void done() {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' finished!");
         //limelight.setLedMode(LedMode.Off);
+        System.out.println("dwadwa");
         turret.stop();
     }
 }
