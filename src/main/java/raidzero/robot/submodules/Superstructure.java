@@ -38,7 +38,7 @@ public class Superstructure extends Submodule {
 
     private static final Point[] CLOSE_ALIGN_POINTS = {
         new Point(0, 0, 0),
-        new Point(34, 0, 0)
+        new Point(30, 0, 0)
     };
     private static final Path CLOSE_ALIGN_PATH = new Path(CLOSE_ALIGN_POINTS, true, 12, 10);
 

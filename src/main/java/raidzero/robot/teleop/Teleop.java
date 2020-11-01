@@ -74,7 +74,7 @@ public class Teleop {
 
     private DebugLimelightDistance debugDistance = new DebugLimelightDistance();
 
-    private DriveMode driveMode = DriveMode.ARCADE;
+    private DriveMode driveMode = DriveMode.CURVATURE;
 
     private NetworkTableEntry driveModeEntry = Shuffleboard.getTab(Tab.MAIN)
         .add("Drive Mode", driveMode.toString())

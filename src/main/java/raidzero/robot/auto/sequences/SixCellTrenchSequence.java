@@ -62,7 +62,7 @@ public class SixCellTrenchSequence extends AutoSequence {
                 // new LambdaAction(() -> System.out.println("Fook")),
                 // new LambdaAction(() -> intake.intakeBalls(1.0)),
                 new DrivePath(TRENCH_FORWARD_PATH, true),
-                new DrivePath(TRENCH_BACKWARD_PATH)
+                new DrivePath(TRENCH_BACKWARD_PATH, true)
             )
         ));
         // addAction(new SeriesAction(

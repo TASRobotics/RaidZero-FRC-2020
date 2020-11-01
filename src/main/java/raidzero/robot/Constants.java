@@ -41,7 +41,7 @@ public class Constants {
         public static final InvertType RIGHT_INVERSION = InvertType.InvertMotorOutput;
 
         public static final double HIGH_GEAR_RATIO = 10.42;
-        public static final double LOW_GEAR_RATIO = 13.28;
+        public static final double LOW_GEAR_RATIO = 19.23;
     
         public static final double WHEEL_DIAMETER_INCHES = 6.0;
 
@@ -158,7 +158,7 @@ public class Constants {
         public static final InvertType INVERSION = InvertType.None;
         public static final boolean INVERT_PHASE = true;
 
-        public static final double TICKS_PER_DEGREE = 8800 / 90;
+        public static final double TICKS_PER_DEGREE = 10200 / 90;
 
         public static final double MAX_INPUT_PERCENTAGE = 0.3;
 
@@ -228,7 +228,6 @@ public class Constants {
      * Climb Constants
      */
     public static final class ClimbConstants {
-        public static final int SERVO_ID = 0;
         public static final int MOTOR_ID = 12;
         public static final int SERVO_ID = 9;
 
