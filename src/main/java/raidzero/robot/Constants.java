@@ -67,9 +67,9 @@ public class Constants {
         public static final int BASE_TRAJ_PERIOD_MS = 0;
         public static final int SENSOR_UNITS_PER_ROTATION = 2048;
         public static final double SENSOR_UNITS_PER_INCH_LOW_GEAR = 
-            SENSOR_UNITS_PER_ROTATION * LOW_GEAR_RATIO / (WHEEL_DIAMETER_INCHES * Math.PI);
+            (SENSOR_UNITS_PER_ROTATION * LOW_GEAR_RATIO) / (WHEEL_DIAMETER_INCHES * Math.PI);
         public static final double SENSOR_UNITS_PER_INCH_HIGH_GEAR = 
-            SENSOR_UNITS_PER_ROTATION * HIGH_GEAR_RATIO / (WHEEL_DIAMETER_INCHES * Math.PI);
+            (SENSOR_UNITS_PER_ROTATION * HIGH_GEAR_RATIO) / (WHEEL_DIAMETER_INCHES * Math.PI);
         public static final int MIN_POINTS_IN_TALON = 10;
         public static final int TRANSMIT_PERIOD_MS = 3;
 
