@@ -14,22 +14,22 @@ import raidzero.robot.submodules.Intake.Position;
 
 public class SixCellTrenchSequence extends AutoSequence {
 
-    private static final Point[] TRENCH_FORWARD_WAYPOINTS = {
+    private static final Point[] TRENCH_TOWARDS_BALL_WAYPOINTS = {
         new Point(-120, -24, 180),
         new Point(-222, -24, 180),
         new Point(-300, -24, 180),
         new Point(-330, -24, 180)
     };
-    private static final Path TRENCH_FORWARD_PATH = new Path(TRENCH_FORWARD_WAYPOINTS, true, 
-        5.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+    private static final Path TRENCH_TOWARDS_BALLS_PATH = new Path(TRENCH_TOWARDS_BALL_WAYPOINTS, true, 
+        7.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
-    private static final Point[] TRENCH_BACKWARD_WAYPOINTS = {
+    private static final Point[] TRENCH_TOWARDS_GOAL_WAYPOINTS = {
         new Point(-330, -24, 0),
         new Point(-200, -24, 0),
         new Point(-120, -24, 0)
     };
-    private static final Path TRENCH_BACKWARD_PATH = new Path(TRENCH_BACKWARD_WAYPOINTS, false,
-        5.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+    private static final Path TRENCH_TOWARDS_GOAL_PATH = new Path(TRENCH_TOWARDS_GOAL_WAYPOINTS, false,
+        7.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Intake intake = Intake.getInstance();
     private static final Shooter shooter = Shooter.getInstance();
@@ -62,12 +62,13 @@ public class SixCellTrenchSequence extends AutoSequence {
                 new FeedBalls(1.5),
                 new LambdaAction(() -> shooter.stop()),
                 new LambdaAction(() -> intake.intakeBalls(1.0)),
-                new DrivePath(TRENCH_FORWARD_PATH, true),
-                new DrivePath(TRENCH_BACKWARD_PATH, true)
+                new DrivePath(TRENCH_TOWARDS_BALLS_PATH, true),
+                new DrivePath(TRENCH_TOWARDS_GOAL_PATH, true) // TODO: Preferably not reset encoder position
             )
         ));
         addAction(new SeriesAction(
             Arrays.asList(
+                new LambdaAction(() -> intake.intakeBalls(1.0)),
                 new ParallelAction(Arrays.asList(
                     new SetHoodPosition(6400),
                     new FeedBalls(0.6, true),

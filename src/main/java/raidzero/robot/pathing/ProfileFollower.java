@@ -179,8 +179,6 @@ public class ProfileFollower {
         for (int i = 0; i < waypoints.length; i++) {
             TrajectoryPoint tp = new TrajectoryPoint();
             tp.position = reverse * EncoderUtils.inchesToTicks(waypoints[i].position, gearShift);
-            System.out.println("TP POS: " + tp.position);
-            System.out.println(leaderTalon.getSelectedSensorPosition());
             tp.velocity = reverse * EncoderUtils.inchesToTicks(waypoints[i].velocity, gearShift);
             // timeDur takes ms, but Pathpoint::time is in 100 ms
             tp.timeDur = (int) (waypoints[i].time * 100);

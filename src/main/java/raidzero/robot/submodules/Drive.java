@@ -525,9 +525,6 @@ public class Drive extends Submodule {
                 pigeon.setYaw(angle);
                 pigeon.setFusedHeading(angle);
             }
-            double[] ypr = {0.0, 0.0, 0.0};
-            pigeon.getYawPitchRoll(ypr);
-            System.out.println("Current angle: " + ypr[0]);
             // if (path.isReversed()) {
             //     // TODO: Check to see if this is correct
             //     pigeon.setYaw(angle + 180);
