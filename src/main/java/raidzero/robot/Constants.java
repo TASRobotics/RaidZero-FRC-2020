@@ -250,9 +250,9 @@ public class Constants {
         public static final double MIN_I = -0.08;
         public static final double MAX_I = 0.08;
 
-        public static final double ANGLE_ADJUST_THRESHOLD = 3;
+        public static final double ANGLE_ADJUST_THRESHOLD = 1.5;
 
-        public static final double AIM_ON_TARGET_DURATION = 0.13;
+        public static final double AIM_ON_TARGET_DURATION = 0.12;
     }
 
     /**
