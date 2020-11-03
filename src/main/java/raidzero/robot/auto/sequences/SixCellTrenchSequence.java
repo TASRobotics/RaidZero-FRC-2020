@@ -21,7 +21,7 @@ public class SixCellTrenchSequence extends AutoSequence {
         new Point(-330, -24, 180)
     };
     private static final Path TRENCH_TOWARDS_BALLS_PATH = new Path(TRENCH_TOWARDS_BALL_WAYPOINTS, true, 
-        7.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+        6.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] TRENCH_TOWARDS_GOAL_WAYPOINTS = {
         new Point(-330, -24, 0),
@@ -29,7 +29,7 @@ public class SixCellTrenchSequence extends AutoSequence {
         new Point(-120, -24, 0)
     };
     private static final Path TRENCH_TOWARDS_GOAL_PATH = new Path(TRENCH_TOWARDS_GOAL_WAYPOINTS, false,
-        7.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+        8.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Intake intake = Intake.getInstance();
     private static final Shooter shooter = Shooter.getInstance();
@@ -47,7 +47,6 @@ public class SixCellTrenchSequence extends AutoSequence {
                 new ParallelAction(
                     Arrays.asList(
                         new LambdaAction(() -> shooter.shoot(1.0, false)),
-                        new WaitAction(2.0),
                         new SetShooterVelocity(1.0),
                         new LambdaAction(() -> intake.setPosition(Position.DOWN)),
                         // Optional Old Turret rotation method
@@ -71,10 +70,10 @@ public class SixCellTrenchSequence extends AutoSequence {
                 new LambdaAction(() -> intake.intakeBalls(1.0)),
                 new ParallelAction(Arrays.asList(
                     new SetHoodPosition(6400),
-                    new FeedBalls(0.6, true),
                     new SetShooterVelocity(1.0)                 
                 )),
                 new TurnToGoal(),
+                new FeedBalls(0.3, false),
                 new LambdaAction(() -> drive.setBrakeMode(true)),
                 new FeedBalls(5.0),
                 new LambdaAction(() -> drive.setBrakeMode(false)),
