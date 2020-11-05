@@ -184,7 +184,7 @@ public class Constants {
         public static final int INTAKE_FORWARD_ID = 2;
         public static final int INTAKE_REVERSE_ID = 3;
 
-        public static final double CONTROL_SCALING_FACTOR = 1.0;
+        public static final double CONTROL_SCALING_FACTOR = 0.8;
     }
 
     /**
@@ -244,15 +244,15 @@ public class Constants {
         public static final double MOUNTING_ANGLE = 31.4; // in degrees
         public static final double MOUNTING_HEIGHT = 0.584; // in meters
 
-        public static final double AIM_KP = 0.020;
-        public static final double AIM_KI = 0.00;
-        public static final double AIM_KD = 0.0013;
+        public static final double AIM_KP = 0.02;
+        public static final double AIM_KI = 0.0;
+        public static final double AIM_KD = 0.0012;
         public static final double MIN_I = -0.08;
         public static final double MAX_I = 0.08;
 
-        public static final double ANGLE_ADJUST_THRESHOLD = 3;
+        public static final double ANGLE_ADJUST_THRESHOLD = 1.3;
 
-        public static final double AIM_ON_TARGET_DURATION = 0.13;
+        public static final double AIM_ON_TARGET_DURATION = 0.3;
     }
 
     /**
