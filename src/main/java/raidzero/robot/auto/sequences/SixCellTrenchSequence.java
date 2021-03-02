@@ -21,15 +21,15 @@ public class SixCellTrenchSequence extends AutoSequence {
         new Point(-330, -24, 180)
     };
     private static final Path TRENCH_TOWARDS_BALLS_PATH = new Path(TRENCH_TOWARDS_BALL_WAYPOINTS, true, 
-        5.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+        6.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] TRENCH_TOWARDS_GOAL_WAYPOINTS = {
         new Point(-330, -24, 0),
         new Point(-200, -24, 0),
-        new Point(-140, -24, 0)
+        new Point(-120, -24, 0)
     };
     private static final Path TRENCH_TOWARDS_GOAL_PATH = new Path(TRENCH_TOWARDS_GOAL_WAYPOINTS, false,
-        9.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+        8.0, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Intake intake = Intake.getInstance();
     private static final Shooter shooter = Shooter.getInstance();
@@ -55,27 +55,30 @@ public class SixCellTrenchSequence extends AutoSequence {
                             new TurnToGoal()
                         )), **/
                         new TurnToGoal(DefaultMode.COUNTER_CLOCKWISE),
-                        new SetHoodPosition(6320)
+                        new SetHoodPosition(6230)
                     )
                 ),
-                new FeedBalls(1),
-                new LambdaAction(() -> intake.intakeBalls(0.7)),
-                new DrivePath(TRENCH_TOWARDS_BALLS_PATH, true)
+                new FeedBalls(1.5),
+                new LambdaAction(() -> shooter.stop()),
+                new LambdaAction(() -> intake.intakeBalls(1.0)),
+                new DrivePath(TRENCH_TOWARDS_BALLS_PATH, true),
+                new DrivePath(TRENCH_TOWARDS_GOAL_PATH, true) // TODO: Preferably not reset encoder position
             )
         ));
         addAction(new SeriesAction(
             Arrays.asList(
+                new LambdaAction(() -> intake.intakeBalls(1.0)),
                 new ParallelAction(Arrays.asList(
-                    new DrivePath(TRENCH_TOWARDS_GOAL_PATH, true), // TODO: Preferably not reset encoder position
-                    new SetHoodPosition(6420),
-                    new SetShooterVelocity(1.0)
+                    new SetHoodPosition(6400),
+                    new SetShooterVelocity(1.0)                 
                 )),
-                //new FeedBalls(0.3, true),
-                new LambdaAction(() -> drive.setBrakeMode(true)),
                 new TurnToGoal(),
+                new FeedBalls(0.3, false),
+                new LambdaAction(() -> drive.setBrakeMode(true)),
                 new FeedBalls(5.0),
                 new LambdaAction(() -> drive.setBrakeMode(false)),
-                new LambdaAction(() -> shooter.stop())
+                new LambdaAction(() -> shooter.stop()),
+                new LambdaAction(() -> intake.stop())
             )
         ));
         System.out.println("Added actions.");
