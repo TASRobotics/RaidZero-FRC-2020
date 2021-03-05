@@ -54,10 +54,10 @@ public class SixCellTrenchSequence extends AutoSequence {
                             new TurnTurretToAngle(100),
                             new TurnToGoal()
                         )), **/
-                        new TurnToGoal(DefaultMode.COUNTER_CLOCKWISE),
-                        new SetHoodPosition(6230)
+                        new TurnToGoal(DefaultMode.COUNTER_CLOCKWISE)
                     )
                 ),
+                new SetHoodPosition(5700),
                 new FeedBalls(1.5),
                 new LambdaAction(() -> shooter.stop()),
                 new LambdaAction(() -> intake.intakeBalls(1.0)),
@@ -69,7 +69,7 @@ public class SixCellTrenchSequence extends AutoSequence {
             Arrays.asList(
                 new LambdaAction(() -> intake.intakeBalls(1.0)),
                 new ParallelAction(Arrays.asList(
-                    new SetHoodPosition(6400),
+                    new SetHoodPosition(5600),
                     new SetShooterVelocity(1.0)                 
                 )),
                 new TurnToGoal(),

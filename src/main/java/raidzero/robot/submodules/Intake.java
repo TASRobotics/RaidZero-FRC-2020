@@ -70,8 +70,6 @@ public class Intake extends Submodule {
     @Override
     public void writePeriodicOutputs() {
         intakeMotor.set(ControlMode.PercentOutput, periodicIO.demand);
-        System.out.println(":)");
-        System.out.println(periodicIO.demand);
     }
 
     @Override
@@ -88,7 +86,6 @@ public class Intake extends Submodule {
      */
     public void intakeBalls(double percentOutput) {
         periodicIO.demand = percentOutput;
-        System.out.println(percentOutput);
     }
 
     /**

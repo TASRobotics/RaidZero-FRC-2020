@@ -132,7 +132,7 @@ public class Teleop {
         }
         driveModeEntry.setString(driveMode.toString());
         if (!superstructure.isCloseAligning()) {
-            double speedMultiplier = 1.0;
+            double speedMultiplier = 0.5;
             if (climb.isUnlocked()) {
                 speedMultiplier = 0.5;
             }
